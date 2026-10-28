@@ -1,0 +1,518 @@
+from __future__ import annotations
+
+import base64
+import subprocess
+import tempfile
+from pathlib import Path
+
+import numpy as np
+import soundfile as sf
+import torch
+from phonemizer.backend.espeak.wrapper import EspeakWrapper
+
+from .config import BASE_DIR
+from .knowledge_base import retrieve
+from .llm import generate_answer
+
+# -------------------------------------------------------------------
+# Local IndicVoice configuration
+# -------------------------------------------------------------------
+
+INDICVOICE_DIR = BASE_DIR / "indic-voice"
+INDICVOICE_CONFIG = INDICVOICE_DIR / "config.json"
+INDICVOICE_MODEL = INDICVOICE_DIR / "indicvoice-v1_0.pth"
+INDICVOICE_VOICE = INDICVOICE_DIR / "voices" / "hf_alpha.pt"
+
+VOICE_SPEED = 1.10
+SAMPLE_RATE = 24000
+
+DEVICE = "mps" if torch.backends.mps.is_available() else "cpu"
+
+# eSpeak-NG: use the Homebrew installation instead of the broken
+# bundled loader path.
+EspeakWrapper.set_library(
+    "/opt/homebrew/opt/espeak-ng/lib/libespeak-ng.dylib"
+)
+EspeakWrapper.set_data_path(
+    "/opt/homebrew/opt/espeak-ng/share/espeak-ng-data"
+)
+
+
+# -------------------------------------------------------------------
+# Lazy-loaded IndicVoice pipeline
+# -------------------------------------------------------------------
+
+_pipeline_hi = None
+_pipeline_en = None
+
+
+def _load_local_voice_pipeline(language_code: str):
+    global _pipeline_hi, _pipeline_en
+
+    if language_code == "hi" and _pipeline_hi is not None:
+        return _pipeline_hi
+
+    if language_code == "en" and _pipeline_en is not None:
+        return _pipeline_en
+
+    if not INDICVOICE_CONFIG.exists():
+        raise FileNotFoundError(
+            f"IndicVoice config not found: {INDICVOICE_CONFIG}"
+        )
+
+    if not INDICVOICE_MODEL.exists():
+        raise FileNotFoundError(
+            f"IndicVoice model not found: {INDICVOICE_MODEL}"
+        )
+
+    if not INDICVOICE_VOICE.exists():
+        raise FileNotFoundError(
+            f"IndicVoice voice not found: {INDICVOICE_VOICE}"
+        )
+
+    from indicvoice import IndicPipeline
+    from indicvoice.model import IndicModel
+
+    print(
+        f"[voice] Loading IndicVoice locally "
+        f"(language={language_code}, device={DEVICE})..."
+    )
+
+    model = IndicModel(
+        repo_id="Bindkushal/IndicVoice-82M",
+        config=str(INDICVOICE_CONFIG),
+        model=str(INDICVOICE_MODEL),
+    ).to(DEVICE).eval()
+
+    pipeline = IndicPipeline(
+        lang_code=language_code,
+        model=model,
+        repo_id="Bindkushal/IndicVoice-82M",
+    )
+
+    # Compatibility fix: indicg2p expects fallback to return
+    # (phonemes, rating), while some eSpeak fallbacks return raw text.
+    if language_code == "a" and getattr(pipeline.g2p, "fallback", None) is not None:
+        _original_fallback = pipeline.g2p.fallback
+
+        def _compatible_english_fallback(token):
+            fallback_input = (
+                token.text if hasattr(token, "text") else token
+            )
+            result = _original_fallback(fallback_input)
+
+            if isinstance(result, tuple):
+                if len(result) >= 2:
+                    return result[0], result[1]
+                if len(result) == 1:
+                    return result[0], 1
+
+            if isinstance(result, list):
+                result = result[0] if result else ""
+
+            if not isinstance(result, str):
+                result = str(result)
+
+            return result, 1
+
+        pipeline.g2p.fallback = _compatible_english_fallback
+
+    # Important:
+    # The repository loader uses weights_only=True, which is incompatible
+    # with this particular .pt tensor under the installed PyTorch version.
+    # We already verified this trusted local tensor loads correctly with
+    # weights_only=False, so inject it directly and avoid any remote fetch.
+    voice_tensor = torch.load(
+        INDICVOICE_VOICE,
+        weights_only=False,
+    ).to(DEVICE)
+
+    pipeline.voices[str(INDICVOICE_VOICE)] = voice_tensor
+
+    if language_code == "hi":
+        _pipeline_hi = pipeline
+    else:
+        _pipeline_en = pipeline
+
+    print(
+        f"[voice] IndicVoice ready "
+        f"(language={language_code}, device={DEVICE})"
+    )
+
+    return pipeline
+
+
+# -------------------------------------------------------------------
+# Audio helpers
+# -------------------------------------------------------------------
+
+def convert_to_wav(input_path: Path, output_path: Path) -> None:
+    command = [
+        "ffmpeg",
+        "-y",
+        "-i",
+        str(input_path),
+        "-ar",
+        "16000",
+        "-ac",
+        "1",
+        "-sample_fmt",
+        "s16",
+        str(output_path),
+    ]
+
+    result = subprocess.run(
+        command,
+        capture_output=True,
+        text=True,
+    )
+
+    if result.returncode != 0:
+        raise RuntimeError(
+            "FFmpeg could not process the audio:\n"
+            + result.stderr[-3000:]
+        )
+
+
+def transcribe_audio(audio_path: Path, language: str) -> str:
+    """
+    Direct MLX Whisper transcription.
+
+    Uses the Python API instead of spawning the mlx_whisper CLI.
+    This avoids output-file naming issues and gives us a retry path
+    for short/low-confidence browser recordings.
+    """
+    import mlx_whisper
+
+    language_map = {
+        "English": "en",
+        "Hindi": "hi",
+        "Hinglish": None,
+    }
+
+    whisper_language = language_map.get(language)
+
+    models = [
+        "mlx-community/whisper-base-mlx",
+        "mlx-community/whisper-tiny",
+    ]
+
+    last_error = None
+
+    for model_name in models:
+        try:
+            kwargs = {
+                "path_or_hf_repo": model_name,
+                "temperature": 0.0,
+                "condition_on_previous_text": False,
+                "verbose": False,
+            }
+
+            if whisper_language:
+                kwargs["language"] = whisper_language
+
+            result = mlx_whisper.transcribe(
+                str(audio_path),
+                **kwargs,
+            )
+
+            transcript = (
+                result.get("text", "")
+                if isinstance(result, dict)
+                else ""
+            )
+
+            transcript = str(transcript).strip()
+
+            if transcript:
+                return transcript
+
+            # Retry once with a slightly more permissive decode.
+            retry_kwargs = dict(kwargs)
+            retry_kwargs["temperature"] = 0.2
+
+            retry_result = mlx_whisper.transcribe(
+                str(audio_path),
+                **retry_kwargs,
+            )
+
+            retry_text = (
+                retry_result.get("text", "")
+                if isinstance(retry_result, dict)
+                else ""
+            )
+
+            retry_text = str(retry_text).strip()
+
+            if retry_text:
+                return retry_text
+
+        except Exception as exc:
+            last_error = exc
+            print(
+                f"[whisper] {model_name} failed: {exc}"
+            )
+
+    if last_error:
+        raise RuntimeError(
+            f"Whisper transcription failed: {last_error}"
+        )
+
+    raise RuntimeError(
+        "No speech detected in the audio."
+    )
+
+
+# -------------------------------------------------------------------
+# Qwen response
+# -------------------------------------------------------------------
+
+def generate_voice_answer(
+    transcript: str,
+    language: str,
+) -> str:
+    context, _ = retrieve(transcript)
+
+    question_for_llm = f"""
+Answer naturally in {language}.
+
+Customer said:
+{transcript}
+
+Give a concise, natural customer-support response.
+
+Rules:
+- Do not mention AI, models, prompts, internal systems,
+  knowledge bases, or reasoning.
+- Keep the response suitable for being spoken aloud.
+- Avoid unnecessary bullets unless absolutely required.
+- Keep it concise.
+""".strip()
+
+    answer = generate_answer(
+        question_for_llm,
+        context,
+    )
+
+    return answer.strip()
+
+
+# -------------------------------------------------------------------
+# IndicVoice TTS
+# -------------------------------------------------------------------
+
+def _generate_indicvoice_audio(
+    text: str,
+    language: str,
+):
+    language_code = "a" if language == "English" else "hi"
+
+    pipeline = _load_local_voice_pipeline(
+        language_code
+    )
+
+    voice_name = str(INDICVOICE_VOICE)
+    audio_chunks = []
+
+    # IndicVoice may yield multiple chunks for a long response.
+    # Collect every chunk so the complete answer is spoken.
+    for result in pipeline(
+        text,
+        voice=voice_name,
+    ):
+        audio = result.audio
+
+        if audio is None:
+            continue
+
+        if isinstance(audio, torch.Tensor):
+            audio = audio.detach().cpu().numpy()
+
+        audio = np.asarray(audio, dtype=np.float32).reshape(-1)
+
+        if audio.size:
+            audio_chunks.append(audio)
+
+    if not audio_chunks:
+        raise RuntimeError(
+            "IndicVoice did not generate any audio chunks."
+        )
+
+    return np.concatenate(audio_chunks)
+
+
+def synthesize_speech(
+    text: str,
+    language: str,
+) -> Path:
+    audio = _generate_indicvoice_audio(
+        text=text,
+        language=language,
+    )
+
+    raw_path = Path(
+        tempfile.mktemp(
+            prefix="grc_tts_raw_",
+            suffix=".wav",
+        )
+    )
+
+    final_path = Path(
+        tempfile.mktemp(
+            prefix="grc_tts_",
+            suffix=".wav",
+        )
+    )
+
+    sf.write(
+        raw_path,
+        audio,
+        SAMPLE_RATE,
+    )
+
+    # Final voice speed: 1.10x
+    command = [
+        "ffmpeg",
+        "-y",
+        "-i",
+        str(raw_path),
+        "-filter:a",
+        f"atempo={VOICE_SPEED}",
+        str(final_path),
+    ]
+
+    result = subprocess.run(
+        command,
+        capture_output=True,
+        text=True,
+    )
+
+    try:
+        raw_path.unlink()
+    except OSError:
+        pass
+
+    if result.returncode != 0:
+        raise RuntimeError(
+            "Voice speed processing failed:\n"
+            + result.stderr[-3000:]
+        )
+
+    if not final_path.exists():
+        raise RuntimeError(
+            "IndicVoice did not create the final audio file."
+        )
+
+    return final_path
+
+
+# -------------------------------------------------------------------
+# Complete voice request
+# -------------------------------------------------------------------
+
+def process_voice_message(
+    uploaded_audio: Path,
+    language: str,
+) -> dict:
+    with tempfile.TemporaryDirectory(
+        prefix="grc_voice_"
+    ) as temp_dir:
+
+        temp_dir_path = Path(temp_dir)
+
+        wav_path = (
+            temp_dir_path / "input.wav"
+        )
+
+        convert_to_wav(
+            uploaded_audio,
+            wav_path,
+        )
+
+        transcript = transcribe_audio(
+            wav_path,
+            language,
+        )
+
+        answer = generate_voice_answer(
+            transcript,
+            language,
+        )
+
+        speech_path = synthesize_speech(
+            answer,
+            language,
+        )
+
+        audio_bytes = speech_path.read_bytes()
+
+        audio_base64 = base64.b64encode(
+            audio_bytes
+        ).decode("utf-8")
+
+        try:
+            speech_path.unlink()
+        except OSError:
+            pass
+
+        return {
+            "transcript": transcript,
+            "answer": answer,
+            "audio_base64": audio_base64,
+            "audio_mime": "audio/wav",
+        }
+
+# -------------------------------------------------------------------
+# Live call: spoken question + current camera frame -> spoken answer
+# -------------------------------------------------------------------
+
+def process_live_call_turn(
+    uploaded_audio: Path,
+    image_path: Path,
+    language: str,
+) -> dict:
+    """Process one live-call turn entirely through local models."""
+    with tempfile.TemporaryDirectory(prefix="grc_live_turn_") as temp_dir:
+        wav_path = Path(temp_dir) / "input.wav"
+
+        convert_to_wav(uploaded_audio, wav_path)
+        transcript = transcribe_audio(wav_path, language)
+
+        if not transcript.strip():
+            raise RuntimeError("No speech was detected.")
+
+        from .accident_vision import analyze_live_frame
+
+        vision_question = (
+            f"Answer in {language}. "
+            f"The user asked: {transcript}"
+        )
+
+        vision_result = analyze_live_frame(
+            image_path=image_path,
+            question=vision_question,
+        )
+        answer = vision_result["analysis"].strip()
+
+        if not answer:
+            raise RuntimeError("The live vision model returned no answer.")
+
+        speech_path = synthesize_speech(answer, language)
+
+        try:
+            audio_base64 = base64.b64encode(
+                speech_path.read_bytes()
+            ).decode("utf-8")
+        finally:
+            try:
+                speech_path.unlink()
+            except OSError:
+                pass
+
+        return {
+            "transcript": transcript,
+            "answer": answer,
+            "audio_base64": audio_base64,
+            "audio_mime": "audio/wav",
+            "vision_model": vision_result.get("model"),
+        }

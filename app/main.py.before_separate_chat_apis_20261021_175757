@@ -1,0 +1,1251 @@
+from __future__ import annotations
+
+import tempfile
+import ipaddress
+import re
+from pathlib import Path
+
+import requests
+
+from fastapi import FastAPI, HTTPException, UploadFile, File, Form, Request
+from fastapi.responses import FileResponse, StreamingResponse
+from pydantic import BaseModel, Field
+
+from .config import (
+    BASE_DIR,
+    ENABLE_LOCAL_CUSTOMER_LOOKUP,
+    OLLAMA_BASE_URL,
+    OLLAMA_MODEL,
+    UI_FILE,
+)
+
+from .customer_data import (
+    get_customer_snapshot,
+    match_customer_identity,
+    match_customer_by_mobile,
+    get_vehicle_snapshot,
+    normalize_vehicle,
+    find_vehicle_number_in_text,
+)
+from .challan_data import get_vehicle_challans
+from .chat_sessions import (
+    create_session,
+    get_session,
+    is_session_verified,
+    mark_session_verified,
+    parse_name_mobile,
+    parse_mobile_number,
+)
+from .dashboard_data import answer_dashboard_question
+
+
+from .knowledge_base import (
+    KNOWLEDGE_FILE,
+    retrieve,
+)
+
+from .llm import generate_answer
+from .accident_vision import analyze_accident_image
+from .customer_insights import (
+    build_customer_360_answer,
+    build_renewal_expiry_answer,
+    create_customer_report,
+    is_customer_360_question,
+    is_report_request,
+    is_renewal_expiry_question,
+)
+
+from .file_qa import MAX_UPLOAD_BYTES, answer_question_about_file
+from .document_enhancer import enhance_document
+from .agent_actions import (
+    consume_pending_action,
+    create_pending_action,
+    detect_requested_action,
+)
+
+
+
+# =========================================================
+# FASTAPI APP
+# =========================================================
+
+app = FastAPI(
+    title="GetRightCover Local Chatbot",
+    version="1.0.0",
+)
+
+
+# =========================================================
+# REQUEST / RESPONSE MODELS
+# =========================================================
+
+class ChatRequest(BaseModel):
+    question: str = Field(min_length=1, max_length=4000)
+    language: str = "Hindi"
+    session_token: str | None = Field(default=None, max_length=200)
+
+
+class ChatResponse(BaseModel):
+    answer: str
+    session_token: str | None = None
+    verified: bool = False
+    verification_required: bool = False
+    download_url: str | None = None
+    agent_action: dict[str, str] | None = None
+
+
+class DevCustomerLookupRequest(BaseModel):
+    name: str = Field(min_length=1, max_length=200)
+    mobile: str = Field(min_length=10, max_length=16)
+
+
+# =========================================================
+# HOME
+# =========================================================
+
+@app.get("/")
+def home():
+    return FileResponse(UI_FILE)
+
+
+
+# =========================================================
+@app.get("/document-chat")
+def document_chat_page():
+    return FileResponse(BASE_DIR / "ui" / "document_chat.html")
+
+
+@app.get("/user-guide")
+def user_guide_page():
+    return FileResponse(BASE_DIR / "ui" / "user_guide.html")
+
+
+# DOCUMENT ENHANCER PAGE
+# =========================================================
+
+@app.get("/document-enhancer")
+def document_enhancer_page():
+    return FileResponse(
+        BASE_DIR / "ui" / "document_enhancer.html"
+    )
+
+
+# =========================================================
+# GETRIGHTCOVER LOGO ASSET
+# =========================================================
+
+@app.get("/assets/getrightcover_logo.jpeg")
+def getrightcover_logo():
+    return FileResponse(
+        BASE_DIR / "ui" / "assets" / "getrightcover_logo.jpeg",
+        media_type="image/jpeg",
+    )
+
+# =========================================================
+# HEALTH CHECK
+# =========================================================
+
+@app.get("/api/health")
+def health():
+
+    try:
+
+        r = requests.get(
+            f"{OLLAMA_BASE_URL}/api/tags",
+            timeout=5,
+        )
+
+        ollama = r.ok
+
+    except requests.RequestException:
+
+        ollama = False
+
+    return {
+        "status": "ok",
+        "ollama": ollama,
+        "model": OLLAMA_MODEL,
+        "knowledge_exists": KNOWLEDGE_FILE.exists(),
+    }
+
+
+
+# =========================================================
+# VEHICLE DATABASE LOOKUP
+# =========================================================
+
+_VEHICLE_NUMBER_PATTERN = re.compile(
+    r"(?<![A-Z0-9])"
+    r"("
+    r"[A-Z]{2}\s*0?\d{1,2}\s*[A-Z]{0,3}\s*\d{1,4}"
+    r"|"
+    r"\d{2}\s*BH\s*\d{4}\s*[A-Z]{1,2}"
+    r")"
+    r"(?![A-Z0-9])",
+    re.IGNORECASE,
+)
+
+
+def _vehicle_lookup_answer(question: str, language: str) -> str | None:
+    match = _VEHICLE_NUMBER_PATTERN.search(question)
+    if not match:
+        return None
+
+    vehicle_number = match.group(1)
+    snapshot = get_vehicle_snapshot(vehicle_number)
+
+    lang = (language or "English").strip().lower()
+
+    if snapshot is None:
+        messages = {
+            "hindi": (
+                "इस वाहन का रिकॉर्ड मौजूदा स्थानीय डेटाबेस में नहीं मिला। "
+                "कृपया वाहन रजिस्ट्रेशन नंबर जाँचें।"
+            ),
+            "hinglish": (
+                "Ye vehicle current local database mein nahi mila. "
+                "Vehicle registration number check karke dobara try karein."
+            ),
+            "english": (
+                "I couldn't find this vehicle in the current local database. "
+                "Please check the registration number."
+            ),
+        }
+        return messages.get(lang, messages["english"])
+
+    vehicle = snapshot.get("vehicle") or {}
+
+    headings = {
+        "hindi": "स्थानीय डेटाबेस में वाहन की जानकारी मिली:",
+        "hinglish": "Local database mein vehicle ki information mili:",
+        "english": "Vehicle information found in the local database:",
+    }
+    heading = headings.get(lang, headings["english"])
+
+    lines = [heading, ""]
+
+    fields = [
+        ("Vehicle number", vehicle.get("vehicle_number")),
+        ("Make", vehicle.get("make")),
+        ("Model", vehicle.get("model")),
+        ("Registered state", vehicle.get("state")),
+        ("Registered at", vehicle.get("registered_at")),
+        ("Insurance company", vehicle.get("insurance_company")),
+    ]
+
+    for label, value in fields:
+        if value is not None and str(value).strip():
+            lines.append(f"{label}: {str(value).strip()}")
+
+    documents = snapshot.get("documents", [])
+    if documents:
+        lines.extend(["", "Document expiry status:"])
+        for item in documents:
+            name = item.get("document") or "Document"
+            expiry = item.get("expiry_date") or "Date unavailable"
+            status = item.get("status") or "Status unavailable"
+            lines.append(f"- {name}: {expiry} — {status}")
+
+    rc_statuses = snapshot.get("rc_statuses", [])
+    available_statuses = [
+        str(item.get("status")).strip()
+        for item in rc_statuses
+        if item.get("status") and str(item.get("status")).strip()
+    ]
+
+    if available_statuses:
+        lines.extend(["", "RC status:"])
+        lines.extend(f"- {status}" for status in available_statuses)
+
+    lines.extend([
+        "",
+        "Source: local vehicle database.",
+        "Membership and personal claim details are not included in this response.",
+    ])
+
+    return "\n".join(lines)
+
+
+
+# =========================================================
+# VERIFIED DASHBOARD-DATA CHAT
+# =========================================================
+
+_STATE_NAMES = (
+    "andhra pradesh", "arunachal pradesh", "assam", "bihar",
+    "chhattisgarh", "goa", "gujarat", "haryana", "himachal pradesh",
+    "jharkhand", "karnataka", "kerala", "madhya pradesh", "maharashtra",
+    "manipur", "meghalaya", "mizoram", "nagaland", "odisha",
+    "punjab", "rajasthan", "sikkim", "tamil nadu", "telangana",
+    "tripura", "uttar pradesh", "uttarakhand", "west bengal",
+    "दिल्ली", "राजस्थान", "गुजरात", "महाराष्ट्र", "हरियाणा",
+    "पंजाब", "उत्तर प्रदेश", "मध्य प्रदेश",
+)
+
+
+def _looks_like_data_question(question: str) -> bool:
+    """Detect a database question without opening any data files."""
+    text = question.casefold()
+
+    if (
+        is_renewal_expiry_question(question)
+        or is_customer_360_question(question)
+        or is_report_request(question)
+    ):
+        return True
+
+    if (
+        _VEHICLE_NUMBER_PATTERN.search(question)
+        or find_vehicle_number_in_text(question)
+    ):
+        return True
+
+    topics = (
+        "vehicle", "vehicles", "gaadi", "gadi", "वाहन", "गाड़ी",
+        "challan", "चालान", "membership", "renewal", "सदस्यता",
+        "insurance", "बीमा", "puc", "fitness", "tax expiry",
+        "financier", "rc status", "claim", "business partner",
+    )
+    metrics = (
+        "how many", "count", "number of", "total", "overall",
+        "summary", "breakdown", "state wise", "state-wise",
+        "dashboard", "statistics", "stats", "records", "data",
+        "expiry", "expire", "expired", "expiring", "status",
+        "details", "information", "top ", "highest", "most",
+        "kitne", "kitni", "kitna", "kul", "mere", "meri", "mera",
+        "my vehicle", "my membership", "do i have", "i have",
+        "कितने", "कितनी", "कितना", "कुल", "समाप्त", "स्थिति",
+    )
+
+    if "dashboard" in text:
+        return True
+
+    has_topic = any(term in text for term in topics)
+    has_metric = any(term in text for term in metrics)
+    has_state = any(state in text for state in _STATE_NAMES)
+
+    # A known state plus an aggregate/count question should still
+    # route to the dashboard query layer despite a typo in "vehicle".
+    return (
+        has_topic and (has_metric or has_state)
+    ) or (
+        has_state and has_metric
+    )
+
+
+def _is_local_request(http_request: Request) -> bool:
+    """Require a loopback client and local Host header."""
+    client_host = http_request.client.host if http_request.client else ""
+
+    try:
+        loopback = ipaddress.ip_address(client_host).is_loopback
+    except ValueError:
+        loopback = False
+
+    host = (http_request.url.hostname or "").lower()
+    return loopback and host in {"localhost", "127.0.0.1", "::1"}
+
+
+def _identity_prompt(language: str) -> str:
+    language = (language or "English").strip().lower()
+
+    if language == "hindi":
+        return (
+            "पहले अपना GetRightCover में रजिस्टर्ड 10 अंकों का "
+            "मोबाइल नंबर भेजें।"
+        )
+    if language == "hinglish":
+        return (
+            "Pehle apna GetRightCover mein registered "
+            "10-digit mobile number bhejein."
+        )
+    return (
+        "First, enter your registered 10-digit GetRightCover mobile number."
+    )
+
+
+def _name_prompt(language: str) -> str:
+    language = (language or "English").strip().lower()
+
+    if language == "hindi":
+        return "अब अपना GetRightCover में रजिस्टर्ड पूरा नाम भेजें।"
+    if language == "hinglish":
+        return "Ab apna GetRightCover mein registered full name bhejein."
+    return "Now enter your registered full name."
+
+
+def _answer_customer_data_question(
+    question: str,
+    customer_id: str,
+    language: str,
+) -> str:
+    """
+    Answer structured questions only from source JSON records.
+    Vehicle-level information is restricted to vehicles linked
+    to the successfully matched customer record.
+    """
+    indexed_vehicle = find_vehicle_number_in_text(question)
+    match = _VEHICLE_NUMBER_PATTERN.search(question)
+
+    # Prefer an exact known registration from the JSON index.
+    detected_vehicle = (
+        indexed_vehicle
+        or (match.group(1) if match else None)
+    )
+
+    if detected_vehicle:
+        requested_number = normalize_vehicle(detected_vehicle)
+        customer_snapshot = get_customer_snapshot(customer_id)
+
+        owned_vehicle = next(
+            (
+                item for item in (customer_snapshot or {}).get("vehicles", [])
+                if normalize_vehicle(
+                    (item.get("vehicle") or {}).get("vehicle_number")
+                ) == requested_number
+            ),
+            None,
+        )
+
+        if not owned_vehicle:
+            return (
+                "I couldn't find that vehicle linked to your verified "
+                "GetRightCover account. Please check the registration number."
+            )
+
+        vehicle = owned_vehicle.get("vehicle") or {}
+        lines = ["Vehicle details from your linked account:"]
+
+        for label, key in (
+            ("Vehicle number", "vehicle_number"),
+            ("Make", "make"),
+            ("Model", "model"),
+            ("State", "state"),
+            ("Registered at", "registered_at"),
+            ("Insurance company", "insurance_company"),
+            ("Financier", "financier"),
+        ):
+            value = vehicle.get(key)
+            if value is not None and str(value).strip():
+                lines.append(f"{label}: {str(value).strip()}")
+
+        q = question.casefold()
+
+        # Always include available document expiry details when a
+        # verified customer asks about one of their linked vehicles.
+        lines.extend(["", "Document expiry details:"])
+        documents = owned_vehicle.get("documents", [])
+        if documents:
+            for item in documents:
+                lines.append(
+                    f"- {item.get('document')}: "
+                    f"{item.get('expiry_date') or 'Date unavailable'} — "
+                    f"{item.get('status') or 'Status unavailable'}"
+                )
+        else:
+            lines.append("- No document expiry records are available.")
+
+        if any(x in q for x in ("membership", "renewal", "सदस्यता")):
+            for item in owned_vehicle.get("memberships", []):
+                lines.extend([
+                    "",
+                    f"Membership type: {item.get('membership_type') or 'Unavailable'}",
+                    f"Start date: {item.get('start_date') or 'Unavailable'}",
+                    f"End date: {item.get('end_date') or 'Unavailable'}",
+                    f"Membership status: {item.get('status') or 'Unavailable'}",
+                ])
+
+        if "claim" in q:
+            indicator = owned_vehicle.get("claim_indicator") or {}
+            lines.append(
+                "\nClaim indicator: "
+                + ("Claim flag present" if indicator.get("has_claim_flag")
+                   else "No matching claim flag found")
+            )
+
+        # Include individual challan matches from the local workbook.
+        # This is reached only after confirming the vehicle belongs to
+        # the verified customer's own snapshot.
+        challan_records = get_vehicle_challans(requested_number)
+        court_records = [
+            record for record in challan_records
+            if record.get("type") == "Court"
+        ]
+        e_challan_records = [
+            record for record in challan_records
+            if record.get("type") == "E-Challan"
+        ]
+
+        lines.extend([
+            "",
+            "Vehicle-wise challan summary (local source):",
+            f"- Court challans: {len(court_records)}",
+            f"- E-Challans: {len(e_challan_records)}",
+            f"- Total matched challan records: {len(challan_records)}",
+        ])
+
+        if challan_records:
+            lines.append("")
+            lines.append("Challan details:")
+            for record in challan_records[:25]:
+                amount = record.get("amount")
+                amount_text = (
+                    f"₹{amount}" if amount is not None and str(amount).strip()
+                    else "Amount unavailable"
+                )
+                lines.append(
+                    f"- {record.get('type') or 'Challan'}"
+                    f" | Challan No: {record.get('challan_number') or 'Unavailable'}"
+                    f" | Date/Time: {record.get('date_time') or 'Unavailable'}"
+                    f" | Payment: {record.get('payment_status') or 'Unavailable'}"
+                    f" | Amount: {amount_text}"
+                )
+
+            if len(challan_records) > 25:
+                lines.append(
+                    f"...{len(challan_records) - 25} additional matching records "
+                    "were omitted from this chat response."
+                )
+        else:
+            lines.append(
+                "No matching records were found in the local challan workbook. "
+                "This does not prove that no challans exist in other sources."
+            )
+
+        if "rc" in q or "registration status" in q:
+            statuses = owned_vehicle.get("rc_statuses", [])
+            lines.extend(["", "RC status:"])
+            if statuses:
+                lines.extend(
+                    f"- {item.get('status') or 'Status unavailable'}"
+                    for item in statuses
+                )
+            else:
+                lines.append("No RC status record found for this vehicle.")
+
+        return "\n".join(lines)
+
+    # Personal vehicle queries must use the verified customer's own snapshot.
+    q = question.casefold()
+
+    personal_reference = (
+        any(term in q for term in (
+            "my vehicle", "my vehicles", "do i have", "i have",
+            "mere vehicle", "meri gaadi", "mera vehicle",
+            "my account", "mere saare", "meri saari",
+            "is number se", "iss number se",
+            "is mobile number se", "iss mobile number se",
+            "is mobile se", "iss mobile se",
+            "is phone se", "iss phone se",
+            "mere number se", "mere mobile se",
+            "this mobile number", "this phone number",
+        ))
+        or bool(re.search(
+            r"\b(?:my|mine|mera|meri|mere|mujhe|hamari|hamare)\b",
+            q,
+        ))
+        or any(term in q for term in (
+            "मेरे", "मेरी", "मेरा", "मुझे", "हमारे", "हमारी"
+        ))
+    )
+
+    vehicle_reference = any(
+        term in q for term in (
+            "vehicle", "vehicl", "gaadi", "gadi", "car", "truck",
+            "वाहन", "गाड़ी", "गाड़ी", "गाडी"
+        )
+    )
+
+    asks_about_own_vehicles = (
+        any(term in q for term in (
+            "my vehicle", "my vehicles", "do i have", "i have",
+            "mere vehicle", "meri gaadi", "mera vehicle",
+            "मेरे वाहन", "मेरी गाड़ी"
+        ))
+        or (personal_reference and vehicle_reference)
+    )
+
+    if asks_about_own_vehicles:
+        customer_snapshot = get_customer_snapshot(customer_id)
+        own_vehicles = (customer_snapshot or {}).get("vehicles", [])
+
+        if not own_vehicles:
+            return (
+                "No linked vehicle records were found for your account."
+            )
+
+        # Aggregate challan summaries do not identify individual vehicles.
+        if "challan" in q or "चालान" in q:
+            lang = (language or "English").strip().lower()
+
+            if lang == "hindi":
+                return (
+                    "मौजूदा JSON डेटा में कुल चालान के सारांश उपलब्ध हैं, "
+                    "लेकिन आपके प्रत्येक वाहन के चालान रिकॉर्ड उपलब्ध नहीं हैं। "
+                    "इसलिए आपके कितने वाहनों पर चालान हैं, इसकी सही संख्या "
+                    "अभी नहीं निकाली जा सकती।"
+                )
+
+            if lang == "hinglish":
+                return (
+                    "Current JSON mein aggregate challan summaries hain, "
+                    "lekin individual vehicle-wise challan records nahi hain. "
+                    "Isliye aapki kitni vehicles par challans hain, uska "
+                    "accurate count abhi nahi nikal sakta."
+                )
+
+            return (
+                "The current JSON contains aggregate challan summaries, "
+                "but not individual vehicle-level challan records. I cannot "
+                "accurately count how many of your vehicles have challans "
+                "until those records are available."
+            )
+
+        count_question = any(term in q for term in (
+            "how many", "kitne", "kitni", "kitna", "count", "total",
+            "kul", "कितने", "कितनी", "कितना", "कुल"
+        ))
+
+        wants_list = any(term in q for term in (
+            "all", "saare", "sare", "sabhi", "every", "list",
+            "numbers", "number bata", "number batado", "bata do",
+            "batado", "registration", "सारे", "सभी", "नंबर"
+        ))
+
+        lang = (language or "English").strip().lower()
+
+        if count_question and not wants_list:
+            count = len(own_vehicles)
+
+            if lang == "hindi":
+                return f"आपके अकाउंट से {count} वाहन जुड़े हुए हैं।"
+            if lang == "hinglish":
+                return f"Aapke account se {count} vehicles linked hain."
+            return f"There are {count} vehicles linked to your account."
+
+        lines = [
+            f"Vehicles linked to your account: {len(own_vehicles)}"
+        ]
+
+        for item in own_vehicles:
+            vehicle = item.get("vehicle") or {}
+            label = vehicle.get("vehicle_number") or "Registration unavailable"
+            description = " ".join(
+                str(vehicle.get(key)).strip()
+                for key in ("make", "model")
+                if vehicle.get(key)
+            )
+            lines.append(
+                f"- {label}" +
+                (f" — {description}" if description else "")
+            )
+
+        if any(x in q for x in (
+            "expiry", "expire", "insurance", "puc", "fitness",
+            "tax", "document", "status", "दस्तावेज़", "बीमा", "समाप्त"
+        )):
+            for item in own_vehicles:
+                vehicle = item.get("vehicle") or {}
+                lines.append(
+                    f"\n{vehicle.get('vehicle_number') or 'Vehicle'}:"
+                )
+                for doc in item.get("documents", []):
+                    lines.append(
+                        f"- {doc.get('document')}: "
+                        f"{doc.get('expiry_date') or 'Date unavailable'} — "
+                        f"{doc.get('status') or 'Status unavailable'}"
+                    )
+
+        return "\n".join(lines)
+
+    # Aggregate dashboard JSON is read only after verification.
+    answer = answer_dashboard_question(question, language)
+    if answer:
+        return answer
+
+    return (
+        "I couldn't find a supported answer to that question in the "
+        "currently available dashboard summary data. I won't guess a number. "
+        "The query rules or source dataset may need to be expanded."
+    )
+
+
+def _answer_customer_feature_question(
+    question: str,
+    customer_id: str,
+    language: str,
+) -> tuple[str, bool]:
+    """Dispatch verified-customer questions to approved feature helpers."""
+    if is_report_request(question):
+        return (
+            "Your customer report is ready to download. Use the download link below.",
+            True,
+        )
+
+    if is_customer_360_question(question) or is_renewal_expiry_question(question):
+        snapshot = get_customer_snapshot(customer_id)
+        if snapshot is None:
+            return (
+                "I couldn't retrieve the linked customer records. No report was generated.",
+                False,
+            )
+
+        if is_customer_360_question(question):
+            return build_customer_360_answer(snapshot), False
+
+        return build_renewal_expiry_answer(snapshot, question, language), False
+
+    return _answer_customer_data_question(question, customer_id, language), False
+
+
+# =========================================================
+# NORMAL TEXT CHAT
+# =========================================================
+
+@app.post(
+    "/api/chat",
+    response_model=ChatResponse,
+)
+def chat(request: ChatRequest, http_request: Request):
+    question = request.question.strip()
+    session = get_session(request.session_token)
+    pending_verification = bool(
+        session and not is_session_verified(session)
+    )
+    data_question = _looks_like_data_question(question)
+
+    # Database lookups remain disabled unless explicitly enabled
+    # for local development. This protects hosted deployments by default.
+    if data_question or pending_verification:
+        if not ENABLE_LOCAL_CUSTOMER_LOOKUP or not _is_local_request(http_request):
+            return ChatResponse(
+                answer=(
+                    "Database-backed lookups are currently enabled only "
+                    "for local development. No dashboard data was accessed."
+                ),
+                verified=False,
+                verification_required=False,
+            )
+
+        if session is None:
+            token, _ = create_session(question)
+            return ChatResponse(
+                answer=_identity_prompt(request.language),
+                session_token=token,
+                verified=False,
+                verification_required=True,
+            )
+
+        if not is_session_verified(session):
+            if session.get("blocked"):
+                return ChatResponse(
+                    answer="Verification limit reached. Start a new chat.",
+                    session_token=request.session_token,
+                    verified=False,
+                    verification_required=True,
+                )
+
+            mobile = parse_mobile_number(question)
+            if not mobile:
+                return ChatResponse(
+                    answer=_identity_prompt(request.language),
+                    session_token=request.session_token,
+                    verified=False,
+                    verification_required=True,
+                )
+
+            customer_id = match_customer_by_mobile(mobile)
+
+            if customer_id is None:
+                attempts = int(session.get("verification_attempts", 0)) + 1
+                session["verification_attempts"] = attempts
+
+                if attempts >= 5:
+                    session["blocked"] = True
+                    session["pending_question"] = ""
+                    message = "Too many attempts. Start a new chat."
+                else:
+                    message = (
+                        "This mobile number did not match exactly one "
+                        "registered customer record. Check it and try again."
+                    )
+
+                return ChatResponse(
+                    answer=message,
+                    session_token=request.session_token,
+                    verified=False,
+                    verification_required=True,
+                )
+
+            pending_question = mark_session_verified(session, customer_id)
+            session.pop("pending_mobile", None)
+            session.pop("verification_step", None)
+
+            if not pending_question.strip():
+                return ChatResponse(
+                    answer=(
+                        "The mobile number matches a registered record. "
+                        "Now ask your vehicle or dashboard question."
+                    ),
+                    session_token=request.session_token,
+                    verified=True,
+                    verification_required=False,
+                )
+
+            answer, wants_report = _answer_customer_feature_question(
+                pending_question,
+                customer_id,
+                request.language,
+            )
+            report_url = (
+                f"/api/customer-report?session_token={request.session_token}"
+                if wants_report else None
+            )
+            return ChatResponse(
+                answer=answer,
+                session_token=request.session_token,
+                verified=True,
+                verification_required=False,
+                download_url=report_url,
+            )
+
+        customer_id = str(session["verified_customer_id"])
+        answer, wants_report = _answer_customer_feature_question(
+            question,
+            customer_id,
+            request.language,
+        )
+        report_url = (
+            f"/api/customer-report?session_token={request.session_token}"
+            if wants_report else None
+        )
+
+        return ChatResponse(
+            answer=answer,
+            session_token=request.session_token,
+            verified=True,
+            verification_required=False,
+            download_url=report_url,
+        )
+
+    # Never send a standalone mobile number to the LLM.
+    if session is None:
+        combined_identity = parse_name_mobile(question)
+        supplied_mobile = (
+            combined_identity[1]
+            if combined_identity
+            else parse_mobile_number(question)
+        )
+
+        if supplied_mobile:
+            if (
+                not ENABLE_LOCAL_CUSTOMER_LOOKUP
+                or not _is_local_request(http_request)
+            ):
+                return ChatResponse(
+                    answer="Customer lookup is disabled in this environment."
+                )
+
+            token, new_session = create_session("")
+            customer_id = match_customer_by_mobile(supplied_mobile)
+
+            if customer_id is None:
+                return ChatResponse(
+                    answer=(
+                        "This mobile number did not match exactly one "
+                        "registered customer record. Check it and try again."
+                    ),
+                    session_token=token,
+                    verified=False,
+                    verification_required=True,
+                )
+
+            mark_session_verified(new_session, customer_id)
+            return ChatResponse(
+                answer=(
+                    "The mobile number matches a registered record. "
+                    "Now ask your vehicle or dashboard question."
+                ),
+                session_token=token,
+                verified=True,
+                verification_required=False,
+            )
+
+    try:
+        context, _ = retrieve(question)
+        answer = generate_answer(question, context, request.language)
+
+        return ChatResponse(
+            answer=answer,
+            session_token=request.session_token,
+            verified=bool(session and is_session_verified(session)),
+            verification_required=False,
+        )
+
+    except Exception as exc:
+        print(f"[chat error] {exc}")
+        raise HTTPException(
+            status_code=500,
+            detail="Chatbot could not process the request.",
+        )
+
+
+
+@app.post("/api/chat-with-file")
+async def chat_with_file(
+    file: UploadFile = File(...),
+    question: str = Form(""),
+    language: str = Form("English"),
+    session_token: str | None = Form(default=None),
+):
+    """Answer a question using one locally processed uploaded file."""
+    filename = Path(file.filename or "").name
+    if not filename:
+        raise HTTPException(status_code=400, detail="Please select a file.")
+
+    content = await file.read(MAX_UPLOAD_BYTES + 1)
+    if len(content) > MAX_UPLOAD_BYTES:
+        raise HTTPException(
+            status_code=413,
+            detail="File is too large. The maximum upload size is 15 MB.",
+        )
+    if not content:
+        raise HTTPException(status_code=400, detail="The selected file is empty.")
+
+    try:
+        answer = answer_question_about_file(
+            filename=filename,
+            content=content,
+            question=question or "Summarize the attached file.",
+            language=language,
+        )
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+    except RuntimeError as exc:
+        raise HTTPException(status_code=503, detail=str(exc)) from exc
+    except requests.RequestException as exc:
+        print(f"[file question error] {exc}")
+        raise HTTPException(
+            status_code=502,
+            detail="The local AI service could not process this file.",
+        ) from exc
+    except Exception as exc:
+        print(f"[file extraction error] {exc}")
+        raise HTTPException(
+            status_code=400,
+            detail="Could not read this file. Check its format and try again.",
+        ) from exc
+    finally:
+        await file.close()
+
+    return {
+        "answer": answer,
+        "session_token": session_token,
+        "verified": False,
+        "verification_required": False,
+    }
+
+
+# =========================================================
+@app.get("/api/customer-report")
+def download_customer_report(
+    request: Request,
+    session_token: str | None = None,
+):
+    """Download an Excel report for the verified local customer."""
+    if (
+        not ENABLE_LOCAL_CUSTOMER_LOOKUP
+        or not _is_local_request(request)
+    ):
+        raise HTTPException(status_code=404, detail="Report not available")
+
+    session = get_session(session_token)
+    if not session or not is_session_verified(session):
+        raise HTTPException(status_code=404, detail="Report not available")
+
+    customer_id = str(session.get("verified_customer_id") or "")
+    snapshot = get_customer_snapshot(customer_id)
+    if not snapshot:
+        raise HTTPException(status_code=404, detail="Report not available")
+
+    try:
+        report_bytes = create_customer_report(snapshot)
+    except Exception as exc:
+        print(f"[customer report error] {exc}")
+        raise HTTPException(
+            status_code=500,
+            detail="Could not generate the customer report.",
+        ) from exc
+
+    from io import BytesIO
+
+    return StreamingResponse(
+        BytesIO(report_bytes),
+        media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        headers={
+            "Content-Disposition": 'attachment; filename="GetRightCover_Customer_Report.xlsx"',
+            "Cache-Control": "no-store",
+        },
+    )
+
+
+# LOCAL DEVELOPMENT ONLY — CUSTOMER LOOKUP
+# Keep ENABLE_LOCAL_CUSTOMER_LOOKUP=false on hosted deployments.
+# This is not a substitute for customer authentication.
+# =========================================================
+
+@app.post("/api/dev/customer-lookup")
+def dev_customer_lookup(
+    payload: DevCustomerLookupRequest,
+    request: Request,
+):
+    if not ENABLE_LOCAL_CUSTOMER_LOOKUP:
+        raise HTTPException(status_code=404, detail="Not found")
+
+    # Require both a loopback client and a localhost Host header.
+    client_host = request.client.host if request.client else ""
+
+    try:
+        is_loopback = ipaddress.ip_address(client_host).is_loopback
+    except ValueError:
+        is_loopback = False
+
+    request_host = (request.url.hostname or "").lower()
+
+    if not is_loopback or request_host not in {
+        "localhost", "127.0.0.1", "::1"
+    }:
+        raise HTTPException(
+            status_code=403,
+            detail="This development endpoint is only available on localhost.",
+        )
+
+    customer_id = match_customer_identity(payload.name, payload.mobile)
+
+    if customer_id is None:
+        raise HTTPException(
+            status_code=404,
+            detail="No unique matching customer was found.",
+        )
+
+    snapshot = get_customer_snapshot(customer_id)
+
+    if snapshot is None:
+        raise HTTPException(
+            status_code=404,
+            detail="No customer record was found.",
+        )
+
+    return snapshot
+
+
+# ACCIDENT IMAGE ANALYSIS
+
+
+@app.post("/api/analyze-accident")
+async def analyze_accident(
+    image: UploadFile = File(...),
+):
+
+    temp_image = None
+
+    try:
+
+        if not image.filename:
+            raise HTTPException(
+                status_code=400,
+                detail="No image was provided.",
+            )
+
+        allowed_types = {
+            "image/jpeg",
+            "image/png",
+            "image/webp",
+        }
+
+        if image.content_type not in allowed_types:
+            raise HTTPException(
+                status_code=400,
+                detail="Please upload a JPG, PNG, or WEBP image.",
+            )
+
+        suffix = Path(
+            image.filename
+        ).suffix.lower()
+
+        if suffix not in {
+            ".jpg",
+            ".jpeg",
+            ".png",
+            ".webp",
+        }:
+            suffix = ".jpg"
+
+        with tempfile.NamedTemporaryFile(
+            delete=False,
+            suffix=suffix,
+        ) as temp_file:
+
+            temp_image = Path(
+                temp_file.name
+            )
+
+            content = await image.read()
+
+            if not content:
+                raise HTTPException(
+                    status_code=400,
+                    detail="Uploaded image is empty.",
+                )
+
+            temp_file.write(
+                content
+            )
+
+        result = analyze_accident_image(
+            temp_image
+        )
+
+        return result
+
+    except HTTPException:
+        raise
+
+    except requests.RequestException as exc:
+
+        print(
+            f"[accident vision error] {exc}"
+        )
+
+        raise HTTPException(
+            status_code=502,
+            detail="Accident image analysis service is unavailable.",
+        )
+
+    except Exception as exc:
+
+        print(
+            f"[accident analysis error] {exc}"
+        )
+
+        raise HTTPException(
+            status_code=500,
+            detail="Could not analyze the accident image.",
+        )
+
+    finally:
+
+        if temp_image and temp_image.exists():
+
+            try:
+                temp_image.unlink()
+
+            except OSError:
+                pass
+
+# =========================================================
+# DOCUMENT IMAGE ENHANCER
+# =========================================================
+
+@app.post("/api/enhance-document")
+async def enhance_document_endpoint(
+    image: UploadFile = File(...),
+):
+    input_path = None
+    output_path = None
+
+    try:
+        if not image.filename:
+            raise HTTPException(
+                status_code=400,
+                detail="No image was provided.",
+            )
+
+        allowed_types = {
+            "image/jpeg",
+            "image/png",
+            "image/webp",
+        }
+
+        if image.content_type not in allowed_types:
+            raise HTTPException(
+                status_code=400,
+                detail="Please upload a JPG, PNG, or WEBP image.",
+            )
+
+        suffix = Path(
+            image.filename
+        ).suffix.lower()
+
+        if suffix not in {
+            ".jpg",
+            ".jpeg",
+            ".png",
+            ".webp",
+        }:
+            suffix = ".jpg"
+
+        with tempfile.NamedTemporaryFile(
+            delete=False,
+            suffix=suffix,
+        ) as temp_file:
+
+            input_path = Path(
+                temp_file.name
+            )
+
+            content = await image.read()
+
+            if not content:
+                raise HTTPException(
+                    status_code=400,
+                    detail="Uploaded image is empty.",
+                )
+
+            temp_file.write(content)
+
+        output_file = tempfile.NamedTemporaryFile(
+            delete=False,
+            suffix=".png",
+        )
+
+        output_file.close()
+
+        output_path = Path(
+            output_file.name
+        )
+
+        enhance_document(
+            input_path,
+            output_path,
+        )
+
+        return FileResponse(
+            path=output_path,
+            media_type="image/png",
+            filename="enhanced-document.png",
+        )
+
+    except HTTPException:
+        raise
+
+    except Exception as exc:
+
+        print(
+            f"[document enhancer error] {exc}"
+        )
+
+        raise HTTPException(
+            status_code=500,
+            detail="Could not enhance the document image.",
+        )
+
+    finally:
+
+        if input_path and input_path.exists():
+
+            try:
+                input_path.unlink()
+            except OSError:
+                pass
+

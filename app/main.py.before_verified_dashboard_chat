@@ -1,0 +1,538 @@
+from __future__ import annotations
+
+import tempfile
+import ipaddress
+import re
+from pathlib import Path
+
+import requests
+
+from fastapi import FastAPI, HTTPException, UploadFile, File, Form, Request
+from fastapi.responses import FileResponse
+from pydantic import BaseModel, Field
+
+from .config import (
+    BASE_DIR,
+    ENABLE_LOCAL_CUSTOMER_LOOKUP,
+    OLLAMA_BASE_URL,
+    OLLAMA_MODEL,
+    UI_FILE,
+)
+
+from .customer_data import (
+    get_customer_snapshot,
+    match_customer_identity,
+    get_vehicle_snapshot,
+)
+
+from .knowledge_base import (
+    KNOWLEDGE_FILE,
+    retrieve,
+)
+
+from .llm import generate_answer
+from .accident_vision import analyze_accident_image
+from .document_enhancer import enhance_document
+
+
+# =========================================================
+# FASTAPI APP
+# =========================================================
+
+app = FastAPI(
+    title="GetRightCover Local Chatbot",
+    version="1.0.0",
+)
+
+
+# =========================================================
+# REQUEST / RESPONSE MODELS
+# =========================================================
+
+class ChatRequest(BaseModel):
+    question: str = Field(
+        min_length=1,
+        max_length=4000,
+    )
+    language: str = "Hindi"
+
+
+class ChatResponse(BaseModel):
+    answer: str
+
+
+
+class DevCustomerLookupRequest(BaseModel):
+    name: str = Field(min_length=1, max_length=200)
+    mobile: str = Field(min_length=10, max_length=16)
+
+
+# =========================================================
+# HOME
+# =========================================================
+
+@app.get("/")
+def home():
+    return FileResponse(UI_FILE)
+
+
+
+# =========================================================
+# DOCUMENT ENHANCER PAGE
+# =========================================================
+
+@app.get("/document-enhancer")
+def document_enhancer_page():
+    return FileResponse(
+        BASE_DIR / "ui" / "document_enhancer.html"
+    )
+
+
+# =========================================================
+# GETRIGHTCOVER LOGO ASSET
+# =========================================================
+
+@app.get("/assets/getrightcover_logo.jpeg")
+def getrightcover_logo():
+    return FileResponse(
+        BASE_DIR / "ui" / "assets" / "getrightcover_logo.jpeg",
+        media_type="image/jpeg",
+    )
+
+# =========================================================
+# HEALTH CHECK
+# =========================================================
+
+@app.get("/api/health")
+def health():
+
+    try:
+
+        r = requests.get(
+            f"{OLLAMA_BASE_URL}/api/tags",
+            timeout=5,
+        )
+
+        ollama = r.ok
+
+    except requests.RequestException:
+
+        ollama = False
+
+    return {
+        "status": "ok",
+        "ollama": ollama,
+        "model": OLLAMA_MODEL,
+        "knowledge_exists": KNOWLEDGE_FILE.exists(),
+    }
+
+
+
+# =========================================================
+# VEHICLE DATABASE LOOKUP
+# =========================================================
+
+_VEHICLE_NUMBER_PATTERN = re.compile(
+    r"(?<![A-Z0-9])"
+    r"("
+    r"[A-Z]{2}\s*0?\d{1,2}\s*[A-Z]{0,3}\s*\d{1,4}"
+    r"|"
+    r"\d{2}\s*BH\s*\d{4}\s*[A-Z]{1,2}"
+    r")"
+    r"(?![A-Z0-9])",
+    re.IGNORECASE,
+)
+
+
+def _vehicle_lookup_answer(question: str, language: str) -> str | None:
+    match = _VEHICLE_NUMBER_PATTERN.search(question)
+    if not match:
+        return None
+
+    vehicle_number = match.group(1)
+    snapshot = get_vehicle_snapshot(vehicle_number)
+
+    lang = (language or "English").strip().lower()
+
+    if snapshot is None:
+        messages = {
+            "hindi": (
+                "इस वाहन का रिकॉर्ड मौजूदा स्थानीय डेटाबेस में नहीं मिला। "
+                "कृपया वाहन रजिस्ट्रेशन नंबर जाँचें।"
+            ),
+            "hinglish": (
+                "Ye vehicle current local database mein nahi mila. "
+                "Vehicle registration number check karke dobara try karein."
+            ),
+            "english": (
+                "I couldn't find this vehicle in the current local database. "
+                "Please check the registration number."
+            ),
+        }
+        return messages.get(lang, messages["english"])
+
+    vehicle = snapshot.get("vehicle") or {}
+
+    headings = {
+        "hindi": "स्थानीय डेटाबेस में वाहन की जानकारी मिली:",
+        "hinglish": "Local database mein vehicle ki information mili:",
+        "english": "Vehicle information found in the local database:",
+    }
+    heading = headings.get(lang, headings["english"])
+
+    lines = [heading, ""]
+
+    fields = [
+        ("Vehicle number", vehicle.get("vehicle_number")),
+        ("Make", vehicle.get("make")),
+        ("Model", vehicle.get("model")),
+        ("Registered state", vehicle.get("state")),
+        ("Registered at", vehicle.get("registered_at")),
+        ("Insurance company", vehicle.get("insurance_company")),
+    ]
+
+    for label, value in fields:
+        if value is not None and str(value).strip():
+            lines.append(f"{label}: {str(value).strip()}")
+
+    documents = snapshot.get("documents", [])
+    if documents:
+        lines.extend(["", "Document expiry status:"])
+        for item in documents:
+            name = item.get("document") or "Document"
+            expiry = item.get("expiry_date") or "Date unavailable"
+            status = item.get("status") or "Status unavailable"
+            lines.append(f"- {name}: {expiry} — {status}")
+
+    rc_statuses = snapshot.get("rc_statuses", [])
+    available_statuses = [
+        str(item.get("status")).strip()
+        for item in rc_statuses
+        if item.get("status") and str(item.get("status")).strip()
+    ]
+
+    if available_statuses:
+        lines.extend(["", "RC status:"])
+        lines.extend(f"- {status}" for status in available_statuses)
+
+    lines.extend([
+        "",
+        "Source: local vehicle database.",
+        "Membership and personal claim details are not included in this response.",
+    ])
+
+    return "\n".join(lines)
+
+
+# =========================================================
+# NORMAL TEXT CHAT
+# =========================================================
+
+@app.post(
+    "/api/chat",
+    response_model=ChatResponse,
+)
+def chat(request: ChatRequest):
+
+    question = request.question.strip()
+
+    try:
+
+        vehicle_answer = _vehicle_lookup_answer(
+            question,
+            request.language,
+        )
+
+        if vehicle_answer is not None:
+            return ChatResponse(answer=vehicle_answer)
+
+        context, _ = retrieve(
+            question
+        )
+
+        answer = generate_answer(
+            question,
+            context,
+            request.language,
+        )
+
+        return ChatResponse(
+            answer=answer
+        )
+
+    except Exception as exc:
+
+        print(
+            f"[chat error] {exc}"
+        )
+
+        raise HTTPException(
+            status_code=500,
+            detail=(
+                "Chatbot could not "
+                "process the request."
+            ),
+        )
+
+
+# =========================================================
+# LOCAL DEVELOPMENT ONLY — CUSTOMER LOOKUP
+# Keep ENABLE_LOCAL_CUSTOMER_LOOKUP=false on hosted deployments.
+# This is not a substitute for customer authentication.
+# =========================================================
+
+@app.post("/api/dev/customer-lookup")
+def dev_customer_lookup(
+    payload: DevCustomerLookupRequest,
+    request: Request,
+):
+    if not ENABLE_LOCAL_CUSTOMER_LOOKUP:
+        raise HTTPException(status_code=404, detail="Not found")
+
+    # Require both a loopback client and a localhost Host header.
+    client_host = request.client.host if request.client else ""
+
+    try:
+        is_loopback = ipaddress.ip_address(client_host).is_loopback
+    except ValueError:
+        is_loopback = False
+
+    request_host = (request.url.hostname or "").lower()
+
+    if not is_loopback or request_host not in {
+        "localhost", "127.0.0.1", "::1"
+    }:
+        raise HTTPException(
+            status_code=403,
+            detail="This development endpoint is only available on localhost.",
+        )
+
+    customer_id = match_customer_identity(payload.name, payload.mobile)
+
+    if customer_id is None:
+        raise HTTPException(
+            status_code=404,
+            detail="No unique matching customer was found.",
+        )
+
+    snapshot = get_customer_snapshot(customer_id)
+
+    if snapshot is None:
+        raise HTTPException(
+            status_code=404,
+            detail="No customer record was found.",
+        )
+
+    return snapshot
+
+
+# ACCIDENT IMAGE ANALYSIS
+
+
+@app.post("/api/analyze-accident")
+async def analyze_accident(
+    image: UploadFile = File(...),
+):
+
+    temp_image = None
+
+    try:
+
+        if not image.filename:
+            raise HTTPException(
+                status_code=400,
+                detail="No image was provided.",
+            )
+
+        allowed_types = {
+            "image/jpeg",
+            "image/png",
+            "image/webp",
+        }
+
+        if image.content_type not in allowed_types:
+            raise HTTPException(
+                status_code=400,
+                detail="Please upload a JPG, PNG, or WEBP image.",
+            )
+
+        suffix = Path(
+            image.filename
+        ).suffix.lower()
+
+        if suffix not in {
+            ".jpg",
+            ".jpeg",
+            ".png",
+            ".webp",
+        }:
+            suffix = ".jpg"
+
+        with tempfile.NamedTemporaryFile(
+            delete=False,
+            suffix=suffix,
+        ) as temp_file:
+
+            temp_image = Path(
+                temp_file.name
+            )
+
+            content = await image.read()
+
+            if not content:
+                raise HTTPException(
+                    status_code=400,
+                    detail="Uploaded image is empty.",
+                )
+
+            temp_file.write(
+                content
+            )
+
+        result = analyze_accident_image(
+            temp_image
+        )
+
+        return result
+
+    except HTTPException:
+        raise
+
+    except requests.RequestException as exc:
+
+        print(
+            f"[accident vision error] {exc}"
+        )
+
+        raise HTTPException(
+            status_code=502,
+            detail="Accident image analysis service is unavailable.",
+        )
+
+    except Exception as exc:
+
+        print(
+            f"[accident analysis error] {exc}"
+        )
+
+        raise HTTPException(
+            status_code=500,
+            detail="Could not analyze the accident image.",
+        )
+
+    finally:
+
+        if temp_image and temp_image.exists():
+
+            try:
+                temp_image.unlink()
+
+            except OSError:
+                pass
+
+# =========================================================
+# DOCUMENT IMAGE ENHANCER
+# =========================================================
+
+@app.post("/api/enhance-document")
+async def enhance_document_endpoint(
+    image: UploadFile = File(...),
+):
+    input_path = None
+    output_path = None
+
+    try:
+        if not image.filename:
+            raise HTTPException(
+                status_code=400,
+                detail="No image was provided.",
+            )
+
+        allowed_types = {
+            "image/jpeg",
+            "image/png",
+            "image/webp",
+        }
+
+        if image.content_type not in allowed_types:
+            raise HTTPException(
+                status_code=400,
+                detail="Please upload a JPG, PNG, or WEBP image.",
+            )
+
+        suffix = Path(
+            image.filename
+        ).suffix.lower()
+
+        if suffix not in {
+            ".jpg",
+            ".jpeg",
+            ".png",
+            ".webp",
+        }:
+            suffix = ".jpg"
+
+        with tempfile.NamedTemporaryFile(
+            delete=False,
+            suffix=suffix,
+        ) as temp_file:
+
+            input_path = Path(
+                temp_file.name
+            )
+
+            content = await image.read()
+
+            if not content:
+                raise HTTPException(
+                    status_code=400,
+                    detail="Uploaded image is empty.",
+                )
+
+            temp_file.write(content)
+
+        output_file = tempfile.NamedTemporaryFile(
+            delete=False,
+            suffix=".png",
+        )
+
+        output_file.close()
+
+        output_path = Path(
+            output_file.name
+        )
+
+        enhance_document(
+            input_path,
+            output_path,
+        )
+
+        return FileResponse(
+            path=output_path,
+            media_type="image/png",
+            filename="enhanced-document.png",
+        )
+
+    except HTTPException:
+        raise
+
+    except Exception as exc:
+
+        print(
+            f"[document enhancer error] {exc}"
+        )
+
+        raise HTTPException(
+            status_code=500,
+            detail="Could not enhance the document image.",
+        )
+
+    finally:
+
+        if input_path and input_path.exists():
+
+            try:
+                input_path.unlink()
+            except OSError:
+                pass
+

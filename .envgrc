@@ -1,0 +1,1 @@
+MONGODB_URI="mongodb://DB_USER:URL_ENCODED_NEW_PASSWORD@100.112.248.19:27017/grc_prod_salted?replicaSet=rs0&authSource=admin&directConnection=true"

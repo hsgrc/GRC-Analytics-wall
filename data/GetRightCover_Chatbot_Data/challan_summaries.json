@@ -1,0 +1,1750 @@
+{
+  "monthly": [
+    {
+      "Month": "2002-10",
+      "Total_Challans": 1,
+      "Total_Amount": 1000,
+      "Unique_Vehicles": 1,
+      "Paid_Status": 1,
+      "Unpaid_Status": 0,
+      "Paid_%": 100.0,
+      "Unpaid_%": 0.0
+    },
+    {
+      "Month": "2011-05",
+      "Total_Challans": 1,
+      "Total_Amount": 6600,
+      "Unique_Vehicles": 1,
+      "Paid_Status": 1,
+      "Unpaid_Status": 0,
+      "Paid_%": 100.0,
+      "Unpaid_%": 0.0
+    },
+    {
+      "Month": "2013-01",
+      "Total_Challans": 2,
+      "Total_Amount": 5100,
+      "Unique_Vehicles": 2,
+      "Paid_Status": 2,
+      "Unpaid_Status": 0,
+      "Paid_%": 100.0,
+      "Unpaid_%": 0.0
+    },
+    {
+      "Month": "2014-08",
+      "Total_Challans": 1,
+      "Total_Amount": 600,
+      "Unique_Vehicles": 1,
+      "Paid_Status": 1,
+      "Unpaid_Status": 0,
+      "Paid_%": 100.0,
+      "Unpaid_%": 0.0
+    },
+    {
+      "Month": "2014-09",
+      "Total_Challans": 1,
+      "Total_Amount": 20000,
+      "Unique_Vehicles": 1,
+      "Paid_Status": 1,
+      "Unpaid_Status": 0,
+      "Paid_%": 100.0,
+      "Unpaid_%": 0.0
+    },
+    {
+      "Month": "2014-10",
+      "Total_Challans": 1,
+      "Total_Amount": 6700,
+      "Unique_Vehicles": 1,
+      "Paid_Status": 1,
+      "Unpaid_Status": 0,
+      "Paid_%": 100.0,
+      "Unpaid_%": 0.0
+    },
+    {
+      "Month": "2015-05",
+      "Total_Challans": 1,
+      "Total_Amount": 13000,
+      "Unique_Vehicles": 1,
+      "Paid_Status": 1,
+      "Unpaid_Status": 0,
+      "Paid_%": 100.0,
+      "Unpaid_%": 0.0
+    },
+    {
+      "Month": "2015-09",
+      "Total_Challans": 1,
+      "Total_Amount": 3000,
+      "Unique_Vehicles": 1,
+      "Paid_Status": 1,
+      "Unpaid_Status": 0,
+      "Paid_%": 100.0,
+      "Unpaid_%": 0.0
+    },
+    {
+      "Month": "2016-01",
+      "Total_Challans": 1,
+      "Total_Amount": 10000,
+      "Unique_Vehicles": 1,
+      "Paid_Status": 0,
+      "Unpaid_Status": 1,
+      "Paid_%": 0.0,
+      "Unpaid_%": 100.0
+    },
+    {
+      "Month": "2016-03",
+      "Total_Challans": 4,
+      "Total_Amount": 6300,
+      "Unique_Vehicles": 4,
+      "Paid_Status": 3,
+      "Unpaid_Status": 1,
+      "Paid_%": 75.0,
+      "Unpaid_%": 25.0
+    },
+    {
+      "Month": "2016-05",
+      "Total_Challans": 1,
+      "Total_Amount": 100,
+      "Unique_Vehicles": 1,
+      "Paid_Status": 1,
+      "Unpaid_Status": 0,
+      "Paid_%": 100.0,
+      "Unpaid_%": 0.0
+    },
+    {
+      "Month": "2016-07",
+      "Total_Challans": 3,
+      "Total_Amount": 37200,
+      "Unique_Vehicles": 3,
+      "Paid_Status": 0,
+      "Unpaid_Status": 3,
+      "Paid_%": 0.0,
+      "Unpaid_%": 100.0
+    },
+    {
+      "Month": "2016-08",
+      "Total_Challans": 1,
+      "Total_Amount": 100,
+      "Unique_Vehicles": 1,
+      "Paid_Status": 1,
+      "Unpaid_Status": 0,
+      "Paid_%": 100.0,
+      "Unpaid_%": 0.0
+    },
+    {
+      "Month": "2016-10",
+      "Total_Challans": 2,
+      "Total_Amount": 4000,
+      "Unique_Vehicles": 2,
+      "Paid_Status": 2,
+      "Unpaid_Status": 0,
+      "Paid_%": 100.0,
+      "Unpaid_%": 0.0
+    },
+    {
+      "Month": "2016-11",
+      "Total_Challans": 2,
+      "Total_Amount": 11000,
+      "Unique_Vehicles": 2,
+      "Paid_Status": 1,
+      "Unpaid_Status": 1,
+      "Paid_%": 50.0,
+      "Unpaid_%": 50.0
+    },
+    {
+      "Month": "2016-12",
+      "Total_Challans": 2,
+      "Total_Amount": 10000,
+      "Unique_Vehicles": 2,
+      "Paid_Status": 2,
+      "Unpaid_Status": 0,
+      "Paid_%": 100.0,
+      "Unpaid_%": 0.0
+    },
+    {
+      "Month": "2017-02",
+      "Total_Challans": 1,
+      "Total_Amount": 5000,
+      "Unique_Vehicles": 1,
+      "Paid_Status": 1,
+      "Unpaid_Status": 0,
+      "Paid_%": 100.0,
+      "Unpaid_%": 0.0
+    },
+    {
+      "Month": "2017-03",
+      "Total_Challans": 5,
+      "Total_Amount": 32200,
+      "Unique_Vehicles": 5,
+      "Paid_Status": 3,
+      "Unpaid_Status": 2,
+      "Paid_%": 60.0,
+      "Unpaid_%": 40.0
+    },
+    {
+      "Month": "2017-04",
+      "Total_Challans": 3,
+      "Total_Amount": 24300,
+      "Unique_Vehicles": 3,
+      "Paid_Status": 3,
+      "Unpaid_Status": 0,
+      "Paid_%": 100.0,
+      "Unpaid_%": 0.0
+    },
+    {
+      "Month": "2017-05",
+      "Total_Challans": 9,
+      "Total_Amount": 46500,
+      "Unique_Vehicles": 9,
+      "Paid_Status": 9,
+      "Unpaid_Status": 0,
+      "Paid_%": 100.0,
+      "Unpaid_%": 0.0
+    },
+    {
+      "Month": "2017-06",
+      "Total_Challans": 14,
+      "Total_Amount": 66700,
+      "Unique_Vehicles": 13,
+      "Paid_Status": 14,
+      "Unpaid_Status": 0,
+      "Paid_%": 100.0,
+      "Unpaid_%": 0.0
+    },
+    {
+      "Month": "2017-07",
+      "Total_Challans": 16,
+      "Total_Amount": 75300,
+      "Unique_Vehicles": 16,
+      "Paid_Status": 15,
+      "Unpaid_Status": 1,
+      "Paid_%": 93.75,
+      "Unpaid_%": 6.25
+    },
+    {
+      "Month": "2017-08",
+      "Total_Challans": 18,
+      "Total_Amount": 39600,
+      "Unique_Vehicles": 18,
+      "Paid_Status": 14,
+      "Unpaid_Status": 4,
+      "Paid_%": 77.78,
+      "Unpaid_%": 22.22
+    },
+    {
+      "Month": "2017-09",
+      "Total_Challans": 12,
+      "Total_Amount": 27700,
+      "Unique_Vehicles": 12,
+      "Paid_Status": 10,
+      "Unpaid_Status": 2,
+      "Paid_%": 83.33,
+      "Unpaid_%": 16.67
+    },
+    {
+      "Month": "2017-10",
+      "Total_Challans": 13,
+      "Total_Amount": 63200,
+      "Unique_Vehicles": 13,
+      "Paid_Status": 12,
+      "Unpaid_Status": 1,
+      "Paid_%": 92.31,
+      "Unpaid_%": 7.69
+    },
+    {
+      "Month": "2017-11",
+      "Total_Challans": 7,
+      "Total_Amount": 36500,
+      "Unique_Vehicles": 7,
+      "Paid_Status": 7,
+      "Unpaid_Status": 0,
+      "Paid_%": 100.0,
+      "Unpaid_%": 0.0
+    },
+    {
+      "Month": "2017-12",
+      "Total_Challans": 16,
+      "Total_Amount": 45800,
+      "Unique_Vehicles": 16,
+      "Paid_Status": 15,
+      "Unpaid_Status": 1,
+      "Paid_%": 93.75,
+      "Unpaid_%": 6.25
+    },
+    {
+      "Month": "2018-01",
+      "Total_Challans": 19,
+      "Total_Amount": 54600,
+      "Unique_Vehicles": 19,
+      "Paid_Status": 18,
+      "Unpaid_Status": 1,
+      "Paid_%": 94.74,
+      "Unpaid_%": 5.26
+    },
+    {
+      "Month": "2018-02",
+      "Total_Challans": 14,
+      "Total_Amount": 71900,
+      "Unique_Vehicles": 14,
+      "Paid_Status": 14,
+      "Unpaid_Status": 0,
+      "Paid_%": 100.0,
+      "Unpaid_%": 0.0
+    },
+    {
+      "Month": "2018-03",
+      "Total_Challans": 19,
+      "Total_Amount": 139750,
+      "Unique_Vehicles": 17,
+      "Paid_Status": 16,
+      "Unpaid_Status": 3,
+      "Paid_%": 84.21,
+      "Unpaid_%": 15.79
+    },
+    {
+      "Month": "2018-04",
+      "Total_Challans": 27,
+      "Total_Amount": 55300,
+      "Unique_Vehicles": 25,
+      "Paid_Status": 25,
+      "Unpaid_Status": 2,
+      "Paid_%": 92.59,
+      "Unpaid_%": 7.41
+    },
+    {
+      "Month": "2018-05",
+      "Total_Challans": 42,
+      "Total_Amount": 237700,
+      "Unique_Vehicles": 39,
+      "Paid_Status": 39,
+      "Unpaid_Status": 3,
+      "Paid_%": 92.86,
+      "Unpaid_%": 7.14
+    },
+    {
+      "Month": "2018-06",
+      "Total_Challans": 50,
+      "Total_Amount": 84600,
+      "Unique_Vehicles": 47,
+      "Paid_Status": 46,
+      "Unpaid_Status": 4,
+      "Paid_%": 92.0,
+      "Unpaid_%": 8.0
+    },
+    {
+      "Month": "2018-07",
+      "Total_Challans": 110,
+      "Total_Amount": 421122,
+      "Unique_Vehicles": 106,
+      "Paid_Status": 109,
+      "Unpaid_Status": 1,
+      "Paid_%": 99.09,
+      "Unpaid_%": 0.91
+    },
+    {
+      "Month": "2018-08",
+      "Total_Challans": 426,
+      "Total_Amount": 1824217,
+      "Unique_Vehicles": 293,
+      "Paid_Status": 419,
+      "Unpaid_Status": 7,
+      "Paid_%": 98.36,
+      "Unpaid_%": 1.64
+    },
+    {
+      "Month": "2018-09",
+      "Total_Challans": 469,
+      "Total_Amount": 2420411,
+      "Unique_Vehicles": 354,
+      "Paid_Status": 462,
+      "Unpaid_Status": 7,
+      "Paid_%": 98.51,
+      "Unpaid_%": 1.49
+    },
+    {
+      "Month": "2018-10",
+      "Total_Challans": 431,
+      "Total_Amount": 1820151,
+      "Unique_Vehicles": 330,
+      "Paid_Status": 428,
+      "Unpaid_Status": 3,
+      "Paid_%": 99.3,
+      "Unpaid_%": 0.7
+    },
+    {
+      "Month": "2018-11",
+      "Total_Challans": 424,
+      "Total_Amount": 1796342,
+      "Unique_Vehicles": 345,
+      "Paid_Status": 423,
+      "Unpaid_Status": 1,
+      "Paid_%": 99.76,
+      "Unpaid_%": 0.24
+    },
+    {
+      "Month": "2018-12",
+      "Total_Challans": 638,
+      "Total_Amount": 2967715,
+      "Unique_Vehicles": 529,
+      "Paid_Status": 635,
+      "Unpaid_Status": 3,
+      "Paid_%": 99.53,
+      "Unpaid_%": 0.47
+    },
+    {
+      "Month": "2019-01",
+      "Total_Challans": 629,
+      "Total_Amount": 2400223,
+      "Unique_Vehicles": 517,
+      "Paid_Status": 627,
+      "Unpaid_Status": 2,
+      "Paid_%": 99.68,
+      "Unpaid_%": 0.32
+    },
+    {
+      "Month": "2019-02",
+      "Total_Challans": 642,
+      "Total_Amount": 2167290,
+      "Unique_Vehicles": 533,
+      "Paid_Status": 632,
+      "Unpaid_Status": 10,
+      "Paid_%": 98.44,
+      "Unpaid_%": 1.56
+    },
+    {
+      "Month": "2019-03",
+      "Total_Challans": 552,
+      "Total_Amount": 1933775,
+      "Unique_Vehicles": 478,
+      "Paid_Status": 541,
+      "Unpaid_Status": 11,
+      "Paid_%": 98.01,
+      "Unpaid_%": 1.99
+    },
+    {
+      "Month": "2019-04",
+      "Total_Challans": 660,
+      "Total_Amount": 2007810,
+      "Unique_Vehicles": 577,
+      "Paid_Status": 648,
+      "Unpaid_Status": 12,
+      "Paid_%": 98.18,
+      "Unpaid_%": 1.82
+    },
+    {
+      "Month": "2019-05",
+      "Total_Challans": 1041,
+      "Total_Amount": 2727354,
+      "Unique_Vehicles": 874,
+      "Paid_Status": 1031,
+      "Unpaid_Status": 10,
+      "Paid_%": 99.04,
+      "Unpaid_%": 0.96
+    },
+    {
+      "Month": "2019-06",
+      "Total_Challans": 1234,
+      "Total_Amount": 3452960,
+      "Unique_Vehicles": 982,
+      "Paid_Status": 1220,
+      "Unpaid_Status": 14,
+      "Paid_%": 98.87,
+      "Unpaid_%": 1.13
+    },
+    {
+      "Month": "2019-07",
+      "Total_Challans": 1377,
+      "Total_Amount": 3294880,
+      "Unique_Vehicles": 1044,
+      "Paid_Status": 1366,
+      "Unpaid_Status": 11,
+      "Paid_%": 99.2,
+      "Unpaid_%": 0.8
+    },
+    {
+      "Month": "2019-08",
+      "Total_Challans": 1468,
+      "Total_Amount": 3382650,
+      "Unique_Vehicles": 1115,
+      "Paid_Status": 1451,
+      "Unpaid_Status": 17,
+      "Paid_%": 98.84,
+      "Unpaid_%": 1.16
+    },
+    {
+      "Month": "2019-09",
+      "Total_Challans": 1226,
+      "Total_Amount": 4715000,
+      "Unique_Vehicles": 1010,
+      "Paid_Status": 1216,
+      "Unpaid_Status": 10,
+      "Paid_%": 99.18,
+      "Unpaid_%": 0.82
+    },
+    {
+      "Month": "2019-10",
+      "Total_Challans": 1209,
+      "Total_Amount": 4883070,
+      "Unique_Vehicles": 992,
+      "Paid_Status": 1191,
+      "Unpaid_Status": 18,
+      "Paid_%": 98.51,
+      "Unpaid_%": 1.49
+    },
+    {
+      "Month": "2019-11",
+      "Total_Challans": 1184,
+      "Total_Amount": 4691026,
+      "Unique_Vehicles": 988,
+      "Paid_Status": 1153,
+      "Unpaid_Status": 31,
+      "Paid_%": 97.38,
+      "Unpaid_%": 2.62
+    },
+    {
+      "Month": "2019-12",
+      "Total_Challans": 1134,
+      "Total_Amount": 4527625,
+      "Unique_Vehicles": 937,
+      "Paid_Status": 1080,
+      "Unpaid_Status": 54,
+      "Paid_%": 95.24,
+      "Unpaid_%": 4.76
+    },
+    {
+      "Month": "2020-01",
+      "Total_Challans": 1173,
+      "Total_Amount": 4097835,
+      "Unique_Vehicles": 1000,
+      "Paid_Status": 1091,
+      "Unpaid_Status": 82,
+      "Paid_%": 93.01,
+      "Unpaid_%": 6.99
+    },
+    {
+      "Month": "2020-02",
+      "Total_Challans": 1383,
+      "Total_Amount": 5599750,
+      "Unique_Vehicles": 1164,
+      "Paid_Status": 1335,
+      "Unpaid_Status": 48,
+      "Paid_%": 96.53,
+      "Unpaid_%": 3.47
+    },
+    {
+      "Month": "2020-03",
+      "Total_Challans": 1558,
+      "Total_Amount": 6555233,
+      "Unique_Vehicles": 1327,
+      "Paid_Status": 1517,
+      "Unpaid_Status": 41,
+      "Paid_%": 97.37,
+      "Unpaid_%": 2.63
+    },
+    {
+      "Month": "2020-04",
+      "Total_Challans": 122,
+      "Total_Amount": 388800,
+      "Unique_Vehicles": 120,
+      "Paid_Status": 117,
+      "Unpaid_Status": 5,
+      "Paid_%": 95.9,
+      "Unpaid_%": 4.1
+    },
+    {
+      "Month": "2020-05",
+      "Total_Challans": 182,
+      "Total_Amount": 509750,
+      "Unique_Vehicles": 174,
+      "Paid_Status": 176,
+      "Unpaid_Status": 6,
+      "Paid_%": 96.7,
+      "Unpaid_%": 3.3
+    },
+    {
+      "Month": "2020-06",
+      "Total_Challans": 635,
+      "Total_Amount": 2627134,
+      "Unique_Vehicles": 559,
+      "Paid_Status": 588,
+      "Unpaid_Status": 47,
+      "Paid_%": 92.6,
+      "Unpaid_%": 7.4
+    },
+    {
+      "Month": "2020-07",
+      "Total_Challans": 1047,
+      "Total_Amount": 4054407,
+      "Unique_Vehicles": 878,
+      "Paid_Status": 983,
+      "Unpaid_Status": 64,
+      "Paid_%": 93.89,
+      "Unpaid_%": 6.11
+    },
+    {
+      "Month": "2020-08",
+      "Total_Challans": 1163,
+      "Total_Amount": 4676403,
+      "Unique_Vehicles": 964,
+      "Paid_Status": 1104,
+      "Unpaid_Status": 59,
+      "Paid_%": 94.93,
+      "Unpaid_%": 5.07
+    },
+    {
+      "Month": "2020-09",
+      "Total_Challans": 1268,
+      "Total_Amount": 5462572,
+      "Unique_Vehicles": 1025,
+      "Paid_Status": 1210,
+      "Unpaid_Status": 58,
+      "Paid_%": 95.43,
+      "Unpaid_%": 4.57
+    },
+    {
+      "Month": "2020-10",
+      "Total_Challans": 1281,
+      "Total_Amount": 4984676,
+      "Unique_Vehicles": 1040,
+      "Paid_Status": 1209,
+      "Unpaid_Status": 72,
+      "Paid_%": 94.38,
+      "Unpaid_%": 5.62
+    },
+    {
+      "Month": "2020-11",
+      "Total_Challans": 1329,
+      "Total_Amount": 4902451,
+      "Unique_Vehicles": 1076,
+      "Paid_Status": 1266,
+      "Unpaid_Status": 63,
+      "Paid_%": 95.26,
+      "Unpaid_%": 4.74
+    },
+    {
+      "Month": "2020-12",
+      "Total_Challans": 1282,
+      "Total_Amount": 5583444,
+      "Unique_Vehicles": 1044,
+      "Paid_Status": 1208,
+      "Unpaid_Status": 74,
+      "Paid_%": 94.23,
+      "Unpaid_%": 5.77
+    },
+    {
+      "Month": "2021-01",
+      "Total_Challans": 1632,
+      "Total_Amount": 7649909,
+      "Unique_Vehicles": 1279,
+      "Paid_Status": 1557,
+      "Unpaid_Status": 75,
+      "Paid_%": 95.4,
+      "Unpaid_%": 4.6
+    },
+    {
+      "Month": "2021-02",
+      "Total_Challans": 1753,
+      "Total_Amount": 6964655,
+      "Unique_Vehicles": 1394,
+      "Paid_Status": 1661,
+      "Unpaid_Status": 92,
+      "Paid_%": 94.75,
+      "Unpaid_%": 5.25
+    },
+    {
+      "Month": "2021-03",
+      "Total_Challans": 2346,
+      "Total_Amount": 9000861,
+      "Unique_Vehicles": 1848,
+      "Paid_Status": 2270,
+      "Unpaid_Status": 76,
+      "Paid_%": 96.76,
+      "Unpaid_%": 3.24
+    },
+    {
+      "Month": "2021-04",
+      "Total_Challans": 1525,
+      "Total_Amount": 5627730,
+      "Unique_Vehicles": 1182,
+      "Paid_Status": 1468,
+      "Unpaid_Status": 57,
+      "Paid_%": 96.26,
+      "Unpaid_%": 3.74
+    },
+    {
+      "Month": "2021-05",
+      "Total_Challans": 838,
+      "Total_Amount": 3217642,
+      "Unique_Vehicles": 746,
+      "Paid_Status": 806,
+      "Unpaid_Status": 32,
+      "Paid_%": 96.18,
+      "Unpaid_%": 3.82
+    },
+    {
+      "Month": "2021-06",
+      "Total_Challans": 1401,
+      "Total_Amount": 5309421,
+      "Unique_Vehicles": 1129,
+      "Paid_Status": 1321,
+      "Unpaid_Status": 80,
+      "Paid_%": 94.29,
+      "Unpaid_%": 5.71
+    },
+    {
+      "Month": "2021-07",
+      "Total_Challans": 2183,
+      "Total_Amount": 8164826,
+      "Unique_Vehicles": 1607,
+      "Paid_Status": 2089,
+      "Unpaid_Status": 94,
+      "Paid_%": 95.69,
+      "Unpaid_%": 4.31
+    },
+    {
+      "Month": "2021-08",
+      "Total_Challans": 2290,
+      "Total_Amount": 8401570,
+      "Unique_Vehicles": 1720,
+      "Paid_Status": 2184,
+      "Unpaid_Status": 106,
+      "Paid_%": 95.37,
+      "Unpaid_%": 4.63
+    },
+    {
+      "Month": "2021-09",
+      "Total_Challans": 2149,
+      "Total_Amount": 7300390,
+      "Unique_Vehicles": 1651,
+      "Paid_Status": 2050,
+      "Unpaid_Status": 99,
+      "Paid_%": 95.39,
+      "Unpaid_%": 4.61
+    },
+    {
+      "Month": "2021-10",
+      "Total_Challans": 2427,
+      "Total_Amount": 8524550,
+      "Unique_Vehicles": 1843,
+      "Paid_Status": 2301,
+      "Unpaid_Status": 126,
+      "Paid_%": 94.81,
+      "Unpaid_%": 5.19
+    },
+    {
+      "Month": "2021-11",
+      "Total_Challans": 2103,
+      "Total_Amount": 7157190,
+      "Unique_Vehicles": 1602,
+      "Paid_Status": 1996,
+      "Unpaid_Status": 107,
+      "Paid_%": 94.91,
+      "Unpaid_%": 5.09
+    },
+    {
+      "Month": "2021-12",
+      "Total_Challans": 2730,
+      "Total_Amount": 9979014,
+      "Unique_Vehicles": 1938,
+      "Paid_Status": 2609,
+      "Unpaid_Status": 121,
+      "Paid_%": 95.57,
+      "Unpaid_%": 4.43
+    },
+    {
+      "Month": "2022-01",
+      "Total_Challans": 3229,
+      "Total_Amount": 10544595,
+      "Unique_Vehicles": 2322,
+      "Paid_Status": 3107,
+      "Unpaid_Status": 122,
+      "Paid_%": 96.22,
+      "Unpaid_%": 3.78
+    },
+    {
+      "Month": "2022-02",
+      "Total_Challans": 3605,
+      "Total_Amount": 11676046,
+      "Unique_Vehicles": 2564,
+      "Paid_Status": 3466,
+      "Unpaid_Status": 139,
+      "Paid_%": 96.14,
+      "Unpaid_%": 3.86
+    },
+    {
+      "Month": "2022-03",
+      "Total_Challans": 5126,
+      "Total_Amount": 14855730,
+      "Unique_Vehicles": 3476,
+      "Paid_Status": 4953,
+      "Unpaid_Status": 173,
+      "Paid_%": 96.63,
+      "Unpaid_%": 3.37
+    },
+    {
+      "Month": "2022-04",
+      "Total_Challans": 3702,
+      "Total_Amount": 11287270,
+      "Unique_Vehicles": 2648,
+      "Paid_Status": 3529,
+      "Unpaid_Status": 173,
+      "Paid_%": 95.33,
+      "Unpaid_%": 4.67
+    },
+    {
+      "Month": "2022-05",
+      "Total_Challans": 3967,
+      "Total_Amount": 11846210,
+      "Unique_Vehicles": 2807,
+      "Paid_Status": 3755,
+      "Unpaid_Status": 212,
+      "Paid_%": 94.66,
+      "Unpaid_%": 5.34
+    },
+    {
+      "Month": "2022-06",
+      "Total_Challans": 4114,
+      "Total_Amount": 12371070,
+      "Unique_Vehicles": 2805,
+      "Paid_Status": 3913,
+      "Unpaid_Status": 201,
+      "Paid_%": 95.11,
+      "Unpaid_%": 4.89
+    },
+    {
+      "Month": "2022-07",
+      "Total_Challans": 4142,
+      "Total_Amount": 12383568,
+      "Unique_Vehicles": 2941,
+      "Paid_Status": 3877,
+      "Unpaid_Status": 265,
+      "Paid_%": 93.6,
+      "Unpaid_%": 6.4
+    },
+    {
+      "Month": "2022-08",
+      "Total_Challans": 4229,
+      "Total_Amount": 12420321,
+      "Unique_Vehicles": 3041,
+      "Paid_Status": 3967,
+      "Unpaid_Status": 262,
+      "Paid_%": 93.8,
+      "Unpaid_%": 6.2
+    },
+    {
+      "Month": "2022-09",
+      "Total_Challans": 4659,
+      "Total_Amount": 13308591,
+      "Unique_Vehicles": 3305,
+      "Paid_Status": 4340,
+      "Unpaid_Status": 319,
+      "Paid_%": 93.15,
+      "Unpaid_%": 6.85
+    },
+    {
+      "Month": "2022-10",
+      "Total_Challans": 4314,
+      "Total_Amount": 11903900,
+      "Unique_Vehicles": 3094,
+      "Paid_Status": 4017,
+      "Unpaid_Status": 297,
+      "Paid_%": 93.12,
+      "Unpaid_%": 6.88
+    },
+    {
+      "Month": "2022-11",
+      "Total_Challans": 4333,
+      "Total_Amount": 12399359,
+      "Unique_Vehicles": 3111,
+      "Paid_Status": 4022,
+      "Unpaid_Status": 311,
+      "Paid_%": 92.82,
+      "Unpaid_%": 7.18
+    },
+    {
+      "Month": "2022-12",
+      "Total_Challans": 4599,
+      "Total_Amount": 12919640,
+      "Unique_Vehicles": 3277,
+      "Paid_Status": 4297,
+      "Unpaid_Status": 302,
+      "Paid_%": 93.43,
+      "Unpaid_%": 6.57
+    },
+    {
+      "Month": "2023-01",
+      "Total_Challans": 4839,
+      "Total_Amount": 13825704,
+      "Unique_Vehicles": 3415,
+      "Paid_Status": 4505,
+      "Unpaid_Status": 334,
+      "Paid_%": 93.1,
+      "Unpaid_%": 6.9
+    },
+    {
+      "Month": "2023-02",
+      "Total_Challans": 4640,
+      "Total_Amount": 13829061,
+      "Unique_Vehicles": 3215,
+      "Paid_Status": 4263,
+      "Unpaid_Status": 377,
+      "Paid_%": 91.88,
+      "Unpaid_%": 8.12
+    },
+    {
+      "Month": "2023-03",
+      "Total_Challans": 6554,
+      "Total_Amount": 20146541,
+      "Unique_Vehicles": 4323,
+      "Paid_Status": 6134,
+      "Unpaid_Status": 420,
+      "Paid_%": 93.59,
+      "Unpaid_%": 6.41
+    },
+    {
+      "Month": "2023-04",
+      "Total_Challans": 4814,
+      "Total_Amount": 13861350,
+      "Unique_Vehicles": 3440,
+      "Paid_Status": 4423,
+      "Unpaid_Status": 391,
+      "Paid_%": 91.88,
+      "Unpaid_%": 8.12
+    },
+    {
+      "Month": "2023-05",
+      "Total_Challans": 4478,
+      "Total_Amount": 13688162,
+      "Unique_Vehicles": 3100,
+      "Paid_Status": 4044,
+      "Unpaid_Status": 434,
+      "Paid_%": 90.31,
+      "Unpaid_%": 9.69
+    },
+    {
+      "Month": "2023-06",
+      "Total_Challans": 4333,
+      "Total_Amount": 13149002,
+      "Unique_Vehicles": 3086,
+      "Paid_Status": 3877,
+      "Unpaid_Status": 456,
+      "Paid_%": 89.48,
+      "Unpaid_%": 10.52
+    },
+    {
+      "Month": "2023-07",
+      "Total_Challans": 5354,
+      "Total_Amount": 14667211,
+      "Unique_Vehicles": 3806,
+      "Paid_Status": 4845,
+      "Unpaid_Status": 509,
+      "Paid_%": 90.49,
+      "Unpaid_%": 9.51
+    },
+    {
+      "Month": "2023-08",
+      "Total_Challans": 5258,
+      "Total_Amount": 14859010,
+      "Unique_Vehicles": 3757,
+      "Paid_Status": 4735,
+      "Unpaid_Status": 523,
+      "Paid_%": 90.05,
+      "Unpaid_%": 9.95
+    },
+    {
+      "Month": "2023-09",
+      "Total_Challans": 4830,
+      "Total_Amount": 15408762,
+      "Unique_Vehicles": 3362,
+      "Paid_Status": 4338,
+      "Unpaid_Status": 492,
+      "Paid_%": 89.81,
+      "Unpaid_%": 10.19
+    },
+    {
+      "Month": "2023-10",
+      "Total_Challans": 5501,
+      "Total_Amount": 16757313,
+      "Unique_Vehicles": 3648,
+      "Paid_Status": 4880,
+      "Unpaid_Status": 621,
+      "Paid_%": 88.71,
+      "Unpaid_%": 11.29
+    },
+    {
+      "Month": "2023-11",
+      "Total_Challans": 4365,
+      "Total_Amount": 12943450,
+      "Unique_Vehicles": 3191,
+      "Paid_Status": 3845,
+      "Unpaid_Status": 520,
+      "Paid_%": 88.09,
+      "Unpaid_%": 11.91
+    },
+    {
+      "Month": "2023-12",
+      "Total_Challans": 5220,
+      "Total_Amount": 16091128,
+      "Unique_Vehicles": 3669,
+      "Paid_Status": 4619,
+      "Unpaid_Status": 601,
+      "Paid_%": 88.49,
+      "Unpaid_%": 11.51
+    },
+    {
+      "Month": "2024-01",
+      "Total_Challans": 5313,
+      "Total_Amount": 16250528,
+      "Unique_Vehicles": 3657,
+      "Paid_Status": 4790,
+      "Unpaid_Status": 523,
+      "Paid_%": 90.16,
+      "Unpaid_%": 9.84
+    },
+    {
+      "Month": "2024-02",
+      "Total_Challans": 5518,
+      "Total_Amount": 17968200,
+      "Unique_Vehicles": 3707,
+      "Paid_Status": 4994,
+      "Unpaid_Status": 524,
+      "Paid_%": 90.5,
+      "Unpaid_%": 9.5
+    },
+    {
+      "Month": "2024-03",
+      "Total_Challans": 7028,
+      "Total_Amount": 22715067,
+      "Unique_Vehicles": 4899,
+      "Paid_Status": 6346,
+      "Unpaid_Status": 682,
+      "Paid_%": 90.3,
+      "Unpaid_%": 9.7
+    },
+    {
+      "Month": "2024-04",
+      "Total_Challans": 4715,
+      "Total_Amount": 15312503,
+      "Unique_Vehicles": 3541,
+      "Paid_Status": 4117,
+      "Unpaid_Status": 598,
+      "Paid_%": 87.32,
+      "Unpaid_%": 12.68
+    },
+    {
+      "Month": "2024-05",
+      "Total_Challans": 4916,
+      "Total_Amount": 15787446,
+      "Unique_Vehicles": 3635,
+      "Paid_Status": 4168,
+      "Unpaid_Status": 748,
+      "Paid_%": 84.78,
+      "Unpaid_%": 15.22
+    },
+    {
+      "Month": "2024-06",
+      "Total_Challans": 5207,
+      "Total_Amount": 15107455,
+      "Unique_Vehicles": 3866,
+      "Paid_Status": 4343,
+      "Unpaid_Status": 864,
+      "Paid_%": 83.41,
+      "Unpaid_%": 16.59
+    },
+    {
+      "Month": "2024-07",
+      "Total_Challans": 5606,
+      "Total_Amount": 16572850,
+      "Unique_Vehicles": 4159,
+      "Paid_Status": 4587,
+      "Unpaid_Status": 1019,
+      "Paid_%": 81.82,
+      "Unpaid_%": 18.18
+    },
+    {
+      "Month": "2024-08",
+      "Total_Challans": 5486,
+      "Total_Amount": 17288320,
+      "Unique_Vehicles": 4201,
+      "Paid_Status": 4416,
+      "Unpaid_Status": 1070,
+      "Paid_%": 80.5,
+      "Unpaid_%": 19.5
+    },
+    {
+      "Month": "2024-09",
+      "Total_Challans": 5555,
+      "Total_Amount": 19136790,
+      "Unique_Vehicles": 4133,
+      "Paid_Status": 4520,
+      "Unpaid_Status": 1035,
+      "Paid_%": 81.37,
+      "Unpaid_%": 18.63
+    },
+    {
+      "Month": "2024-10",
+      "Total_Challans": 5984,
+      "Total_Amount": 20344456,
+      "Unique_Vehicles": 4407,
+      "Paid_Status": 4872,
+      "Unpaid_Status": 1112,
+      "Paid_%": 81.42,
+      "Unpaid_%": 18.58
+    },
+    {
+      "Month": "2024-11",
+      "Total_Challans": 5870,
+      "Total_Amount": 18559211,
+      "Unique_Vehicles": 4429,
+      "Paid_Status": 4611,
+      "Unpaid_Status": 1259,
+      "Paid_%": 78.55,
+      "Unpaid_%": 21.45
+    },
+    {
+      "Month": "2024-12",
+      "Total_Challans": 6383,
+      "Total_Amount": 20726557,
+      "Unique_Vehicles": 4693,
+      "Paid_Status": 5061,
+      "Unpaid_Status": 1322,
+      "Paid_%": 79.29,
+      "Unpaid_%": 20.71
+    },
+    {
+      "Month": "2025-01",
+      "Total_Challans": 5778,
+      "Total_Amount": 17902748,
+      "Unique_Vehicles": 4353,
+      "Paid_Status": 4477,
+      "Unpaid_Status": 1301,
+      "Paid_%": 77.48,
+      "Unpaid_%": 22.52
+    },
+    {
+      "Month": "2025-02",
+      "Total_Challans": 5920,
+      "Total_Amount": 18958999,
+      "Unique_Vehicles": 4484,
+      "Paid_Status": 4688,
+      "Unpaid_Status": 1232,
+      "Paid_%": 79.19,
+      "Unpaid_%": 20.81
+    },
+    {
+      "Month": "2025-03",
+      "Total_Challans": 8890,
+      "Total_Amount": 29539019,
+      "Unique_Vehicles": 6312,
+      "Paid_Status": 7185,
+      "Unpaid_Status": 1705,
+      "Paid_%": 80.82,
+      "Unpaid_%": 19.18
+    },
+    {
+      "Month": "2025-04",
+      "Total_Challans": 6648,
+      "Total_Amount": 21463317,
+      "Unique_Vehicles": 4959,
+      "Paid_Status": 4931,
+      "Unpaid_Status": 1717,
+      "Paid_%": 74.17,
+      "Unpaid_%": 25.83
+    },
+    {
+      "Month": "2025-05",
+      "Total_Challans": 6950,
+      "Total_Amount": 21373906,
+      "Unique_Vehicles": 5136,
+      "Paid_Status": 4865,
+      "Unpaid_Status": 2085,
+      "Paid_%": 70.0,
+      "Unpaid_%": 30.0
+    },
+    {
+      "Month": "2025-06",
+      "Total_Challans": 6887,
+      "Total_Amount": 20836074,
+      "Unique_Vehicles": 5118,
+      "Paid_Status": 4721,
+      "Unpaid_Status": 2166,
+      "Paid_%": 68.55,
+      "Unpaid_%": 31.45
+    },
+    {
+      "Month": "2025-07",
+      "Total_Challans": 6925,
+      "Total_Amount": 22865861,
+      "Unique_Vehicles": 5213,
+      "Paid_Status": 4585,
+      "Unpaid_Status": 2340,
+      "Paid_%": 66.21,
+      "Unpaid_%": 33.79
+    },
+    {
+      "Month": "2025-08",
+      "Total_Challans": 7933,
+      "Total_Amount": 26251613,
+      "Unique_Vehicles": 5419,
+      "Paid_Status": 4795,
+      "Unpaid_Status": 3138,
+      "Paid_%": 60.44,
+      "Unpaid_%": 39.56
+    },
+    {
+      "Month": "2025-09",
+      "Total_Challans": 7908,
+      "Total_Amount": 26229980,
+      "Unique_Vehicles": 5487,
+      "Paid_Status": 4634,
+      "Unpaid_Status": 3274,
+      "Paid_%": 58.6,
+      "Unpaid_%": 41.4
+    },
+    {
+      "Month": "2025-10",
+      "Total_Challans": 7559,
+      "Total_Amount": 25300323,
+      "Unique_Vehicles": 5429,
+      "Paid_Status": 4620,
+      "Unpaid_Status": 2939,
+      "Paid_%": 61.12,
+      "Unpaid_%": 38.88
+    },
+    {
+      "Month": "2025-11",
+      "Total_Challans": 8911,
+      "Total_Amount": 27772542,
+      "Unique_Vehicles": 6098,
+      "Paid_Status": 5182,
+      "Unpaid_Status": 3729,
+      "Paid_%": 58.15,
+      "Unpaid_%": 41.85
+    },
+    {
+      "Month": "2025-12",
+      "Total_Challans": 11184,
+      "Total_Amount": 29582175,
+      "Unique_Vehicles": 6966,
+      "Paid_Status": 6009,
+      "Unpaid_Status": 5175,
+      "Paid_%": 53.73,
+      "Unpaid_%": 46.27
+    },
+    {
+      "Month": "2026-01",
+      "Total_Challans": 10442,
+      "Total_Amount": 29680788,
+      "Unique_Vehicles": 6654,
+      "Paid_Status": 5434,
+      "Unpaid_Status": 5008,
+      "Paid_%": 52.04,
+      "Unpaid_%": 47.96
+    },
+    {
+      "Month": "2026-02",
+      "Total_Challans": 10063,
+      "Total_Amount": 30639785,
+      "Unique_Vehicles": 6564,
+      "Paid_Status": 5506,
+      "Unpaid_Status": 4557,
+      "Paid_%": 54.72,
+      "Unpaid_%": 45.28
+    },
+    {
+      "Month": "2026-03",
+      "Total_Challans": 11859,
+      "Total_Amount": 34285478,
+      "Unique_Vehicles": 7632,
+      "Paid_Status": 6577,
+      "Unpaid_Status": 5282,
+      "Paid_%": 55.46,
+      "Unpaid_%": 44.54
+    },
+    {
+      "Month": "2026-04",
+      "Total_Challans": 8728,
+      "Total_Amount": 24567500,
+      "Unique_Vehicles": 6006,
+      "Paid_Status": 4223,
+      "Unpaid_Status": 4505,
+      "Paid_%": 48.38,
+      "Unpaid_%": 51.62
+    },
+    {
+      "Month": "2026-05",
+      "Total_Challans": 9021,
+      "Total_Amount": 27292319,
+      "Unique_Vehicles": 6284,
+      "Paid_Status": 3947,
+      "Unpaid_Status": 5074,
+      "Paid_%": 43.75,
+      "Unpaid_%": 56.25
+    },
+    {
+      "Month": "2026-06",
+      "Total_Challans": 9660,
+      "Total_Amount": 28763724,
+      "Unique_Vehicles": 6611,
+      "Paid_Status": 3724,
+      "Unpaid_Status": 5936,
+      "Paid_%": 38.55,
+      "Unpaid_%": 61.45
+    },
+    {
+      "Month": "2026-07",
+      "Total_Challans": 9121,
+      "Total_Amount": 27561847,
+      "Unique_Vehicles": 6486,
+      "Paid_Status": 2979,
+      "Unpaid_Status": 6142,
+      "Paid_%": 32.66,
+      "Unpaid_%": 67.34
+    },
+    {
+      "Month": "2026-08",
+      "Total_Challans": 8494,
+      "Total_Amount": 25000082,
+      "Unique_Vehicles": 6066,
+      "Paid_Status": 2368,
+      "Unpaid_Status": 6126,
+      "Paid_%": 27.88,
+      "Unpaid_%": 72.12
+    }
+  ],
+  "states": [
+    {
+      "state_normalized": "Rajasthan",
+      "Total_Challans": 138133,
+      "Total_Amount": 535948424,
+      "Unique_Vehicles": 13491,
+      "Paid_Status": 106811,
+      "Unpaid_Status": 31322,
+      "Paid_%": 77.32,
+      "Unpaid_%": 22.68,
+      "Challans_Per_Vehicle": 10.24
+    },
+    {
+      "state_normalized": "Maharashtra",
+      "Total_Challans": 79528,
+      "Total_Amount": 155734217,
+      "Unique_Vehicles": 9430,
+      "Paid_Status": 74418,
+      "Unpaid_Status": 5110,
+      "Paid_%": 93.57,
+      "Unpaid_%": 6.43,
+      "Challans_Per_Vehicle": 8.43
+    },
+    {
+      "state_normalized": "Bihar",
+      "Total_Challans": 54683,
+      "Total_Amount": 194582461,
+      "Unique_Vehicles": 8052,
+      "Paid_Status": 52599,
+      "Unpaid_Status": 2084,
+      "Paid_%": 96.19,
+      "Unpaid_%": 3.81,
+      "Challans_Per_Vehicle": 6.79
+    },
+    {
+      "state_normalized": "Haryana",
+      "Total_Challans": 31015,
+      "Total_Amount": 55937051,
+      "Unique_Vehicles": 10671,
+      "Paid_Status": 18250,
+      "Unpaid_Status": 12765,
+      "Paid_%": 58.84,
+      "Unpaid_%": 41.16,
+      "Challans_Per_Vehicle": 2.91
+    },
+    {
+      "state_normalized": "Uttar Pradesh",
+      "Total_Challans": 20399,
+      "Total_Amount": 77523092,
+      "Unique_Vehicles": 8364,
+      "Paid_Status": 10019,
+      "Unpaid_Status": 10380,
+      "Paid_%": 49.12,
+      "Unpaid_%": 50.88,
+      "Challans_Per_Vehicle": 2.44
+    },
+    {
+      "state_normalized": "Gujarat",
+      "Total_Challans": 17330,
+      "Total_Amount": 54279861,
+      "Unique_Vehicles": 6796,
+      "Paid_Status": 10785,
+      "Unpaid_Status": 6545,
+      "Paid_%": 62.23,
+      "Unpaid_%": 37.77,
+      "Challans_Per_Vehicle": 2.55
+    },
+    {
+      "state_normalized": "Madhya Pradesh",
+      "Total_Challans": 13132,
+      "Total_Amount": 51918200,
+      "Unique_Vehicles": 6471,
+      "Paid_Status": 4318,
+      "Unpaid_Status": 8814,
+      "Paid_%": 32.88,
+      "Unpaid_%": 67.12,
+      "Challans_Per_Vehicle": 2.03
+    },
+    {
+      "state_normalized": "Tamil Nadu",
+      "Total_Challans": 11303,
+      "Total_Amount": 19507645,
+      "Unique_Vehicles": 4836,
+      "Paid_Status": 6079,
+      "Unpaid_Status": 5224,
+      "Paid_%": 53.78,
+      "Unpaid_%": 46.22,
+      "Challans_Per_Vehicle": 2.34
+    },
+    {
+      "state_normalized": "Delhi",
+      "Total_Challans": 9086,
+      "Total_Amount": 28918723,
+      "Unique_Vehicles": 3254,
+      "Paid_Status": 4174,
+      "Unpaid_Status": 4912,
+      "Paid_%": 45.94,
+      "Unpaid_%": 54.06,
+      "Challans_Per_Vehicle": 2.79
+    },
+    {
+      "state_normalized": "Odisha",
+      "Total_Challans": 5307,
+      "Total_Amount": 36111494,
+      "Unique_Vehicles": 2872,
+      "Paid_Status": 3606,
+      "Unpaid_Status": 1701,
+      "Paid_%": 67.95,
+      "Unpaid_%": 32.05,
+      "Challans_Per_Vehicle": 1.85
+    },
+    {
+      "state_normalized": "West Bengal",
+      "Total_Challans": 5143,
+      "Total_Amount": 9418835,
+      "Unique_Vehicles": 2859,
+      "Paid_Status": 2450,
+      "Unpaid_Status": 2693,
+      "Paid_%": 47.64,
+      "Unpaid_%": 52.36,
+      "Challans_Per_Vehicle": 1.8
+    },
+    {
+      "state_normalized": "Himachal Pradesh",
+      "Total_Challans": 3390,
+      "Total_Amount": 5620660,
+      "Unique_Vehicles": 1329,
+      "Paid_Status": 2042,
+      "Unpaid_Status": 1348,
+      "Paid_%": 60.24,
+      "Unpaid_%": 39.76,
+      "Challans_Per_Vehicle": 2.55
+    },
+    {
+      "state_normalized": "Punjab",
+      "Total_Challans": 2669,
+      "Total_Amount": 6154601,
+      "Unique_Vehicles": 1781,
+      "Paid_Status": 1267,
+      "Unpaid_Status": 1402,
+      "Paid_%": 47.47,
+      "Unpaid_%": 52.53,
+      "Challans_Per_Vehicle": 1.5
+    },
+    {
+      "state_normalized": "Jammu and Kashmir",
+      "Total_Challans": 2401,
+      "Total_Amount": 2153050,
+      "Unique_Vehicles": 641,
+      "Paid_Status": 1595,
+      "Unpaid_Status": 806,
+      "Paid_%": 66.43,
+      "Unpaid_%": 33.57,
+      "Challans_Per_Vehicle": 3.75
+    },
+    {
+      "state_normalized": "Kerala",
+      "Total_Challans": 2371,
+      "Total_Amount": 1825500,
+      "Unique_Vehicles": 1534,
+      "Paid_Status": 1447,
+      "Unpaid_Status": 924,
+      "Paid_%": 61.03,
+      "Unpaid_%": 38.97,
+      "Challans_Per_Vehicle": 1.55
+    },
+    {
+      "state_normalized": "Uttarakhand",
+      "Total_Challans": 1884,
+      "Total_Amount": 4416667,
+      "Unique_Vehicles": 1023,
+      "Paid_Status": 1317,
+      "Unpaid_Status": 567,
+      "Paid_%": 69.9,
+      "Unpaid_%": 30.1,
+      "Challans_Per_Vehicle": 1.84
+    },
+    {
+      "state_normalized": "Chhattisgarh",
+      "Total_Challans": 1083,
+      "Total_Amount": 6642700,
+      "Unique_Vehicles": 842,
+      "Paid_Status": 744,
+      "Unpaid_Status": 339,
+      "Paid_%": 68.7,
+      "Unpaid_%": 31.3,
+      "Challans_Per_Vehicle": 1.29
+    },
+    {
+      "state_normalized": "Andhra Pradesh",
+      "Total_Challans": 930,
+      "Total_Amount": 8185875,
+      "Unique_Vehicles": 729,
+      "Paid_Status": 707,
+      "Unpaid_Status": 223,
+      "Paid_%": 76.02,
+      "Unpaid_%": 23.98,
+      "Challans_Per_Vehicle": 1.28
+    },
+    {
+      "state_normalized": "Assam",
+      "Total_Challans": 808,
+      "Total_Amount": 2870600,
+      "Unique_Vehicles": 612,
+      "Paid_Status": 409,
+      "Unpaid_Status": 399,
+      "Paid_%": 50.62,
+      "Unpaid_%": 49.38,
+      "Challans_Per_Vehicle": 1.32
+    },
+    {
+      "state_normalized": "Chandigarh",
+      "Total_Challans": 446,
+      "Total_Amount": 719800,
+      "Unique_Vehicles": 282,
+      "Paid_Status": 274,
+      "Unpaid_Status": 172,
+      "Paid_%": 61.43,
+      "Unpaid_%": 38.57,
+      "Challans_Per_Vehicle": 1.58
+    },
+    {
+      "state_normalized": "Jharkhand",
+      "Total_Challans": 412,
+      "Total_Amount": 2693092,
+      "Unique_Vehicles": 381,
+      "Paid_Status": 205,
+      "Unpaid_Status": 207,
+      "Paid_%": 49.76,
+      "Unpaid_%": 50.24,
+      "Challans_Per_Vehicle": 1.08
+    },
+    {
+      "state_normalized": "Karnataka",
+      "Total_Challans": 351,
+      "Total_Amount": 188700,
+      "Unique_Vehicles": 315,
+      "Paid_Status": 200,
+      "Unpaid_Status": 151,
+      "Paid_%": 56.98,
+      "Unpaid_%": 43.02,
+      "Challans_Per_Vehicle": 1.11
+    },
+    {
+      "state_normalized": "Goa",
+      "Total_Challans": 333,
+      "Total_Amount": 156350,
+      "Unique_Vehicles": 255,
+      "Paid_Status": 293,
+      "Unpaid_Status": 40,
+      "Paid_%": 87.99,
+      "Unpaid_%": 12.01,
+      "Challans_Per_Vehicle": 1.31
+    },
+    {
+      "state_normalized": "Tripura",
+      "Total_Challans": 298,
+      "Total_Amount": 1164000,
+      "Unique_Vehicles": 97,
+      "Paid_Status": 294,
+      "Unpaid_Status": 4,
+      "Paid_%": 98.66,
+      "Unpaid_%": 1.34,
+      "Challans_Per_Vehicle": 3.07
+    },
+    {
+      "state_normalized": "Dadra and Nagar Haveli and Daman and Diu",
+      "Total_Challans": 62,
+      "Total_Amount": 188100,
+      "Unique_Vehicles": 61,
+      "Paid_Status": 57,
+      "Unpaid_Status": 5,
+      "Paid_%": 91.94,
+      "Unpaid_%": 8.06,
+      "Challans_Per_Vehicle": 1.02
+    },
+    {
+      "state_normalized": "Puducherry",
+      "Total_Challans": 45,
+      "Total_Amount": 29000,
+      "Unique_Vehicles": 34,
+      "Paid_Status": 27,
+      "Unpaid_Status": 18,
+      "Paid_%": 60.0,
+      "Unpaid_%": 40.0,
+      "Challans_Per_Vehicle": 1.32
+    },
+    {
+      "state_normalized": "ML",
+      "Total_Challans": 2,
+      "Total_Amount": 7000,
+      "Unique_Vehicles": 2,
+      "Paid_Status": 1,
+      "Unpaid_Status": 1,
+      "Paid_%": 50.0,
+      "Unpaid_%": 50.0,
+      "Challans_Per_Vehicle": 1.0
+    },
+    {
+      "state_normalized": "ARUNACHAL PRADESH",
+      "Total_Challans": 1,
+      "Total_Amount": 201992,
+      "Unique_Vehicles": 1,
+      "Paid_Status": 1,
+      "Unpaid_Status": 0,
+      "Paid_%": 100.0,
+      "Unpaid_%": 0.0,
+      "Challans_Per_Vehicle": 1.0
+    },
+    {
+      "state_normalized": "MN",
+      "Total_Challans": 1,
+      "Total_Amount": 500,
+      "Unique_Vehicles": 1,
+      "Paid_Status": 0,
+      "Unpaid_Status": 1,
+      "Paid_%": 0.0,
+      "Unpaid_%": 100.0,
+      "Challans_Per_Vehicle": 1.0
+    },
+    {
+      "state_normalized": "SK",
+      "Total_Challans": 1,
+      "Total_Amount": 500,
+      "Unique_Vehicles": 1,
+      "Paid_Status": 1,
+      "Unpaid_Status": 0,
+      "Paid_%": 100.0,
+      "Unpaid_%": 0.0,
+      "Challans_Per_Vehicle": 1.0
+    }
+  ],
+  "violations": [
+    {
+      "Violation_Clean": "Unknown",
+      "Total_Challans": 23059,
+      "Total_Amount": 110682798,
+      "Unique_Vehicles": 2658
+    },
+    {
+      "Violation_Clean": "Excess front/rear/height/sides or both sides projection of load beyond permissible limits",
+      "Total_Challans": 21741,
+      "Total_Amount": 110562800,
+      "Unique_Vehicles": 3120
+    },
+    {
+      "Violation_Clean": "Unauthorised alteration of a motor vehicle by owner, Unauthorised alteration of a motor vehicle by owner",
+      "Total_Challans": 20329,
+      "Total_Amount": 101181500,
+      "Unique_Vehicles": 2808
+    },
+    {
+      "Violation_Clean": "45. Lane change",
+      "Total_Challans": 15075,
+      "Total_Amount": 13058600,
+      "Unique_Vehicles": 7503
+    },
+    {
+      "Violation_Clean": "Overloading Offence",
+      "Total_Challans": 11821,
+      "Total_Amount": 35942900,
+      "Unique_Vehicles": 2300
+    },
+    {
+      "Violation_Clean": "violation of parking rules.",
+      "Total_Challans": 5683,
+      "Total_Amount": 3515729,
+      "Unique_Vehicles": 3563
+    },
+    {
+      "Violation_Clean": "Disobedience of any direction or obstruction of any function by a driver 179(1)          किसी चालक द्वारा किसी भी दिशा या किसी भी कार्य की रुकावट की अवज्ञा 179(1)",
+      "Total_Challans": 5354,
+      "Total_Amount": 2675500,
+      "Unique_Vehicles": 3201
+    },
+    {
+      "Violation_Clean": "Driver or passenger without seat belt, Using horn needlessly or continuously (Other than 2W/3W)",
+      "Total_Challans": 5286,
+      "Total_Amount": 10575000,
+      "Unique_Vehicles": 1789
+    },
+    {
+      "Violation_Clean": "Reflectors not fitted",
+      "Total_Challans": 5179,
+      "Total_Amount": 5224700,
+      "Unique_Vehicles": 2315
+    },
+    {
+      "Violation_Clean": "Contravention of rule 6 (pertaining to lane driving) of the MVDR, 2017  एमवीडीआर, 2017 के नियम 6 (लेन ड्राइविंग से संबंधित) का उल्लंघन (118/177A)",
+      "Total_Challans": 4729,
+      "Total_Amount": 2291200,
+      "Unique_Vehicles": 2649
+    },
+    {
+      "Violation_Clean": "190(1)A,177(A), Overloading Offence",
+      "Total_Challans": 4675,
+      "Total_Amount": 11690000,
+      "Unique_Vehicles": 1727
+    },
+    {
+      "Violation_Clean": "Custom offence 1",
+      "Total_Challans": 4203,
+      "Total_Amount": 7569190,
+      "Unique_Vehicles": 1998
+    },
+    {
+      "Violation_Clean": "parking in no parking zone (other than 2W/e-rick/3W) नो पार्किंग जोन में पार्किंग (2W / e-rick / 3W के अलावा)",
+      "Total_Challans": 3785,
+      "Total_Amount": 878150,
+      "Unique_Vehicles": 2888
+    },
+    {
+      "Violation_Clean": "Voilation of standards prescribed in relation to road safety, control of noise and air pollution (Medium/Heavy Transport Vehicle)",
+      "Total_Challans": 3289,
+      "Total_Amount": 6636400,
+      "Unique_Vehicles": 2046
+    },
+    {
+      "Violation_Clean": "49. Wrong parking",
+      "Total_Challans": 3286,
+      "Total_Amount": 2080850,
+      "Unique_Vehicles": 2647
+    }
+  ],
+  "aggregate_crosscheck": {
+    "monthly_total_challans_sum": 397631,
+    "state_total_challans_sum": 402547,
+    "violation_total_challans_sum": 137494,
+    "monthly_vs_state_difference": 4916,
+    "monthly_vs_violation_difference": -260137,
+    "state_vs_violation_difference": 265053,
+    "totals_reconcile": false
+  },
+  "row_level_challan_records_available": false,
+  "source_file": "Challan_Intelligence_Dashboard.html",
+  "note": "The embedded challan dashboard contains aggregated monthly/state/violation rows, not individual challan records. It does not support vehicle-specific pending challan number, offence, or amount lookup by itself. The aggregate totals do not reconcile across the three breakdowns; preserve as source-specific figures rather than choosing one as authoritative."
+}

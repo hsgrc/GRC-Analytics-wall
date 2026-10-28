@@ -1,0 +1,3906 @@
+```
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>GetRightCover Assistant</title>
+
+    <style>
+
+        :root {
+            --bg: #eef2f8;
+            --panel: rgba(255, 255, 255, 0.92);
+            --primary: #172033;
+            --primary-light: #33445f;
+            --text: #182033;
+            --muted: #7b8498;
+            --border: rgba(26, 38, 63, 0.08);
+            --bot: #f3f5f9;
+            --white: #ffffff;
+            --shadow: 0 25px 80px rgba(22, 33, 54, 0.12);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html,
+        body {
+            width: 100%;
+            height: 100%;
+        }
+
+        body {
+            min-height: 100vh;
+
+            padding: 20px;
+
+            font-family:
+                -apple-system,
+                BlinkMacSystemFont,
+                "SF Pro Display",
+                "SF Pro Text",
+                "Segoe UI",
+                sans-serif;
+
+            color: var(--text);
+
+            background:
+                radial-gradient(
+                    circle at 10% 10%,
+                    rgba(108, 130, 255, 0.13),
+                    transparent 28%
+                ),
+                radial-gradient(
+                    circle at 90% 85%,
+                    rgba(58, 199, 176, 0.12),
+                    transparent 28%
+                ),
+                linear-gradient(
+                    135deg,
+                    #f5f7fb 0%,
+                    #edf1f7 100%
+                );
+
+            overflow: hidden;
+        }
+
+        button,
+        textarea {
+            font: inherit;
+        }
+
+
+        /* =========================================================
+           BACKGROUND
+           ========================================================= */
+
+        body::before,
+        body::after {
+            content: "";
+
+            position: fixed;
+
+            width: 360px;
+            height: 360px;
+
+            border-radius: 50%;
+
+            filter: blur(95px);
+
+            opacity: 0.38;
+
+            pointer-events: none;
+
+            z-index: -1;
+        }
+
+        body::before {
+            top: -150px;
+            left: -120px;
+
+            background: rgba(105, 128, 255, 0.24);
+
+            animation:
+                floatingBlob 13s ease-in-out infinite;
+        }
+
+        body::after {
+            right: -150px;
+            bottom: -140px;
+
+            background: rgba(55, 199, 171, 0.18);
+
+            animation:
+                floatingBlob 16s ease-in-out infinite reverse;
+        }
+
+        @keyframes floatingBlob {
+
+            0%,
+            100% {
+                transform:
+                    translate(0, 0)
+                    scale(1);
+            }
+
+            50% {
+                transform:
+                    translate(35px, -25px)
+                    scale(1.12);
+            }
+        }
+
+
+        /* =========================================================
+           APP
+           ========================================================= */
+
+        .app {
+
+            width:
+                min(
+                    1180px,
+                    calc(100% - 20px)
+                );
+
+            height:
+                calc(100vh - 40px);
+
+            min-height: 650px;
+
+            margin: auto;
+
+            display: flex;
+
+            flex-direction: column;
+
+            overflow: hidden;
+
+            background:
+                var(--panel);
+
+            backdrop-filter: blur(22px);
+            -webkit-backdrop-filter: blur(22px);
+
+            border:
+                1px solid rgba(
+                    255,
+                    255,
+                    255,
+                    0.9
+                );
+
+            border-radius: 30px;
+
+            box-shadow: var(--shadow);
+
+            animation:
+                appAppear
+                0.65s
+                cubic-bezier(.2,.8,.2,1);
+        }
+
+        @keyframes appAppear {
+
+            from {
+                opacity: 0;
+
+                transform:
+                    translateY(18px)
+                    scale(0.985);
+            }
+
+            to {
+                opacity: 1;
+
+                transform:
+                    translateY(0)
+                    scale(1);
+            }
+        }
+
+
+        /* =========================================================
+           HEADER
+           ========================================================= */
+
+        header {
+
+            min-height: 86px;
+
+            padding:
+                0 28px;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: space-between;
+
+            gap: 18px;
+
+            background:
+                rgba(
+                    255,
+                    255,
+                    255,
+                    0.74
+                );
+
+            border-bottom:
+                1px solid var(--border);
+        }
+
+        .brand {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 14px;
+
+            min-width: 0;
+        }
+
+        .logo-wrap {
+
+            position: relative;
+
+            width: 48px;
+            height: 48px;
+
+            flex: 0 0 48px;
+        }
+
+        .logo-mark {
+
+            width: 48px;
+            height: 48px;
+
+            display: flex;
+
+            align-items: center;
+            justify-content: center;
+
+            border-radius: 16px;
+
+            color: #fff;
+
+            background:
+                linear-gradient(
+                    145deg,
+                    #172033,
+                    #3b4c6c
+                );
+
+            font-size: 14px;
+
+            font-weight: 850;
+
+            letter-spacing:
+                -0.6px;
+
+            box-shadow:
+                0 10px 25px
+                rgba(
+                    23,
+                    32,
+                    51,
+                    0.18
+                ),
+                inset 0 1px 0
+                rgba(
+                    255,
+                    255,
+                    255,
+                    0.12
+                );
+
+            animation:
+                logoFloat
+                5s ease-in-out
+                infinite;
+        }
+
+        @keyframes logoFloat {
+
+            0%,
+            100% {
+                transform:
+                    translateY(0);
+            }
+
+            50% {
+                transform:
+                    translateY(-2px);
+            }
+        }
+
+        .brand-text {
+
+            min-width: 0;
+        }
+
+        .brand-text h1 {
+
+            font-size: 18px;
+
+            line-height: 1.15;
+
+            letter-spacing:
+                -0.4px;
+
+            white-space:
+                nowrap;
+
+            overflow:
+                hidden;
+
+            text-overflow:
+                ellipsis;
+        }
+
+        .brand-text p {
+
+            margin-top: 5px;
+
+            color:
+                var(--muted);
+
+            font-size: 12px;
+        }
+
+
+        /* =========================================================
+           HEADER ACTIONS
+           ========================================================= */
+
+        .header-actions {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 9px;
+        }
+
+
+        /* =========================================================
+           LANGUAGE SELECTOR
+           ========================================================= */
+
+        .language-selector {
+
+            position: relative;
+        }
+
+        .language-btn {
+
+            height: 41px;
+
+            display: inline-flex;
+
+            align-items: center;
+
+            gap: 7px;
+
+            padding:
+                0 11px;
+
+            border:
+                1px solid #dde2eb;
+
+            border-radius: 13px;
+
+            background:
+                rgba(
+                    255,
+                    255,
+                    255,
+                    0.88
+                );
+
+            color:
+                #4c576b;
+
+            cursor: pointer;
+
+            font-size: 12px;
+
+            font-weight: 650;
+
+            transition:
+                transform .18s ease,
+                background .18s ease,
+                border-color .18s ease,
+                box-shadow .18s ease;
+        }
+
+        .language-btn:hover {
+
+            transform:
+                translateY(-1px);
+
+            background:
+                #ffffff;
+
+            border-color:
+                #cdd4df;
+
+            box-shadow:
+                0 8px 20px
+                rgba(
+                    20,
+                    30,
+                    50,
+                    .07
+                );
+        }
+
+        .language-btn svg {
+
+            width: 16px;
+            height: 16px;
+        }
+
+        .language-btn .chevron {
+
+            width: 13px;
+            height: 13px;
+
+            transition:
+                transform .2s ease;
+        }
+
+        .language-selector.open
+        .language-btn
+        .chevron {
+
+            transform:
+                rotate(180deg);
+        }
+
+
+        /* =========================================================
+           LANGUAGE MENU
+           ========================================================= */
+
+        .language-menu {
+
+            position: absolute;
+
+            top:
+                calc(100% + 9px);
+
+            right: 0;
+
+            width: 174px;
+
+            padding: 7px;
+
+            border:
+                1px solid #e4e8ef;
+
+            border-radius: 17px;
+
+            background:
+                rgba(
+                    255,
+                    255,
+                    255,
+                    0.98
+                );
+
+            backdrop-filter:
+                blur(20px);
+
+            -webkit-backdrop-filter:
+                blur(20px);
+
+            box-shadow:
+                0 20px 45px
+                rgba(
+                    20,
+                    30,
+                    50,
+                    .13
+                );
+
+            opacity: 0;
+
+            visibility:
+                hidden;
+
+            transform:
+                translateY(-7px)
+                scale(.97);
+
+            transform-origin:
+                top right;
+
+            transition:
+                opacity .18s ease,
+                transform .18s ease,
+                visibility .18s ease;
+
+            z-index: 1000;
+        }
+
+        .language-selector.open
+        .language-menu {
+
+            opacity: 1;
+
+            visibility:
+                visible;
+
+            transform:
+                translateY(0)
+                scale(1);
+        }
+
+        .language-option {
+
+            width: 100%;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content:
+                space-between;
+
+            padding:
+                10px 11px;
+
+            border: 0;
+
+            border-radius: 10px;
+
+            background:
+                transparent;
+
+            color:
+                #505a6d;
+
+            font-size:
+                12px;
+
+            font-weight:
+                550;
+
+            cursor: pointer;
+
+            transition:
+                background .15s ease,
+                color .15s ease;
+        }
+
+        .language-option:hover {
+
+            background:
+                #f2f4f8;
+
+            color:
+                var(--primary);
+        }
+
+        .language-option.active {
+
+            background:
+                var(--primary);
+
+            color:
+                #ffffff;
+        }
+
+        .language-check {
+
+            opacity: 0;
+
+            font-size:
+                12px;
+        }
+
+        .language-option.active
+        .language-check {
+
+            opacity: 1;
+        }
+
+
+        /* =========================================================
+           NEW CHAT
+           ========================================================= */
+
+        .new-chat-btn {
+
+            height: 41px;
+
+            display: inline-flex;
+
+            align-items: center;
+
+            gap: 7px;
+
+            padding:
+                0 13px;
+
+            border:
+                1px solid #dde2eb;
+
+            border-radius: 13px;
+
+            background:
+                rgba(
+                    255,
+                    255,
+                    255,
+                    .88
+                );
+
+            color:
+                #4d586d;
+
+            font-size:
+                12px;
+
+            font-weight:
+                650;
+
+            cursor:
+                pointer;
+
+            transition:
+                transform .18s ease,
+                background .18s ease,
+                border-color .18s ease;
+        }
+
+        .new-chat-btn:hover {
+
+            transform:
+                translateY(-1px);
+
+            background:
+                #ffffff;
+
+            border-color:
+                #cdd4df;
+        }
+
+        .new-chat-btn svg {
+
+            width: 15px;
+            height: 15px;
+        }
+
+
+        /* =========================================================
+           MESSAGES
+           ========================================================= */
+
+        #messages {
+
+            flex: 1;
+
+            overflow-y:
+                auto;
+
+            padding:
+                28px 34px 24px;
+
+            scroll-behavior:
+                smooth;
+        }
+
+        #messages::-webkit-scrollbar {
+
+            width: 7px;
+        }
+
+        #messages::-webkit-scrollbar-track {
+
+            background:
+                transparent;
+        }
+
+        #messages::-webkit-scrollbar-thumb {
+
+            background:
+                #d5dae4;
+
+            border-radius:
+                20px;
+        }
+
+
+        /* =========================================================
+           WELCOME
+           ========================================================= */
+
+        .welcome {
+
+            max-width:
+                760px;
+
+            margin:
+                7vh auto 30px;
+
+            text-align:
+                center;
+
+            animation:
+                welcomeIn
+                .75s
+                cubic-bezier(.2,.8,.2,1);
+        }
+
+        @keyframes welcomeIn {
+
+            from {
+
+                opacity: 0;
+
+                transform:
+                    translateY(22px);
+            }
+
+            to {
+
+                opacity: 1;
+
+                transform:
+                    translateY(0);
+            }
+        }
+
+        .welcome-logo {
+
+            position:
+                relative;
+
+            width:
+                78px;
+
+            height:
+                78px;
+
+            margin:
+                0 auto 22px;
+
+            display:
+                flex;
+
+            align-items:
+                center;
+
+            justify-content:
+                center;
+
+            border-radius:
+                26px;
+
+            color:
+                #ffffff;
+
+            background:
+                linear-gradient(
+                    145deg,
+                    #172033,
+                    #3b4c6c
+                );
+
+            font-size:
+                21px;
+
+            font-weight:
+                850;
+
+            letter-spacing:
+                -1px;
+
+            box-shadow:
+                0 18px 40px
+                rgba(
+                    23,
+                    32,
+                    51,
+                    .18
+                );
+        }
+
+        .welcome-logo::after {
+
+            content:
+                "";
+
+            position:
+                absolute;
+
+            inset:
+                -8px;
+
+            border-radius:
+                32px;
+
+            border:
+                1px solid
+                rgba(
+                    23,
+                    32,
+                    51,
+                    .07
+                );
+
+            animation:
+                welcomeRing
+                3s ease-in-out
+                infinite;
+        }
+
+        @keyframes welcomeRing {
+
+            0%,
+            100% {
+
+                transform:
+                    scale(.98);
+
+                opacity:
+                    .45;
+            }
+
+            50% {
+
+                transform:
+                    scale(1.06);
+
+                opacity:
+                    1;
+            }
+        }
+
+        .welcome h2 {
+
+            font-size:
+                clamp(
+                    28px,
+                    5vw,
+                    40px
+                );
+
+            line-height:
+                1.08;
+
+            letter-spacing:
+                -1.7px;
+        }
+
+        .welcome p {
+
+            max-width:
+                600px;
+
+            margin:
+                14px auto 0;
+
+            color:
+                var(--muted);
+
+            font-size:
+                14px;
+
+            line-height:
+                1.7;
+        }
+
+
+        /* =========================================================
+           SUGGESTIONS
+           ========================================================= */
+
+        .suggestions {
+
+            display:
+                grid;
+
+            grid-template-columns:
+                repeat(
+                    2,
+                    minmax(0, 1fr)
+                );
+
+            gap:
+                12px;
+
+            max-width:
+                680px;
+
+            margin:
+                28px auto 0;
+        }
+
+        .suggestion {
+
+            display:
+                flex;
+
+            align-items:
+                center;
+
+            justify-content:
+                space-between;
+
+            gap:
+                10px;
+
+            padding:
+                14px 16px;
+
+            text-align:
+                left;
+
+            border:
+                1px solid #e1e5ed;
+
+            border-radius:
+                16px;
+
+            background:
+                rgba(
+                    255,
+                    255,
+                    255,
+                    .82
+                );
+
+            color:
+                #4e596c;
+
+            font-size:
+                12.5px;
+
+            font-weight:
+                600;
+
+            cursor:
+                pointer;
+
+            transition:
+                transform .2s ease,
+                border-color .2s ease,
+                box-shadow .2s ease,
+                background .2s ease;
+        }
+
+        .suggestion:hover {
+
+            transform:
+                translateY(-3px);
+
+            background:
+                #ffffff;
+
+            border-color:
+                #d0d6e1;
+
+            box-shadow:
+                0 12px 24px
+                rgba(
+                    20,
+                    30,
+                    50,
+                    .07
+                );
+        }
+
+        .suggestion svg {
+
+            width:
+                16px;
+
+            height:
+                16px;
+
+            flex:
+                0 0 auto;
+
+            color:
+                #9aa2b1;
+
+            transition:
+                transform .2s ease;
+        }
+
+        .suggestion:hover svg {
+
+            transform:
+                translateX(3px);
+        }
+
+
+        /* =========================================================
+           MESSAGE ROW
+           ========================================================= */
+
+        .message-row {
+
+            width:
+                min(
+                    860px,
+                    100%
+                );
+
+            margin:
+                0 auto 18px;
+
+            display:
+                flex;
+
+            gap:
+                11px;
+
+            align-items:
+                flex-end;
+
+            animation:
+                messageIn
+                .3s
+                cubic-bezier(.2,.8,.2,1);
+        }
+
+        @keyframes messageIn {
+
+            from {
+
+                opacity:
+                    0;
+
+                transform:
+                    translateY(9px);
+            }
+
+            to {
+
+                opacity:
+                    1;
+
+                transform:
+                    translateY(0);
+            }
+        }
+
+        .user-row {
+
+            justify-content:
+                flex-end;
+        }
+
+
+        /* =========================================================
+           AVATAR
+           ========================================================= */
+
+        .avatar {
+
+            width:
+                34px;
+
+            height:
+                34px;
+
+            flex:
+                0 0 34px;
+
+            display:
+                flex;
+
+            align-items:
+                center;
+
+            justify-content:
+                center;
+
+            border-radius:
+                12px;
+
+            color:
+                #ffffff;
+
+            background:
+                linear-gradient(
+                    145deg,
+                    #172033,
+                    #394b6e
+                );
+
+            font-size:
+                9px;
+
+            font-weight:
+                850;
+
+            box-shadow:
+                0 8px 18px
+                rgba(
+                    23,
+                    32,
+                    51,
+                    .14
+                );
+        }
+
+
+        /* =========================================================
+           BUBBLES
+           ========================================================= */
+
+        .bubble-wrap {
+
+            max-width:
+                min(
+                    78%,
+                    710px
+                );
+        }
+
+        .bubble {
+
+            padding:
+                13px 16px;
+
+            border-radius:
+                18px;
+
+            font-size:
+                14px;
+
+            line-height:
+                1.62;
+
+            white-space:
+                pre-wrap;
+
+            overflow-wrap:
+                anywhere;
+        }
+
+        .bot-bubble {
+
+            background:
+                var(--bot);
+
+            border:
+                1px solid #e9ecf2;
+
+            border-bottom-left-radius:
+                6px;
+        }
+
+        .user-bubble {
+
+            color:
+                #ffffff;
+
+            background:
+                linear-gradient(
+                    145deg,
+                    #172033,
+                    #2c3953
+                );
+
+            border-bottom-right-radius:
+                6px;
+
+            box-shadow:
+                0 8px 18px
+                rgba(
+                    23,
+                    32,
+                    51,
+                    .1
+                );
+        }
+
+        .meta {
+
+            margin-top:
+                5px;
+
+            padding:
+                0 3px;
+
+            color:
+                #a1a8b6;
+
+            font-size:
+                10px;
+        }
+
+        .user-row .meta {
+
+            text-align:
+                right;
+        }
+
+
+        /* =========================================================
+           TYPING
+           ========================================================= */
+
+        .typing-row {
+
+            width:
+                min(
+                    860px,
+                    100%
+                );
+
+            margin:
+                0 auto 18px;
+
+            display:
+                flex;
+
+            align-items:
+                flex-end;
+
+            gap:
+                11px;
+
+            animation:
+                messageIn
+                .25s
+                ease;
+        }
+
+        .typing-bubble {
+
+            display:
+                flex;
+
+            align-items:
+                center;
+
+            gap:
+                5px;
+
+            padding:
+                14px 16px;
+
+            border-radius:
+                18px;
+
+            border-bottom-left-radius:
+                6px;
+
+            background:
+                var(--bot);
+
+            border:
+                1px solid #e9ecf2;
+        }
+
+        .typing-dot {
+
+            width:
+                6px;
+
+            height:
+                6px;
+
+            border-radius:
+                50%;
+
+            background:
+                #9aa2b2;
+
+            animation:
+                typingBounce
+                1.2s
+                infinite
+                ease-in-out;
+        }
+
+        .typing-dot:nth-child(2) {
+
+            animation-delay:
+                .15s;
+        }
+
+        .typing-dot:nth-child(3) {
+
+            animation-delay:
+                .30s;
+        }
+
+        @keyframes typingBounce {
+
+            0%,
+            60%,
+            100% {
+
+                transform:
+                    translateY(0);
+
+                opacity:
+                    .35;
+            }
+
+            30% {
+
+                transform:
+                    translateY(-4px);
+
+                opacity:
+                    1;
+            }
+        }
+
+
+        /* =========================================================
+           COMPOSER
+           ========================================================= */
+
+        .composer-area {
+
+            padding:
+                15px 24px 19px;
+
+            border-top:
+                1px solid var(--border);
+
+            background:
+                rgba(
+                    255,
+                    255,
+                    255,
+                    .77
+                );
+        }
+
+        .composer {
+
+            width:
+                min(
+                    920px,
+                    100%
+                );
+
+            margin:
+                0 auto;
+
+            display:
+                flex;
+
+            align-items:
+                flex-end;
+
+            gap:
+                10px;
+        }
+
+        .input-shell {
+
+            flex:
+                1;
+        }
+
+        textarea {
+
+            display:
+                block;
+
+            width:
+                100%;
+
+            min-height:
+                56px;
+
+            max-height:
+                150px;
+
+            resize:
+                none;
+
+            padding:
+                17px 18px;
+
+            border:
+                1px solid #dce1ea;
+
+            border-radius:
+                17px;
+
+            outline:
+                none;
+
+            background:
+                rgba(
+                    255,
+                    255,
+                    255,
+                    .96
+                );
+
+            color:
+                var(--text);
+
+            font-family:
+                inherit;
+
+            font-size:
+                14px;
+
+            line-height:
+                1.45;
+
+            box-shadow:
+                0 5px 18px
+                rgba(
+                    24,
+                    32,
+                    50,
+                    .03
+                );
+
+            transition:
+                border-color .2s ease,
+                box-shadow .2s ease;
+        }
+
+        textarea::placeholder {
+
+            color:
+                #9aa1b0;
+        }
+
+        textarea:focus {
+
+            border-color:
+                #adb6c5;
+
+            box-shadow:
+                0 8px 28px
+                rgba(
+                    24,
+                    32,
+                    50,
+                    .08
+                );
+        }
+
+        .send-btn {
+
+            width:
+                56px;
+
+            height:
+                56px;
+
+            flex:
+                0 0 56px;
+
+            display:
+                flex;
+
+            align-items:
+                center;
+
+            justify-content:
+                center;
+
+            border:
+                0;
+
+            border-radius:
+                17px;
+
+            color:
+                #ffffff;
+
+            background:
+                linear-gradient(
+                    145deg,
+                    #172033,
+                    #32415e
+                );
+
+            cursor:
+                pointer;
+
+            box-shadow:
+                0 10px 24px
+                rgba(
+                    23,
+                    32,
+                    51,
+                    .18
+                );
+
+            transition:
+                transform .18s ease,
+                box-shadow .18s ease,
+                opacity .18s ease;
+        }
+
+        .send-btn:hover {
+
+            transform:
+                translateY(-2px);
+
+            box-shadow:
+                0 14px 28px
+                rgba(
+                    23,
+                    32,
+                    51,
+                    .23
+                );
+        }
+
+        .send-btn:active {
+
+            transform:
+                scale(.97);
+        }
+
+        .send-btn:disabled {
+
+            opacity:
+                .55;
+
+            cursor:
+                not-allowed;
+        }
+
+        .send-btn svg {
+
+            width:
+                20px;
+
+            height:
+                20px;
+        }
+
+        .footnote {
+
+            margin-top:
+                9px;
+
+            text-align:
+                center;
+
+            color:
+                #a3aab8;
+
+            font-size:
+                10px;
+        }
+
+
+        .hidden {
+
+            display:
+                none !important;
+        }
+
+
+        /* =========================================================
+           MOBILE
+           ========================================================= */
+
+        @media (
+            max-width: 720px
+        ) {
+
+            body {
+
+                padding:
+                    0;
+            }
+
+            .app {
+
+                width:
+                    100%;
+
+                height:
+                    100vh;
+
+                min-height:
+                    100vh;
+
+                margin:
+                    0;
+
+                border-radius:
+                    0;
+
+                border:
+                    0;
+            }
+
+            header {
+
+                min-height:
+                    76px;
+
+                padding:
+                    0 14px;
+
+                gap:
+                    8px;
+            }
+
+            .brand {
+
+                gap:
+                    10px;
+
+                min-width:
+                    0;
+            }
+
+            .logo-wrap,
+            .logo-mark {
+
+                width:
+                    43px;
+
+                height:
+                    43px;
+            }
+
+            .brand-text h1 {
+
+                font-size:
+                    16px;
+            }
+
+            .brand-text p {
+
+                display:
+                    none;
+            }
+
+            .header-actions {
+
+                gap:
+                    6px;
+            }
+
+            .new-chat-btn {
+
+                padding:
+                    0 10px;
+            }
+
+            .new-chat-btn svg {
+
+                width:
+                    14px;
+
+                height:
+                    14px;
+            }
+
+            .new-chat-btn {
+
+                font-size:
+                    0;
+            }
+
+            .new-chat-btn svg {
+
+                margin:
+                    0;
+            }
+
+            .language-btn {
+
+                width:
+                    41px;
+
+                padding:
+                    0;
+
+                justify-content:
+                    center;
+            }
+
+            .language-btn span {
+
+                display:
+                    none;
+            }
+
+            .language-menu {
+
+                right:
+                    -5px;
+            }
+
+            #messages {
+
+                padding:
+                    22px 14px 16px;
+            }
+
+            .welcome {
+
+                margin-top:
+                    6vh;
+            }
+
+            .welcome-logo {
+
+                width:
+                    68px;
+
+                height:
+                    68px;
+
+                border-radius:
+                    22px;
+            }
+
+            .welcome h2 {
+
+                font-size:
+                    29px;
+            }
+
+            .welcome p {
+
+                padding:
+                    0 8px;
+
+                font-size:
+                    13px;
+            }
+
+            .suggestions {
+
+                grid-template-columns:
+                    1fr;
+
+                margin-top:
+                    22px;
+            }
+
+            .bubble-wrap {
+
+                max-width:
+                    86%;
+            }
+
+            .bubble {
+
+                font-size:
+                    13.5px;
+            }
+
+            .composer-area {
+
+                padding:
+                    10px 12px 14px;
+            }
+
+            .send-btn {
+
+                width:
+                    54px;
+
+                height:
+                    54px;
+
+                flex-basis:
+                    54px;
+            }
+
+            textarea {
+
+                min-height:
+                    54px;
+            }
+        }
+
+
+        @media (
+            prefers-reduced-motion: reduce
+        ) {
+
+            *,
+            *::before,
+            *::after {
+
+                animation-duration:
+                    .01ms !important;
+
+                animation-iteration-count:
+                    1 !important;
+
+                transition-duration:
+                    .01ms !important;
+
+                scroll-behavior:
+                    auto !important;
+            }
+        }
+
+    
+
+        /* =========================================================
+           GRC LIVE — LOCAL VOICE UI
+           ========================================================= */
+
+        .grc-live-btn {
+            height: 41px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 0 14px;
+            border: 1px solid rgba(23,32,51,.10);
+            border-radius: 13px;
+            color: #fff;
+            background: linear-gradient(145deg, #172033, #405477);
+            font-size: 12px;
+            font-weight: 750;
+            cursor: pointer;
+            box-shadow: 0 8px 22px rgba(23,32,51,.16);
+            transition: transform .18s ease, box-shadow .18s ease, filter .18s ease;
+        }
+
+        .grc-live-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 12px 26px rgba(23,32,51,.21);
+            filter: brightness(1.04);
+        }
+
+        .grc-live-btn:active {
+            transform: scale(.98);
+        }
+
+        .grc-live-btn .live-dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: #55e6b1;
+            box-shadow: 0 0 0 0 rgba(85,230,177,.45);
+        }
+
+        .grc-live-btn.live-active .live-dot {
+            animation: grcLivePulse 1.7s infinite;
+        }
+
+        @keyframes grcLivePulse {
+            0%   { box-shadow: 0 0 0 0 rgba(85,230,177,.48); }
+            70%  { box-shadow: 0 0 0 8px rgba(85,230,177,0); }
+            100% { box-shadow: 0 0 0 0 rgba(85,230,177,0); }
+        }
+
+        .grc-live-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 5000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            background: rgba(14,21,35,.58);
+            backdrop-filter: blur(18px);
+            -webkit-backdrop-filter: blur(18px);
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+            transition: opacity .22s ease, visibility .22s ease;
+        }
+
+        .grc-live-overlay.active {
+            opacity: 1;
+            visibility: visible;
+            pointer-events: auto;
+        }
+
+        .grc-live-card {
+            width: min(470px, 100%);
+            padding: 30px 24px 24px;
+            border-radius: 30px;
+            background: rgba(255,255,255,.96);
+            border: 1px solid rgba(255,255,255,.9);
+            box-shadow: 0 35px 100px rgba(10,18,35,.25);
+            text-align: center;
+            transform: translateY(16px) scale(.97);
+            transition: transform .28s cubic-bezier(.2,.8,.2,1);
+        }
+
+        .grc-live-overlay.active .grc-live-card {
+            transform: translateY(0) scale(1);
+        }
+
+        .grc-live-orb {
+            position: relative;
+            width: 138px;
+            height: 138px;
+            margin: 2px auto 22px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background: radial-gradient(circle at 34% 28%, #7c90ff, #35486f 60%, #172033 100%);
+            box-shadow: 0 24px 60px rgba(42,59,101,.26);
+        }
+
+        .grc-live-orb::before,
+        .grc-live-orb::after {
+            content: "";
+            position: absolute;
+            border-radius: 50%;
+            border: 1px solid rgba(100,120,165,.22);
+            animation: grcLiveRing 2.4s ease-out infinite;
+        }
+
+        .grc-live-orb::before { inset: -10px; }
+        .grc-live-orb::after { inset: -23px; animation-delay: .75s; }
+
+        .grc-live-card.listening .grc-live-orb {
+            animation: grcLiveFloat 2.8s ease-in-out infinite;
+        }
+
+        .grc-live-card.speaking .grc-live-orb {
+            animation: grcLiveSpeak 1.05s ease-in-out infinite;
+        }
+
+        @keyframes grcLiveFloat {
+            0%,100% { transform: translateY(0) scale(1); }
+            50% { transform: translateY(-5px) scale(1.03); }
+        }
+
+        @keyframes grcLiveSpeak {
+            0%,100% { transform: scale(1); }
+            50% { transform: scale(1.055); }
+        }
+
+        @keyframes grcLiveRing {
+            0% { opacity: .72; transform: scale(.88); }
+            100% { opacity: 0; transform: scale(1.18); }
+        }
+
+        .grc-live-orb svg {
+            width: 44px;
+            height: 44px;
+            color: #fff;
+            position: relative;
+            z-index: 2;
+        }
+
+        .grc-live-title {
+            font-size: 27px;
+            line-height: 1.1;
+            letter-spacing: -1px;
+        }
+
+        .grc-live-status {
+            margin-top: 8px;
+            min-height: 20px;
+            color: var(--muted);
+            font-size: 13px;
+        }
+
+        .grc-live-transcript {
+            min-height: 82px;
+            max-height: 150px;
+            margin-top: 20px;
+            padding: 14px 15px;
+            overflow-y: auto;
+            border-radius: 16px;
+            background: #f4f6fa;
+            color: #596476;
+            text-align: left;
+            font-size: 13px;
+            line-height: 1.58;
+        }
+
+        .grc-live-controls {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            margin-top: 21px;
+        }
+
+        .grc-live-control {
+            width: 56px;
+            height: 56px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 0;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: transform .18s ease, box-shadow .18s ease, background .18s ease;
+        }
+
+        .grc-live-control:hover { transform: translateY(-2px); }
+
+        .grc-live-control svg { width: 21px; height: 21px; }
+
+        .grc-live-mic {
+            background: #eef1f6;
+            color: #253149;
+        }
+
+        .grc-live-mic.recording {
+            background: #172033;
+            color: #fff;
+            box-shadow: 0 9px 25px rgba(23,32,51,.22);
+        }
+
+        .grc-live-end {
+            background: #172033;
+            color: #fff;
+            box-shadow: 0 9px 25px rgba(23,32,51,.22);
+        }
+
+        .grc-live-note {
+            margin-top: 14px;
+            color: #9da5b4;
+            font-size: 10px;
+        }
+
+        @media (max-width: 720px) {
+            .grc-live-btn {
+                width: 41px;
+                padding: 0;
+            }
+
+            .grc-live-btn .live-label { display: none; }
+        }
+
+    </style>
+</head>
+
+
+<body>
+
+
+<div class="app">
+
+
+    <!-- =========================================================
+         HEADER
+         ========================================================= -->
+
+    <header>
+
+
+        <div class="brand">
+
+            <div class="logo-wrap">
+
+                <div class="logo-mark">
+                    GRC
+                </div>
+
+            </div>
+
+
+            <div class="brand-text">
+
+                <h1>
+                    GetRightCover Assistant
+                </h1>
+
+                <p>
+                    Your membership & vehicle services assistant
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <!-- HEADER ACTIONS -->
+
+        <div class="header-actions">
+
+
+            <!-- =================================================
+                 LANGUAGE
+                 ================================================= -->
+
+            <div
+                class="language-selector"
+                id="languageSelector"
+            >
+
+                <button
+                    class="language-btn"
+                    id="languageBtn"
+                    type="button"
+                    aria-label="Select language"
+                    aria-expanded="false"
+                >
+
+                    <svg
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="1.9"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                    >
+                        <circle
+                            cx="12"
+                            cy="12"
+                            r="9"
+                        ></circle>
+
+                        <line
+                            x1="3"
+                            y1="12"
+                            x2="21"
+                            y2="12"
+                        ></line>
+
+                        <path
+                            d="M12 3a14 14 0 0 1 0 18"
+                        ></path>
+
+                        <path
+                            d="M12 3a14 14 0 0 0 0 18"
+                        ></path>
+                    </svg>
+
+
+                    <span
+                        id="selectedLanguage"
+                    >
+                        English
+                    </span>
+
+
+                    <svg
+                        class="chevron"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                    >
+                        <path
+                            d="m6 9 6 6 6-6"
+                        ></path>
+                    </svg>
+
+                </button>
+
+
+                <div
+                    class="language-menu"
+                    id="languageMenu"
+                >
+
+                    <button
+                        class="language-option"
+                        data-language="English"
+                        type="button"
+                    >
+                        <span>English</span>
+                        <span class="language-check">✓</span>
+                    </button>
+
+                    <button
+                        class="language-option"
+                        data-language="Hindi"
+                        type="button"
+                    >
+                        <span>हिन्दी</span>
+                        <span class="language-check">✓</span>
+                    </button>
+
+                    <button
+                        class="language-option"
+                        data-language="Hinglish"
+                        type="button"
+                    >
+                        <span>Hinglish</span>
+                        <span class="language-check">✓</span>
+                    </button>
+
+                    <button
+                        class="language-option"
+                        data-language="Marathi"
+                        type="button"
+                    >
+                        <span>मराठी</span>
+                        <span class="language-check">✓</span>
+                    </button>
+
+                    <button
+                        class="language-option"
+                        data-language="Gujarati"
+                        type="button"
+                    >
+                        <span>ગુજરાતી</span>
+                        <span class="language-check">✓</span>
+                    </button>
+
+                    <button
+                        class="language-option"
+                        data-language="Punjabi"
+                        type="button"
+                    >
+                        <span>ਪੰਜਾਬੀ</span>
+                        <span class="language-check">✓</span>
+                    </button>
+
+                    <button
+                        class="language-option"
+                        data-language="Bengali"
+                        type="button"
+                    >
+                        <span>বাংলা</span>
+                        <span class="language-check">✓</span>
+                    </button>
+
+                    <button
+                        class="language-option"
+                        data-language="Tamil"
+                        type="button"
+                    >
+                        <span>தமிழ்</span>
+                        <span class="language-check">✓</span>
+                    </button>
+
+                    <button
+                        class="language-option"
+                        data-language="Telugu"
+                        type="button"
+                    >
+                        <span>తెలుగు</span>
+                        <span class="language-check">✓</span>
+                    </button>
+
+                </div>
+
+            </div>
+
+
+            <!-- =================================================
+                 GRC LIVE
+                 ================================================= -->
+
+            
+
+            <!-- =================================================
+                 NEW CHAT
+                 ================================================= -->
+
+            <button
+                class="new-chat-btn"
+                id="newChat"
+                type="button"
+                aria-label="Start a new chat"
+            >
+
+                <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                >
+                    <path
+                        d="M12 5v14"
+                    ></path>
+
+                    <path
+                        d="M5 12h14"
+                    ></path>
+                </svg>
+
+                <span>
+                    New chat
+                </span>
+
+            </button>
+
+        </div>
+
+    </header>
+
+
+    <!-- =========================================================
+         CHAT AREA
+         ========================================================= -->
+
+    <main id="messages">
+
+
+        <!-- =====================================================
+             WELCOME
+             ===================================================== -->
+
+        <section
+            class="welcome"
+            id="welcome"
+        >
+
+            <div
+                class="welcome-logo"
+            >
+                GRC
+            </div>
+
+
+            <h2>
+                How can I help you?
+            </h2>
+
+
+            <p>
+                Ask me about GetRightCover memberships,
+                benefits, pricing, renewal, challans,
+                or vehicle-related services.
+            </p>
+
+
+            <div
+                class="suggestions"
+            >
+
+
+                <button
+                    class="suggestion"
+                    type="button"
+                    data-question="What membership plans are available?"
+                >
+
+                    <span>
+                        What membership plans are available?
+                    </span>
+
+                    <svg
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                    >
+                        <path
+                            d="M5 12h14"
+                        ></path>
+
+                        <path
+                            d="m13 6 6 6-6 6"
+                        ></path>
+
+                    </svg>
+
+                </button>
+
+
+                <button
+                    class="suggestion"
+                    type="button"
+                    data-question="Tell me about membership benefits"
+                >
+
+                    <span>
+                        Tell me about membership benefits
+                    </span>
+
+                    <svg
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                    >
+                        <path
+                            d="M5 12h14"
+                        ></path>
+
+                        <path
+                            d="m13 6 6 6-6 6"
+                        ></path>
+
+                    </svg>
+
+                </button>
+
+
+                <button
+                    class="suggestion"
+                    type="button"
+                    data-question="How does renewal work?"
+                >
+
+                    <span>
+                        How does renewal work?
+                    </span>
+
+                    <svg
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                    >
+                        <path
+                            d="M5 12h14"
+                        ></path>
+
+                        <path
+                            d="m13 6 6 6-6 6"
+                        ></path>
+
+                    </svg>
+
+                </button>
+
+
+                <button
+                    class="suggestion"
+                    type="button"
+                    data-question="How can I contact GetRightCover?"
+                >
+
+                    <span>
+                        How can I contact GetRightCover?
+                    </span>
+
+                    <svg
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                    >
+                        <path
+                            d="M5 12h14"
+                        ></path>
+
+                        <path
+                            d="m13 6 6 6-6 6"
+                        ></path>
+
+                    </svg>
+
+                </button>
+
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <!-- =========================================================
+         COMPOSER
+         ========================================================= -->
+
+    <div
+        class="composer-area"
+    >
+
+        <form
+            class="composer"
+            id="chatForm"
+        >
+
+            <div
+                class="input-shell"
+            >
+
+                <textarea
+                    id="input"
+                    rows="1"
+                    placeholder="Ask something about GetRightCover..."
+                    autocomplete="off"
+                ></textarea>
+
+            </div>
+
+
+            <button
+                class="send-btn"
+                id="send"
+                type="submit"
+                aria-label="Send message"
+            >
+
+                <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2.2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                >
+
+                    <path
+                        d="M22 2 11 13"
+                    ></path>
+
+                    <path
+                        d="m22 2-7 20-4-9-9-4Z"
+                    ></path>
+
+                </svg>
+
+            </button>
+
+        </form>
+
+
+        <div
+            class="footnote"
+        >
+            GetRightCover Assistant
+        </div>
+
+    </div>
+
+
+    <!-- =========================================================
+         GRC LIVE — LOCAL VOICE OVERLAY
+         ========================================================= -->
+
+    <div
+        class="grc-live-overlay"
+        id="grcLiveOverlay"
+        aria-hidden="true"
+    >
+
+        <div
+            class="grc-live-card"
+            id="grcLiveCard"
+        >
+
+            <div class="grc-live-orb" id="grcLiveOrb">
+                <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1.9"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                >
+                    <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path>
+                    <path d="M19 10v2a7 7 0 0 1-14 0v-2"></path>
+                    <path d="M12 19v4"></path>
+                    <path d="M8 23h8"></path>
+                </svg>
+            </div>
+
+            <h3 class="grc-live-title">GRC Live</h3>
+
+            <div class="grc-live-status" id="grcLiveStatus">
+                Ready to talk
+            </div>
+
+            <div class="grc-live-transcript" id="grcLiveTranscript">
+                Tap the microphone and start speaking.
+            </div>
+
+            <div class="grc-live-controls">
+
+                <button
+                    type="button"
+                    class="grc-live-control grc-live-mic"
+                    id="grcLiveMic"
+                    aria-label="Start recording"
+                    title="Start recording"
+                >
+                    <svg
+                        id="grcLiveMicIcon"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                    >
+                        <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path>
+                        <path d="M19 10v2a7 7 0 0 1-14 0v-2"></path>
+                        <path d="M12 19v4"></path>
+                        <path d="M8 23h8"></path>
+                    </svg>
+                </button>
+
+                <button
+                    type="button"
+                    class="grc-live-control grc-live-end"
+                    id="grcLiveEnd"
+                    aria-label="End GRC Live"
+                    title="End call"
+                >
+                    <svg
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                    >
+                        <path d="M6.5 4.5 17.5 19.5"></path>
+                        <path d="M17.5 4.5 6.5 19.5"></path>
+                    </svg>
+                </button>
+
+            </div>
+
+            <div class="grc-live-note">
+                Local voice mode • Whisper + Qwen + Piper
+            </div>
+
+        </div>
+
+    </div>
+
+
+</div>
+
+
+<script>
+
+
+    /* =========================================================
+       ELEMENTS
+       ========================================================= */
+
+    const messages =
+        document.getElementById(
+            "messages"
+        );
+
+    const welcome =
+        document.getElementById(
+            "welcome"
+        );
+
+    const form =
+        document.getElementById(
+            "chatForm"
+        );
+
+    const input =
+        document.getElementById(
+            "input"
+        );
+
+    const send =
+        document.getElementById(
+            "send"
+        );
+
+    const newChat =
+        document.getElementById(
+            "newChat"
+        );
+
+
+    /* =========================================================
+       LANGUAGE
+       ========================================================= */
+
+    const languageSelector =
+        document.getElementById(
+            "languageSelector"
+        );
+
+    const languageBtn =
+        document.getElementById(
+            "languageBtn"
+        );
+
+    const languageMenu =
+        document.getElementById(
+            "languageMenu"
+        );
+
+    const selectedLanguage =
+        document.getElementById(
+            "selectedLanguage"
+        );
+
+
+    let currentLanguage =
+        localStorage.getItem(
+            "grc_selected_language"
+        ) || "English";
+
+
+
+    /* =========================================================
+       GRC LIVE — LOCAL VOICE
+       ========================================================= */
+
+    const grcLiveBtn =
+        document.getElementById("grcLiveBtn");
+
+    const grcLiveOverlay =
+        document.getElementById("grcLiveOverlay");
+
+    const grcLiveCard =
+        document.getElementById("grcLiveCard");
+
+    const grcLiveStatus =
+        document.getElementById("grcLiveStatus");
+
+    const grcLiveTranscript =
+        document.getElementById("grcLiveTranscript");
+
+    const grcLiveMic =
+        document.getElementById("grcLiveMic");
+
+    const grcLiveEnd =
+        document.getElementById("grcLiveEnd");
+
+    const grcLiveMicIcon =
+        document.getElementById("grcLiveMicIcon");
+
+
+    let grcLiveStream = null;
+    let grcLiveRecorder = null;
+    let grcLiveChunks = [];
+    let grcLiveActive = false;
+    let grcLiveRecording = false;
+    let grcLiveMimeType = "";
+
+
+    function setGrcLiveStatus(text, state = "idle") {
+
+        grcLiveStatus.textContent = text;
+
+        grcLiveCard.classList.remove(
+            "listening",
+            "speaking"
+        );
+
+        if (state === "listening") {
+            grcLiveCard.classList.add("listening");
+        }
+
+        if (state === "speaking") {
+            grcLiveCard.classList.add("speaking");
+        }
+    }
+
+
+    function resetGrcLiveMicIcon() {
+
+        grcLiveMicIcon.innerHTML = `
+            <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path>
+            <path d="M19 10v2a7 7 0 0 1-14 0v-2"></path>
+            <path d="M12 19v4"></path>
+            <path d="M8 23h8"></path>
+        `;
+    }
+
+
+    function chooseRecorderMimeType() {
+
+        const candidates = [
+            "audio/mp4",
+            "audio/webm;codecs=opus",
+            "audio/webm",
+            "audio/ogg;codecs=opus"
+        ];
+
+        for (const type of candidates) {
+
+            if (
+                window.MediaRecorder &&
+                MediaRecorder.isTypeSupported &&
+                MediaRecorder.isTypeSupported(type)
+            ) {
+                return type;
+            }
+        }
+
+        return "";
+    }
+
+
+    async function startGrcLive() {
+
+        if (grcLiveActive) {
+            return;
+        }
+
+        if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+
+            setGrcLiveStatus(
+                "Microphone access is not supported in this browser."
+            );
+
+            return;
+        }
+
+        try {
+
+            grcLiveStream =
+                await navigator.mediaDevices.getUserMedia({
+                    audio: {
+                        channelCount: 1,
+                        echoCancellation: true,
+                        noiseSuppression: true,
+                        autoGainControl: true
+                    }
+                });
+
+            grcLiveActive = true;
+
+            grcLiveBtn.classList.add("live-active");
+
+            setGrcLiveStatus(
+                "Ready — tap the microphone to speak."
+            );
+
+            grcLiveTranscript.textContent =
+                "GRC Live is ready. Choose your language and start speaking.";
+
+        }
+        catch (error) {
+
+            console.error("GRC Live microphone error:", error);
+
+            setGrcLiveStatus(
+                "Microphone permission was not granted."
+            );
+        }
+    }
+
+
+    function stopGrcLiveRecording() {
+
+        if (!grcLiveRecorder) {
+            return;
+        }
+
+        if (grcLiveRecorder.state !== "inactive") {
+            grcLiveRecorder.stop();
+        }
+    }
+
+
+    function releaseGrcLiveStream() {
+
+        if (grcLiveStream) {
+
+            grcLiveStream
+                .getTracks()
+                .forEach(track => track.stop());
+
+            grcLiveStream = null;
+        }
+    }
+
+
+    async function sendGrcLiveAudio(blob) {
+
+        setGrcLiveStatus(
+            "GRC is listening to your message..."
+        );
+
+        grcLiveTranscript.textContent =
+            "Processing your voice...";
+
+        try {
+
+            const formData = new FormData();
+
+            formData.append(
+                "audio",
+                blob,
+                `grc-live-${Date.now()}.${blob.type.includes("mp4") ? "mp4" : "webm"}`
+            );
+
+            formData.append(
+                "language",
+                currentLanguage
+            );
+
+            const response =
+                await fetch(
+                    "/api/voice-chat",
+                    {
+                        method: "POST",
+                        body: formData
+                    }
+                );
+
+            const data =
+                await response.json();
+
+            if (!response.ok) {
+                throw new Error(
+                    data.detail ||
+                    "Local voice service failed."
+                );
+            }
+
+            const transcript =
+                data.transcript ||
+                "";
+
+            const answer =
+                data.answer ||
+                "";
+
+            if (transcript) {
+                grcLiveTranscript.textContent =
+                    `You: ${transcript}` +
+                    (answer ? `\n\nGRC: ${answer}` : "");
+            }
+            else {
+                grcLiveTranscript.textContent =
+                    answer ||
+                    "GRC did not detect any speech.";
+            }
+
+            if (data.audio_base64) {
+
+                setGrcLiveStatus(
+                    "GRC is speaking...",
+                    "speaking"
+                );
+
+                const audio = new Audio(
+                    `data:${data.audio_mime || "audio/wav"};base64,${data.audio_base64}`
+                );
+
+                audio.onended = () => {
+
+                    if (grcLiveActive) {
+
+                        setGrcLiveStatus(
+                            "Ready — tap the microphone to speak."
+                        );
+                    }
+                };
+
+                await audio.play();
+
+            }
+            else {
+
+                setGrcLiveStatus(
+                    "GRC replied, but no voice audio was returned."
+                );
+            }
+
+        }
+        catch (error) {
+
+            console.error(
+                "GRC Live local voice error:",
+                error
+            );
+
+            grcLiveTranscript.textContent =
+                "";
+
+            setGrcLiveStatus(
+                "GRC Live error: " + (error?.message || String(error))
+            );
+        }
+    }
+
+
+    function startGrcLiveRecording() {
+
+        if (!grcLiveActive || !grcLiveStream) {
+
+            setGrcLiveStatus(
+                "Start GRC Live first."
+            );
+
+            return;
+        }
+
+        if (!window.MediaRecorder) {
+
+            setGrcLiveStatus(
+                "This browser does not support microphone recording."
+            );
+
+            return;
+        }
+
+        try {
+
+            grcLiveMimeType =
+                chooseRecorderMimeType();
+
+            grcLiveChunks = [];
+
+            const options =
+                grcLiveMimeType
+                    ? { mimeType: grcLiveMimeType }
+                    : undefined;
+
+            grcLiveRecorder =
+                new MediaRecorder(
+                    grcLiveStream,
+                    options
+                );
+
+            grcLiveRecorder.ondataavailable =
+                event => {
+
+                    if (event.data && event.data.size > 0) {
+                        grcLiveChunks.push(event.data);
+                    }
+                };
+
+            grcLiveRecorder.onstart =
+                () => {
+
+                    grcLiveRecording = true;
+
+                    grcLiveMic.classList.add("recording");
+
+                    grcLiveMic.setAttribute(
+                        "aria-label",
+                        "Stop recording"
+                    );
+
+                    setGrcLiveStatus(
+                        "Listening... tap the microphone when you're finished.",
+                        "listening"
+                    );
+
+                    grcLiveTranscript.textContent =
+                        "Listening...";
+                };
+
+            grcLiveRecorder.onstop =
+                async () => {
+
+                    grcLiveRecording = false;
+
+                    grcLiveMic.classList.remove("recording");
+
+                    grcLiveMic.setAttribute(
+                        "aria-label",
+                        "Start recording"
+                    );
+
+                    resetGrcLiveMicIcon();
+
+                    const type =
+                        grcLiveMimeType ||
+                        "audio/webm";
+
+                    const blob =
+                        new Blob(
+                            grcLiveChunks,
+                            { type }
+                        );
+
+                    grcLiveChunks = [];
+
+                    if (!blob.size) {
+
+                        setGrcLiveStatus(
+                            "No voice was captured. Try again."
+                        );
+
+                        return;
+                    }
+
+                    await sendGrcLiveAudio(blob);
+                };
+
+            grcLiveRecorder.start();
+        }
+        catch (error) {
+
+            console.error(
+                "GRC Live recorder error:",
+                error
+            );
+
+            setGrcLiveStatus(
+                "Could not start voice recording."
+            );
+        }
+    }
+
+
+    function endGrcLive() {
+
+        grcLiveActive = false;
+
+        if (
+            grcLiveRecorder &&
+            grcLiveRecorder.state !== "inactive"
+        ) {
+            grcLiveRecorder.stop();
+        }
+
+        grcLiveRecorder = null;
+        grcLiveRecording = false;
+        grcLiveChunks = [];
+
+        releaseGrcLiveStream();
+
+        grcLiveBtn.classList.remove("live-active");
+        grcLiveMic.classList.remove("recording");
+        resetGrcLiveMicIcon();
+
+        grcLiveOverlay.classList.remove("active");
+        grcLiveOverlay.setAttribute("aria-hidden", "true");
+
+        setGrcLiveStatus(
+            "Ready to talk"
+        );
+
+        grcLiveTranscript.textContent =
+            "Tap the microphone and start speaking.";
+    }
+
+
+    if (grcLiveBtn) {
+
+        grcLiveBtn.addEventListener(
+            "click",
+            async () => {
+
+                grcLiveOverlay.classList.add("active");
+                grcLiveOverlay.setAttribute("aria-hidden", "false");
+
+                await startGrcLive();
+            }
+        );
+    }
+
+
+    if (grcLiveMic) {
+
+        grcLiveMic.addEventListener(
+            "click",
+            () => {
+
+                if (!grcLiveActive) {
+                    return;
+                }
+
+                if (grcLiveRecording) {
+                    stopGrcLiveRecording();
+                }
+                else {
+                    startGrcLiveRecording();
+                }
+            }
+        );
+    }
+
+
+    if (grcLiveEnd) {
+
+        grcLiveEnd.addEventListener(
+            "click",
+            endGrcLive
+        );
+    }
+
+
+    if (grcLiveOverlay) {
+
+        grcLiveOverlay.addEventListener(
+            "click",
+            event => {
+
+                if (event.target === grcLiveOverlay) {
+                    endGrcLive();
+                }
+            }
+        );
+    }
+
+
+    window.addEventListener(
+        "beforeunload",
+        () => {
+            releaseGrcLiveStream();
+        }
+    );
+
+
+    function updateLanguageUI() {
+
+        selectedLanguage.textContent =
+            currentLanguage;
+
+
+        document
+            .querySelectorAll(
+                ".language-option"
+            )
+            .forEach(
+                function(option) {
+
+                    option.classList.toggle(
+                        "active",
+                        option.dataset.language ===
+                        currentLanguage
+                    );
+
+                }
+            );
+
+    }
+
+
+    languageBtn.addEventListener(
+        "click",
+        function(event) {
+
+            event.stopPropagation();
+
+
+            const isOpen =
+                languageSelector.classList.toggle(
+                    "open"
+                );
+
+
+            languageBtn.setAttribute(
+                "aria-expanded",
+                String(isOpen)
+            );
+
+        }
+    );
+
+
+    document
+        .querySelectorAll(
+            ".language-option"
+        )
+        .forEach(
+            function(option) {
+
+                option.addEventListener(
+                    "click",
+                    function() {
+
+                        currentLanguage =
+                            this.dataset.language;
+
+
+                        localStorage.setItem(
+                            "grc_selected_language",
+                            currentLanguage
+                        );
+
+
+                        updateLanguageUI();
+
+
+                        languageSelector.classList.remove(
+                            "open"
+                        );
+
+
+                        languageBtn.setAttribute(
+                            "aria-expanded",
+                            "false"
+                        );
+
+
+                        input.focus();
+
+                    }
+                );
+
+            }
+        );
+
+
+    document.addEventListener(
+        "click",
+        function(event) {
+
+            if (
+                !languageSelector.contains(
+                    event.target
+                )
+            ) {
+
+                languageSelector.classList.remove(
+                    "open"
+                );
+
+                languageBtn.setAttribute(
+                    "aria-expanded",
+                    "false"
+                );
+
+            }
+
+        }
+    );
+
+
+    updateLanguageUI();
+
+
+    /* =========================================================
+       TIME
+       ========================================================= */
+
+    function getTime() {
+
+        return new Date().toLocaleTimeString(
+            [],
+            {
+                hour: "2-digit",
+                minute: "2-digit"
+            }
+        );
+
+    }
+
+
+    /* =========================================================
+       SCROLL
+       ========================================================= */
+
+    function scrollBottom() {
+
+        messages.scrollTo({
+
+            top:
+                messages.scrollHeight,
+
+            behavior:
+                "smooth"
+
+        });
+
+    }
+
+
+    /* =========================================================
+       ADD MESSAGE
+       ========================================================= */
+
+    function addMessage(
+        text,
+        role
+    ) {
+
+        welcome.classList.add(
+            "hidden"
+        );
+
+
+        const row =
+            document.createElement(
+                "div"
+            );
+
+
+        row.className =
+            "message-row " +
+            (
+                role === "user"
+                    ? "user-row"
+                    : ""
+            );
+
+
+        /* BOT AVATAR */
+
+        if (
+            role === "bot"
+        ) {
+
+            const avatar =
+                document.createElement(
+                    "div"
+                );
+
+
+            avatar.className =
+                "avatar";
+
+
+            avatar.textContent =
+                "GRC";
+
+
+            row.appendChild(
+                avatar
+            );
+
+        }
+
+
+        const wrap =
+            document.createElement(
+                "div"
+            );
+
+
+        wrap.className =
+            "bubble-wrap";
+
+
+        const bubble =
+            document.createElement(
+                "div"
+            );
+
+
+        bubble.className =
+            "bubble " +
+            (
+                role === "user"
+                    ? "user-bubble"
+                    : "bot-bubble"
+            );
+
+
+        bubble.textContent =
+            text;
+
+
+        const meta =
+            document.createElement(
+                "div"
+            );
+
+
+        meta.className =
+            "meta";
+
+
+        meta.textContent =
+            getTime();
+
+
+        wrap.appendChild(
+            bubble
+        );
+
+
+        wrap.appendChild(
+            meta
+        );
+
+
+        row.appendChild(
+            wrap
+        );
+
+
+        messages.appendChild(
+            row
+        );
+
+
+        scrollBottom();
+
+    }
+
+
+    /* =========================================================
+       TYPING
+       ========================================================= */
+
+    function showTyping() {
+
+        const row =
+            document.createElement(
+                "div"
+            );
+
+
+        row.id =
+            "typing";
+
+
+        row.className =
+            "typing-row";
+
+
+        const avatar =
+            document.createElement(
+                "div"
+            );
+
+
+        avatar.className =
+            "avatar";
+
+
+        avatar.textContent =
+            "GRC";
+
+
+        const bubble =
+            document.createElement(
+                "div"
+            );
+
+
+        bubble.className =
+            "typing-bubble";
+
+
+        bubble.innerHTML = `
+            <span class="typing-dot"></span>
+            <span class="typing-dot"></span>
+            <span class="typing-dot"></span>
+        `;
+
+
+        row.appendChild(
+            avatar
+        );
+
+
+        row.appendChild(
+            bubble
+        );
+
+
+        messages.appendChild(
+            row
+        );
+
+
+        scrollBottom();
+
+    }
+
+
+    function hideTyping() {
+
+        const typing =
+            document.getElementById(
+                "typing"
+            );
+
+
+        if (
+            typing
+        ) {
+
+            typing.remove();
+
+        }
+
+    }
+
+
+    /* =========================================================
+       TEXTAREA RESIZE
+       ========================================================= */
+
+    function autoResize() {
+
+        input.style.height =
+            "auto";
+
+
+        input.style.height =
+            Math.min(
+                input.scrollHeight,
+                150
+            ) + "px";
+
+    }
+
+
+    /* =========================================================
+       LANGUAGE INSTRUCTION
+       ========================================================= */
+
+    function buildBackendMessage(
+        question
+    ) {
+
+        /*
+         * Current backend accepts only "message".
+         * We therefore keep the API unchanged and add
+         * the selected language as an instruction inside
+         * the message sent to the model.
+         *
+         * The original question is still displayed to
+         * the customer exactly as typed.
+         */
+
+        if (
+            currentLanguage ===
+            "English"
+        ) {
+
+            return question;
+
+        }
+
+
+        return `
+Please answer in ${currentLanguage}.
+
+Customer question:
+${question}
+        `.trim();
+
+    }
+
+
+    /* =========================================================
+       SEND MESSAGE
+       ========================================================= */
+
+    async function sendMessage(
+        rawMessage
+    ) {
+
+        const message =
+            rawMessage.trim();
+
+
+        if (
+            !message ||
+            send.disabled
+        ) {
+
+            return;
+
+        }
+
+
+        /*
+         * Show ONLY the actual customer question.
+         */
+
+        addMessage(
+            message,
+            "user"
+        );
+
+
+        input.value =
+            "";
+
+
+        autoResize();
+
+
+        send.disabled =
+            true;
+
+
+        showTyping();
+
+
+        try {
+
+            const response =
+                await fetch(
+                    "/api/chat",
+                    {
+                        method:
+                            "POST",
+
+                        headers: {
+                            "Content-Type":
+                                "application/json"
+                        },
+
+                        body:
+                            JSON.stringify({
+                                question: message,
+                                language: currentLanguage
+                            })
+                    }
+                );
+
+
+            const data =
+                await response.json();
+
+
+            hideTyping();
+
+
+            if (
+                !response.ok
+            ) {
+
+                throw new Error(
+                    data.detail ||
+                    "Request failed"
+                );
+
+            }
+
+
+            /*
+             * Only final response is shown.
+             */
+
+            addMessage(
+                data.answer,
+                "bot"
+            );
+
+
+        }
+        catch (
+            error
+        ) {
+
+            hideTyping();
+
+
+            addMessage(
+                "Sorry, I couldn't process that request right now.",
+                "bot"
+            );
+
+        }
+        finally {
+
+            send.disabled =
+                false;
+
+
+            input.focus();
+
+        }
+
+    }
+
+
+    /* =========================================================
+       FORM SUBMIT
+       ========================================================= */
+
+    form.addEventListener(
+        "submit",
+        function(event) {
+
+            event.preventDefault();
+
+
+            sendMessage(
+                input.value
+            );
+
+        }
+    );
+
+
+    /* =========================================================
+       ENTER TO SEND
+       ========================================================= */
+
+    input.addEventListener(
+        "keydown",
+        function(event) {
+
+            if (
+                event.key === "Enter" &&
+                !event.shiftKey
+            ) {
+
+                event.preventDefault();
+
+
+                form.requestSubmit();
+
+            }
+
+        }
+    );
+
+
+    /* =========================================================
+       AUTO RESIZE
+       ========================================================= */
+
+    input.addEventListener(
+        "input",
+        autoResize
+    );
+
+
+    /* =========================================================
+       QUICK QUESTIONS
+       ========================================================= */
+
+    document
+        .querySelectorAll(
+            ".suggestion"
+        )
+        .forEach(
+            function(button) {
+
+                button.addEventListener(
+                    "click",
+                    function() {
+
+                        sendMessage(
+                            this.dataset.question
+                        );
+
+                    }
+                );
+
+            }
+        );
+
+
+    /* =========================================================
+       NEW CHAT
+       ========================================================= */
+
+    newChat.addEventListener(
+        "click",
+        function() {
+
+            messages.innerHTML =
+                "";
+
+
+            messages.appendChild(
+                welcome
+            );
+
+
+            welcome.classList.remove(
+                "hidden"
+            );
+
+
+            input.value =
+                "";
+
+
+            autoResize();
+
+
+            input.focus();
+
+        }
+    );
+
+
+    /* =========================================================
+       INITIAL
+       ========================================================= */
+
+    autoResize();
+
+    input.focus();
+
+</script>
+
+</body>
+</html>
+```

@@ -1,0 +1,109 @@
+from __future__ import annotations
+
+import re
+from collections import defaultdict
+from functools import lru_cache
+from pathlib import Path
+from typing import Any
+
+from openpyxl import load_workbook
+
+from .config import BASE_DIR
+
+
+CHALLAN_FILE = (
+    BASE_DIR
+    / "data"
+    / "GetRightCover_Chatbot_Data"
+    / "Customer_Challans_Final_Structured.xlsx"
+)
+
+
+def normalize_challan_vehicle(value: Any) -> str:
+    """Normalize a vehicle registration for exact matching."""
+    return re.sub(r"[^A-Z0-9]", "", str(value or "").upper())
+
+
+@lru_cache(maxsize=1)
+def _build_challan_index() -> dict[str, list[dict[str, Any]]]:
+    """Index individual challan records by vehicle; never index owner names."""
+    if not CHALLAN_FILE.is_file():
+        raise FileNotFoundError(f"Challan source file missing: {CHALLAN_FILE}")
+
+    workbook = load_workbook(
+        CHALLAN_FILE,
+        read_only=True,
+        data_only=True,
+    )
+
+    index: dict[str, list[dict[str, Any]]] = defaultdict(list)
+
+    try:
+        if "Customer Challans" not in workbook.sheetnames:
+            raise ValueError("Expected 'Customer Challans' sheet not found.")
+
+        sheet = workbook["Customer Challans"]
+
+        # Row 1: section titles; Row 2: field headers; Row 3 onward: records.
+        for row in sheet.iter_rows(min_row=3, values_only=True):
+            if len(row) < 11:
+                continue
+
+            # Court challan columns B:F.
+            # E-challan columns G:K.
+            sources = (
+                ("Court", row[1], row[2], row[3], row[4], row[5]),
+                ("E-Challan", row[6], row[7], row[8], row[9], row[10]),
+            )
+
+            for kind, challan_no, vehicle_no, date_time, status, amount in sources:
+                if challan_no is None or not str(challan_no).strip():
+                    continue
+
+                vehicle_key = normalize_challan_vehicle(vehicle_no)
+                if not vehicle_key:
+                    continue
+
+                index[vehicle_key].append({
+                    "type": kind,
+                    "challan_number": str(challan_no).strip(),
+                    "date_time": (
+                        date_time.isoformat(sep=" ")
+                        if hasattr(date_time, "isoformat")
+                        else str(date_time).strip() if date_time is not None else None
+                    ),
+                    "payment_status": (
+                        str(status).strip() if status is not None else None
+                    ),
+                    "amount": amount,
+                })
+    finally:
+        workbook.close()
+
+    return dict(index)
+
+
+def get_vehicle_challans(vehicle_number: str) -> list[dict[str, Any]]:
+    """Return individual challan records for one exact normalized vehicle."""
+    key = normalize_challan_vehicle(vehicle_number)
+    if not key:
+        return []
+    return list(_build_challan_index().get(key, []))
+
+
+def get_challan_index_counts() -> dict[str, int]:
+    """Return aggregate counts for testing without exposing record details."""
+    index = _build_challan_index()
+    court = sum(
+        1 for records in index.values()
+        for record in records if record["type"] == "Court"
+    )
+    e_challan = sum(
+        1 for records in index.values()
+        for record in records if record["type"] == "E-Challan"
+    )
+    return {
+        "indexed_vehicles": len(index),
+        "court_records": court,
+        "e_challan_records": e_challan,
+    }

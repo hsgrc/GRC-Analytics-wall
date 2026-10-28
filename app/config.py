@@ -1,0 +1,22 @@
+from pathlib import Path
+import os
+
+from dotenv import load_dotenv
+
+BASE_DIR = Path(__file__).resolve().parent.parent
+
+# Load local environment settings without overriding existing shell variables.
+load_dotenv(BASE_DIR / ".env", override=False)
+KNOWLEDGE_FILE = BASE_DIR / "knowledge" / "memberships.md"
+UI_FILE = BASE_DIR / "ui" / "chat.html"
+
+OLLAMA_BASE_URL = os.getenv("OLLAMA_BASE_URL", "http://127.0.0.1:11434")
+OLLAMA_MODEL = os.getenv("OLLAMA_MODEL", "qwen3:4b-instruct")
+VISION_MODEL = os.getenv("VISION_MODEL", "qwen3.5:4b")
+HOST = os.getenv("HOST", "127.0.0.1")
+PORT = int(os.getenv("PORT", "8000"))
+MAX_CONTEXT_CHARS = int(os.getenv("MAX_CONTEXT_CHARS", "9000"))
+OLLAMA_TIMEOUT = int(os.getenv("OLLAMA_TIMEOUT", "120"))
+
+# Local development only; disabled by default.
+ENABLE_LOCAL_CUSTOMER_LOOKUP = os.getenv("ENABLE_LOCAL_CUSTOMER_LOOKUP", "false").lower() == "true"

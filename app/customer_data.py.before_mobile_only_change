@@ -1,0 +1,560 @@
+from __future__ import annotations
+
+import json
+import re
+from collections import defaultdict
+from datetime import date, datetime
+from functools import lru_cache
+from pathlib import Path
+from typing import Any
+
+from .config import BASE_DIR
+
+
+DATA_DIR = BASE_DIR / "data" / "GetRightCover_Chatbot_Data"
+
+
+def _load_json(filename: str) -> Any:
+    path = DATA_DIR / filename
+
+    if not path.is_file():
+        raise FileNotFoundError(f"Required data file is missing: {path}")
+
+    with path.open("r", encoding="utf-8") as file:
+        return json.load(file)
+
+
+@lru_cache(maxsize=1)
+def _load_tables() -> dict[str, Any]:
+    """Load exported records once, on the first lookup."""
+    return {
+        "customers": _load_json("customers.json"),
+        "vehicles": _load_json("vehicles.json"),
+        "links": _load_json("customer_vehicle_links.json"),
+        "memberships": _load_json("memberships.json"),
+        "claims": _load_json("renewal_claims.json"),
+        "rc_statuses": _load_json("rc_statuses.json"),
+        "challans": _load_json("challan_summaries.json"),
+    }
+
+
+def normalize_vehicle(value: Any) -> str:
+    """Normalize a registration number for matching."""
+    return re.sub(r"[^A-Z0-9]", "", str(value or "").upper())
+
+
+def _parse_date(value: Any) -> date | None:
+    if value is None:
+        return None
+
+    text = str(value).strip()
+
+    if text.lower() in {
+        "", "-", "--", "n/a", "na", "none", "null", "nan",
+        "not available", "unknown"
+    }:
+        return None
+
+    # Try ISO dates and common dashboard date formats.
+    try:
+        return datetime.fromisoformat(
+            text.replace("Z", "+00:00")
+        ).date()
+    except ValueError:
+        pass
+
+    formats = (
+        "%d-%m-%Y",
+        "%d/%m/%Y",
+        "%Y-%m-%d",
+        "%d-%b-%Y",
+        "%d %b %Y",
+        "%d.%m.%Y",
+        "%m/%d/%Y",
+    )
+
+    for fmt in formats:
+        try:
+            return datetime.strptime(text, fmt).date()
+        except ValueError:
+            continue
+
+    return None
+
+
+def _expiry_status(
+    expiry_value: Any,
+    source_expired_flag: Any = None,
+    today: date | None = None,
+) -> str:
+    today = today or date.today()
+    expiry = _parse_date(expiry_value)
+
+    if expiry is None:
+        if source_expired_flag is True:
+            return "Expired (source flag; date unavailable)"
+        return "Date unavailable"
+
+    days_left = (expiry - today).days
+
+    if days_left < 0:
+        return f"Expired ({abs(days_left)} days ago)"
+
+    if days_left == 0:
+        return "Expires today"
+
+    if days_left <= 30:
+        return f"Expiring in {days_left} days"
+
+    return f"Valid ({days_left} days remaining)"
+
+
+def _records_by_vehicle(
+    rows: list[dict[str, Any]],
+    field_names: tuple[str, ...],
+) -> dict[str, list[dict[str, Any]]]:
+    result: dict[str, list[dict[str, Any]]] = defaultdict(list)
+
+    for row in rows:
+        for field in field_names:
+            key = normalize_vehicle(row.get(field))
+            if key:
+                result[key].append(row)
+                break
+
+    return dict(result)
+
+
+@lru_cache(maxsize=1)
+def _build_indexes() -> dict[str, dict[str, list[dict[str, Any]]]]:
+    tables = _load_tables()
+
+    return {
+        "vehicles": _records_by_vehicle(
+            tables["vehicles"], ("vehicleNumber",)
+        ),
+        "memberships": _records_by_vehicle(
+            tables["memberships"], ("VehicleNumber",)
+        ),
+        "claims": _records_by_vehicle(
+            tables["claims"], ("vehicleClean", "vehicle")
+        ),
+        "links": _records_by_vehicle(
+            tables["links"], ("vehicle_number",)
+        ),
+        "rc_statuses": _records_by_vehicle(
+            tables["rc_statuses"], ("Vehicle Number",)
+        ),
+    }
+
+
+def _best_vehicle_record(
+    rows: list[dict[str, Any]],
+) -> dict[str, Any]:
+    """Prefer a row containing the most usable document dates."""
+    date_fields = (
+        "Insurance Upto",
+        "PUC Upto",
+        "Fitness Upto",
+        "Tax Upto",
+    )
+
+    return max(
+        rows,
+        key=lambda row: sum(
+            _parse_date(row.get(field)) is not None
+            for field in date_fields
+        ),
+    )
+
+
+def _document(
+    name: str,
+    expiry_value: Any,
+    source_flag: Any = None,
+) -> dict[str, Any]:
+    return {
+        "document": name,
+        "expiry_date": (
+            str(expiry_value).strip()
+            if expiry_value is not None and str(expiry_value).strip()
+            else None
+        ),
+        "status": _expiry_status(expiry_value, source_flag),
+    }
+
+
+def get_vehicle_snapshot(vehicle_number: str) -> dict[str, Any] | None:
+    """
+    Read-only vehicle snapshot for internal backend use.
+
+    This function does not authenticate a customer and must not be
+    exposed through a public API without an authorization check.
+    """
+    key = normalize_vehicle(vehicle_number)
+
+    if not key:
+        raise ValueError("A vehicle registration number is required.")
+
+    tables = _load_tables()
+    indexes = _build_indexes()
+
+    vehicle_rows = indexes["vehicles"].get(key, [])
+    portfolio_rows = _records_by_vehicle(
+        tables["customers"][:0], ()
+    )  # Empty fallback; raw portfolio is not loaded here.
+
+    if not vehicle_rows:
+        # A separate source may still contain this registration.
+        return None
+
+    vehicle = _best_vehicle_record(vehicle_rows)
+
+    documents = [
+        _document(
+            "Insurance",
+            vehicle.get("Insurance Upto"),
+            vehicle.get("Insurance Expired"),
+        ),
+        _document(
+            "PUC",
+            vehicle.get("PUC Upto"),
+            vehicle.get("PUC Expired"),
+        ),
+        _document(
+            "Fitness",
+            vehicle.get("Fitness Upto"),
+            vehicle.get("Fitness Expired"),
+        ),
+        _document(
+            "Tax",
+            vehicle.get("Tax Upto"),
+            vehicle.get("Tax Expired"),
+        ),
+    ]
+
+    memberships = indexes["memberships"].get(key, [])
+    claims = indexes["claims"].get(key, [])
+    links = indexes["links"].get(key, [])
+    rc_statuses = indexes["rc_statuses"].get(key, [])
+
+    flagged_claims = [
+        row for row in claims if row.get("hasClaim") is True
+    ]
+
+    # The dashboard export has summary-level challan data only.
+    challan_data = tables["challans"]
+
+    return {
+        "vehicle": {
+            "vehicle_number": vehicle.get("vehicleNumber"),
+            "make": vehicle.get("make"),
+            "model": vehicle.get("model"),
+            "financier": vehicle.get("FINANCIER"),
+            "registered_at": vehicle.get("REGISTERED AT"),
+            "state": vehicle.get("STATE"),
+            "insurance_company": vehicle.get("Insurance Company"),
+        },
+        "documents": documents,
+        "memberships": [
+            {
+                "membership_type": row.get("membershipType"),
+                "start_date": row.get("Start_Date_Display"),
+                "end_date": row.get("End_Date_Display"),
+                "status": row.get("Membership_Status_Dashboard"),
+                "expiry_bucket": row.get("Expiry_Bucket"),
+                "business_partner": row.get("BusinessPartnerName"),
+                "vehicle_type": row.get("VehicleTypeCategory"),
+            }
+            for row in memberships
+        ],
+        "claim_indicator": {
+            "matching_records": len(claims),
+            "has_claim_flag": bool(flagged_claims),
+            "note": (
+                "Claim indicator comes from renewal/claims export; "
+                "it is not an individual traffic-challan record."
+            ),
+        },
+        "renewal_claim_records": [
+            {
+                "start_date": row.get("startDate"),
+                "end_date": row.get("endDate"),
+                "next_membership_start": row.get("nextMembershipStart"),
+                "has_claim": row.get("hasClaim"),
+                "membership_type": row.get("membershipType"),
+                "vehicle_type": row.get("vehicleType"),
+                "business_partner": row.get("businessPartnerName"),
+            }
+            for row in claims
+        ],
+        "rc_statuses": [
+            {
+                "status": row.get("RC Status"),
+                "owner": row.get("Owner"),
+                "marked_count": row.get("Marked Count"),
+            }
+            for row in rc_statuses
+        ],
+        "customer_vehicle_links": [
+            {
+                "customer_id": row.get("customer_id"),
+                "customer_name": row.get("customer_name"),
+                "business": row.get("business"),
+                "state": row.get("state"),
+            }
+            for row in links
+        ],
+        "challan_data": {
+            "individual_records_available": challan_data.get(
+                "row_level_challan_records_available", False
+            ),
+            "note": challan_data.get("note"),
+        },
+    }
+
+
+def get_data_counts() -> dict[str, int]:
+    """Return record counts only; no customer values."""
+    tables = _load_tables()
+
+    return {
+        "customers": len(tables["customers"]),
+        "vehicles": len(tables["vehicles"]),
+        "customer_vehicle_links": len(tables["links"]),
+        "memberships": len(tables["memberships"]),
+        "renewal_claims": len(tables["claims"]),
+        "rc_statuses": len(tables["rc_statuses"]),
+    }
+
+
+def _normalize_phone(value: Any) -> str:
+    """Normalize common Indian mobile-number formats."""
+    digits = re.sub(r"\D", "", str(value or ""))
+
+    if len(digits) == 12 and digits.startswith("91"):
+        digits = digits[2:]
+    elif len(digits) == 11 and digits.startswith("0"):
+        digits = digits[1:]
+
+    return digits
+
+
+def _normalize_customer_name(value: Any) -> str:
+    """Case-insensitive exact name comparison, ignoring spaces/punctuation."""
+    import unicodedata
+
+    text = unicodedata.normalize("NFKC", str(value or "")).casefold()
+    return "".join(character for character in text if character.isalnum())
+
+
+def match_customer_identity(name: str, mobile: str) -> str | None:
+    """
+    Return a customer_id only when name and mobile uniquely match.
+
+    Return None for missing inputs, invalid matches, or ambiguous matches.
+    Do not expose customer records from this function.
+    """
+    normalized_name = _normalize_customer_name(name)
+    normalized_mobile = _normalize_phone(mobile)
+
+    if not normalized_name or len(normalized_mobile) != 10:
+        return None
+
+    customers = _load_tables()["customers"]
+
+    matches = [
+        row
+        for row in customers
+        if _normalize_customer_name(row.get("name")) == normalized_name
+        and _normalize_phone(row.get("mobile")) == normalized_mobile
+    ]
+
+    if len(matches) != 1:
+        return None
+
+    customer_id = str(matches[0].get("customer_id") or "").strip()
+    return customer_id or None
+
+
+def get_customer_snapshot(customer_id: str) -> dict[str, Any] | None:
+    """
+    Build an internal customer-specific snapshot.
+
+    Call only after the application has authenticated the customer.
+    This function itself does not perform authentication or OTP checks.
+    """
+    requested_id = str(customer_id or "").strip()
+    if not requested_id:
+        return None
+
+    tables = _load_tables()
+    indexes = _build_indexes()
+
+    customer_matches = [
+        row for row in tables["customers"]
+        if str(row.get("customer_id") or "").strip() == requested_id
+    ]
+
+    if len(customer_matches) != 1:
+        return None
+
+    customer = customer_matches[0]
+    customer_name = _normalize_customer_name(customer.get("name"))
+    customer_mobile = _normalize_phone(customer.get("mobile"))
+
+    vehicle_numbers: dict[str, str] = {}
+
+    # Vehicles explicitly associated with this customer record.
+    raw_vehicles = customer.get("vehicles") or []
+    if isinstance(raw_vehicles, list):
+        for value in raw_vehicles:
+            key = normalize_vehicle(value)
+            if key:
+                vehicle_numbers.setdefault(key, str(value).strip())
+
+    # Additional links must match this exact customer ID.
+    for link in tables["links"]:
+        if str(link.get("customer_id") or "").strip() != requested_id:
+            continue
+
+        value = link.get("vehicle_number")
+        key = normalize_vehicle(value)
+        if key:
+            vehicle_numbers.setdefault(key, str(value).strip())
+
+    vehicles_output = []
+
+    for key, registration in sorted(vehicle_numbers.items()):
+        snapshot = get_vehicle_snapshot(registration)
+        if not snapshot:
+            continue
+
+        # Avoid showing another person's membership/claim record merely
+        # because the same registration occurs in more than one source.
+        def belongs_to_customer(
+            source_name: Any,
+            source_mobile: Any,
+        ) -> bool:
+            source_phone = _normalize_phone(source_mobile)
+
+            # If both mobile numbers exist, mobile must match.
+            # Name is only a fallback when the source mobile is missing.
+            if customer_mobile and source_phone:
+                return source_phone == customer_mobile
+
+            return bool(
+                customer_name
+                and _normalize_customer_name(source_name) == customer_name
+            )
+
+        matching_memberships = [
+            row for row in indexes["memberships"].get(key, [])
+            if belongs_to_customer(
+                row.get("Customer_Name_Dashboard"),
+                row.get("phoneNumber"),
+            )
+        ]
+
+        matching_claims = [
+            row for row in indexes["claims"].get(key, [])
+            if belongs_to_customer(
+                row.get("customer"),
+                row.get("phone"),
+            )
+        ]
+
+        snapshot["memberships"] = [
+            {
+                "membership_type": row.get("membershipType"),
+                "start_date": row.get("Start_Date_Display"),
+                "end_date": row.get("End_Date_Display"),
+                "status": row.get("Membership_Status_Dashboard"),
+                "expiry_bucket": row.get("Expiry_Bucket"),
+                "business_partner": row.get("BusinessPartnerName"),
+                "vehicle_type": row.get("VehicleTypeCategory"),
+            }
+            for row in matching_memberships
+        ]
+
+        snapshot["renewal_claim_records"] = [
+            {
+                "start_date": row.get("startDate"),
+                "end_date": row.get("endDate"),
+                "next_membership_start": row.get("nextMembershipStart"),
+                "has_claim": row.get("hasClaim"),
+                "membership_type": row.get("membershipType"),
+                "vehicle_type": row.get("vehicleType"),
+                "business_partner": row.get("businessPartnerName"),
+            }
+            for row in matching_claims
+        ]
+
+        snapshot["claim_indicator"] = {
+            "matching_records": len(matching_claims),
+            "has_claim_flag": any(
+                row.get("hasClaim") is True for row in matching_claims
+            ),
+        }
+
+        # Keep RC status limited to vehicle status fields.
+        snapshot["rc_statuses"] = [
+            {
+                "status": row.get("RC Status"),
+                "marked_count": row.get("Marked Count"),
+            }
+            for row in indexes["rc_statuses"].get(key, [])
+        ]
+
+        # Do not expose links belonging to potentially other customers.
+        snapshot.pop("customer_vehicle_links", None)
+
+        vehicles_output.append(snapshot)
+
+    return {
+        "customer": {
+            "customer_id": requested_id,
+            "name": customer.get("name"),
+            "mobile": customer.get("mobile"),
+            "email": customer.get("email"),
+            "business": customer.get("business"),
+            "state": customer.get("state"),
+            "category": customer.get("category"),
+        },
+        "vehicle_count_in_snapshot": len(vehicles_output),
+        "vehicles": vehicles_output,
+    }
+
+
+@lru_cache(maxsize=1)
+def _load_vehicle_lookup_keys() -> tuple[str, ...]:
+    """Load registration keys from the dashboard's vehicle lookup index."""
+    path = DATA_DIR / "vehicle_lookup_index.json"
+    with path.open("r", encoding="utf-8") as file:
+        index = json.load(file)
+
+    # Longest keys first to avoid matching a shorter overlapping key.
+    return tuple(
+        sorted(
+            (str(key) for key in index if len(normalize_vehicle(key)) >= 7),
+            key=lambda key: len(normalize_vehicle(key)),
+            reverse=True,
+        )
+    )
+
+
+def find_vehicle_number_in_text(text: str) -> str | None:
+    """
+    Identify a known vehicle registration by matching against the actual
+    exported index, including entries that don't fit the standard regex.
+    """
+    normalized_text = normalize_vehicle(text)
+    if not normalized_text:
+        return None
+
+    for key in _load_vehicle_lookup_keys():
+        normalized_key = normalize_vehicle(key)
+        if normalized_key and normalized_key in normalized_text:
+            return key
+
+    return None

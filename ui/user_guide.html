@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>User Guide | GetRightCover</title>
+<style>
+:root{font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:#172033;background:#f4f7fb}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh}
+.topbar{height:72px;background:#fff;border-bottom:1px solid #e5ebf3;display:flex;align-items:center;justify-content:space-between;padding:0 clamp(16px,4vw,48px);gap:15px}
+.brand{display:flex;align-items:center;gap:11px;font-size:16px;font-weight:750}
+.logo{width:39px;height:39px;border-radius:12px;background:#1d4ed8;color:white;display:grid;place-items:center;font-size:12px}
+.brand small{display:block;color:#7c899b;font-size:11px;font-weight:500;margin-top:3px}
+.home{border:1px solid #dbe4f0;border-radius:10px;padding:10px 13px;color:#1d4ed8;text-decoration:none;font-size:13px;font-weight:700;background:#fff;white-space:nowrap}
+main{max-width:1000px;margin:auto;padding:34px 18px 60px}
+.hero{display:flex;justify-content:space-between;align-items:flex-end;gap:20px;flex-wrap:wrap;margin-bottom:25px}
+.eyebrow{font-size:11px;letter-spacing:1.6px;text-transform:uppercase;font-weight:800;color:#2563eb}
+h1{font-size:clamp(29px,4vw,39px);letter-spacing:-1.1px;margin:8px 0}
+.subtitle{color:#69788e;max-width:650px;font-size:14px;line-height:1.7;margin:0}
+.language-box{background:#fff;border:1px solid #e1e8f2;border-radius:13px;padding:12px 14px;min-width:200px}
+.language-box label{display:block;color:#64748b;font-size:11px;font-weight:750;margin-bottom:7px}
+select{width:100%;background:#f8fafc;border:1px solid #d9e2ee;border-radius:9px;padding:10px;color:#263449;font:inherit;font-size:13px}
+.section-label{font-size:11px;letter-spacing:1.2px;text-transform:uppercase;font-weight:800;color:#6f7e94;margin:28px 0 12px}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.card{background:#fff;border:1px solid #e2e9f2;border-radius:16px;padding:22px;box-shadow:0 6px 24px rgba(20,40,75,.035)}
+.card-head{display:flex;align-items:flex-start;gap:13px;margin-bottom:13px}
+.icon{width:42px;height:42px;border-radius:12px;background:#eaf2ff;color:#1d4ed8;display:grid;place-items:center;font-size:19px;flex:0 0 auto}
+.card h2{margin:2px 0 6px;font-size:17px;letter-spacing:-.25px}
+.card p{margin:0;color:#6c7a90;font-size:13px;line-height:1.65}
+ol,ul{margin:14px 0 0;padding-left:21px}
+li{font-size:13px;line-height:1.75;color:#34445b;padding:0 0 7px 3px}
+li:last-child{padding-bottom:0}
+.notice{margin-top:17px;background:#eff6ff;border:1px solid #d8e8ff;border-radius:14px;padding:17px 19px;color:#284875;font-size:13px;line-height:1.7}
+.notice strong{display:block;margin-bottom:4px;color:#1d4ed8}
+footer{text-align:center;color:#8a96a8;font-size:11px;line-height:1.7;margin-top:25px}
+@media(max-width:700px){.grid{grid-template-columns:1fr}.hero{align-items:stretch}.language-box{width:100%}main{padding-top:25px}.card{padding:18px}.topbar{height:64px}.brand{font-size:14px}.home{padding:9px;font-size:12px}}
+</style>
+</head>
+<body>
+<header class="topbar">
+  <div class="brand"><div class="logo">GRC</div><div>GetRightCover Assistant<small id="brandSub">User guide and feature instructions</small></div></div>
+  <a class="home" id="homeLink" href="/">← Main Chatbot</a>
+</header>
+
+<main>
+  <section class="hero">
+    <div>
+      <div class="eyebrow" id="eyebrow">HELP CENTRE</div>
+      <h1 id="pageTitle">How to use your chatbot</h1>
+      <p class="subtitle" id="pageSubtitle">Learn how to chat, manage conversations, upload documents and use available reports.</p>
+    </div>
+    <div class="language-box">
+      <label id="languageLabel" for="guideLanguage">SELECT INSTRUCTION LANGUAGE</label>
+      <select id="guideLanguage">
+        <option value="English">English</option>
+        <option value="Hindi">हिन्दी</option>
+        <option value="Hinglish">Hinglish</option>
+        <option value="Marathi">मराठी</option>
+        <option value="Gujarati">ગુજરાતી</option>
+        <option value="Punjabi">ਪੰਜਾਬੀ</option>
+        <option value="Bengali">বাংলা</option>
+        <option value="Tamil">தமிழ்</option>
+        <option value="Telugu">తెలుగు</option>
+      </select>
+    </div>
+  </section>
+
+  <div class="section-label" id="basicsLabel">GETTING STARTED</div>
+  <section class="grid">
+    <article class="card">
+      <div class="card-head"><div class="icon">✦</div><div><h2 id="chatTitle">1. Chat with the assistant</h2><p id="chatIntro">Ask a question in the message box.</p></div></div>
+      <ol id="chatSteps"></ol>
+    </article>
+
+    <article class="card">
+      <div class="card-head"><div class="icon">☷</div><div><h2 id="historyTitle">2. New Chat and Chat History</h2><p id="historyIntro">Keep conversations organised.</p></div></div>
+      <ol id="historySteps"></ol>
+    </article>
+
+    <article class="card">
+      <div class="card-head"><div class="icon">▤</div><div><h2 id="docTitle">3. Document Chat</h2><p id="docIntro">Summarise a file and ask follow-up questions.</p></div></div>
+      <ol id="docSteps"></ol>
+      <div class="notice"><strong id="supportedTitle">Supported files and limits</strong><span id="supportedText"></span></div>
+    </article>
+
+    <article class="card">
+      <div class="card-head"><div class="icon">🚗</div><div><h2 id="customerTitle">4. Customer, vehicle and membership information</h2><p id="customerIntro">Use available, authorised customer information.</p></div></div>
+      <ol id="customerSteps"></ol>
+    </article>
+
+    <article class="card">
+      <div class="card-head"><div class="icon">▦</div><div><h2 id="reportTitle">5. Excel reports</h2><p id="reportIntro">Download a report when the feature is available.</p></div></div>
+      <ol id="reportSteps"></ol>
+    </article>
+
+    <article class="card">
+      <div class="card-head"><div class="icon">✓</div><div><h2 id="tipsTitle">6. Tips for better answers</h2><p id="tipsIntro">A clear question helps the assistant respond accurately.</p></div></div>
+      <ul id="tipsSteps"></ul>
+    </article>
+  </section>
+
+  <div class="notice">
+    <strong id="privacyTitle">Privacy and accuracy</strong>
+    <span id="privacyText"></span>
+  </div>
+  <footer id="footerText">GetRightCover Assistant · User Guide</footer>
+</main>
+
+<script>
+(() => {
+  const guides = {
+    English: {
+      brandSub:"User guide and feature instructions", home:"← Main Chatbot",
+      eyebrow:"HELP CENTRE", title:"How to use your chatbot",
+      subtitle:"Learn how to chat, manage conversations, upload documents and use available reports.",
+      language:"SELECT INSTRUCTION LANGUAGE", basics:"GETTING STARTED",
+      chatTitle:"1. Chat with the assistant", chatIntro:"Ask a question in the message box.",
+      chat:[
+        "Type your question in the message box and press Enter or select Send.",
+        "Choose a response language using the globe/language menu in the main chatbot.",
+        "Ask follow-up questions with enough context. You can also attach a supported file in the main chat when the attachment control is available."
+      ],
+      historyTitle:"2. New Chat and Chat History", historyIntro:"Keep conversations organised.",
+      history:[
+        "Select New Chat to begin a separate conversation. The previous chat should remain saved.",
+        "Open History to view saved conversations, then select a title to reopen it.",
+        "Use the delete control beside a history item to remove that conversation. Browser storage can be cleared by browser settings."
+      ],
+      docTitle:"3. Document Chat", docIntro:"Summarise a file and ask follow-up questions.",
+      doc:[
+        "Select Document Chat in the main chatbot header to open its separate page.",
+        "Choose a document from your device, then select the response language and Generate easy summary.",
+        "After the summary appears, ask questions about the same selected document without selecting it again. Use Clear to start with another file."
+      ],
+      supportedTitle:"Supported files and limits",
+      supportedText:"PDF, DOCX, XLSX, XLS, PPTX, CSV, TXT, JSON, MD and supported image formats. Maximum upload size: 15 MB. Scanned PDFs without selectable text may not be readable because OCR is not enabled.",
+      customerTitle:"4. Customer, vehicle and membership information",
+      customerIntro:"Use available, authorised customer information.",
+      customer:[
+        "When local customer lookup is enabled, provide the required registered customer details and follow the chatbot's prompts.",
+        "Ask specific questions about available vehicles, memberships, renewal dates, document expiry, claims or challans.",
+        "A database number match alone does not prove identity. Only access or share private customer details when you are authorised to do so."
+      ],
+      reportTitle:"5. Excel reports", reportIntro:"Download a report when the feature is available.",
+      report:[
+        "If the chatbot response includes a Download Excel Report link, select it to download the customer report.",
+        "The report may contain customer summary, vehicle details, memberships, renewal and document expiry information, plus the available claims/RC indicators.",
+        "Missing source data will not necessarily appear in the report. Check dates and records before relying on them."
+      ],
+      tipsTitle:"6. Tips for better answers", tipsIntro:"A clear question helps the assistant respond accurately.",
+      tips:[
+        "Ask one clear question at a time and include the vehicle number or relevant context where appropriate.",
+        "For document questions, mention the page, section, date or specific clause you want explained.",
+        "Ask for simple language, a short summary, bullet points or a comparison when useful.",
+        "If a detail is missing or the answer seems wrong, check the original source rather than assuming."
+      ],
+      privacyTitle:"Privacy and accuracy",
+      privacyText:"Do not upload passwords, payment credentials or information you do not have permission to share. Chat history in this version is saved in this browser and is not automatically synced to other devices. Answers depend on the data extracted from the file and the records available to the chatbot.",
+      footer:"GetRightCover Assistant · User Guide"
+    },
+    Hindi: {
+      brandSub:"यूज़र गाइड और फ़ीचर निर्देश", home:"← मुख्य चैटबॉट",
+      eyebrow:"सहायता केंद्र", title:"चैटबॉट का उपयोग कैसे करें",
+      subtitle:"चैट करना, पुरानी बातचीत खोलना, दस्तावेज़ अपलोड करना और रिपोर्ट डाउनलोड करना सीखें।",
+      language:"निर्देशों की भाषा चुनें", basics:"शुरुआत करें",
+      chatTitle:"1. चैटबॉट से बात करें", chatIntro:"मैसेज बॉक्स में अपना सवाल लिखें।",
+      chat:[
+        "मैसेज बॉक्स में सवाल लिखें और Enter दबाएँ या Send चुनें।",
+        "मुख्य चैटबॉट के भाषा मेनू से जवाब की भाषा चुनें।",
+        "ज़रूरत होने पर आगे के सवाल पूछें। अटैचमेंट सुविधा उपलब्ध हो तो मुख्य चैट में समर्थित फ़ाइल भी जोड़ सकते हैं।"
+      ],
+      historyTitle:"2. नई चैट और चैट हिस्ट्री", historyIntro:"अपनी बातचीत व्यवस्थित रखें।",
+      history:[
+        "नई बातचीत शुरू करने के लिए New Chat चुनें। पिछली बातचीत सेव रहनी चाहिए।",
+        "History खोलें और किसी शीर्षक पर क्लिक करके पुरानी बातचीत फिर से खोलें।",
+        "किसी बातचीत को हटाने के लिए उसके पास दिया डिलीट विकल्प चुनें। ब्राउज़र का स्टोरेज साफ करने पर सेव चैट हट सकती हैं।"
+      ],
+      docTitle:"3. Document Chat", docIntro:"दस्तावेज़ का सारांश बनाएँ और सवाल पूछें।",
+      doc:[
+        "मुख्य चैटबॉट के Document Chat बटन से अलग पेज खोलें।",
+        "डिवाइस से फ़ाइल चुनें, जवाब की भाषा चुनें और Generate easy summary दबाएँ।",
+        "सारांश आने के बाद उसी फ़ाइल के बारे में आगे के सवाल पूछें। नई फ़ाइल के लिए Clear चुनें।"
+      ],
+      supportedTitle:"समर्थित फ़ाइलें और सीमा",
+      supportedText:"PDF, DOCX, XLSX, XLS, PPTX, CSV, TXT, JSON, MD और कुछ इमेज फ़ॉर्मेट। अधिकतम आकार 15 MB है। जिन स्कैन किए गए PDF में चुनने योग्य टेक्स्ट नहीं है, वे OCR चालू न होने के कारण पढ़े नहीं जा सकते।",
+      customerTitle:"4. ग्राहक, वाहन और सदस्यता की जानकारी",
+      customerIntro:"केवल उपलब्ध और अधिकृत ग्राहक जानकारी का उपयोग करें।",
+      customer:[
+        "लोकल ग्राहक लुकअप चालू होने पर पंजीकृत ग्राहक की आवश्यक जानकारी दें और चैटबॉट के निर्देशों का पालन करें।",
+        "उपलब्ध वाहन, सदस्यता, नवीनीकरण, दस्तावेज़ की समाप्ति, क्लेम या चालान के बारे में स्पष्ट सवाल पूछें।",
+        "डेटाबेस में नंबर मिलना पहचान का प्रमाण नहीं है। निजी जानकारी तभी देखें या साझा करें जब आपको अनुमति हो।"
+      ],
+      reportTitle:"5. Excel रिपोर्ट", reportIntro:"सुविधा उपलब्ध होने पर रिपोर्ट डाउनलोड करें।",
+      report:[
+        "अगर जवाब में Download Excel Report लिंक दिखे, तो उसे चुनकर ग्राहक रिपोर्ट डाउनलोड करें।",
+        "रिपोर्ट में ग्राहक सारांश, वाहन, सदस्यता, नवीनीकरण, दस्तावेज़ की समाप्ति और उपलब्ध क्लेम/RC स्थिति हो सकती है।",
+        "स्रोत में अनुपलब्ध जानकारी रिपोर्ट में नहीं भी हो सकती। भरोसा करने से पहले तारीखें और रिकॉर्ड जाँचें।"
+      ],
+      tipsTitle:"6. बेहतर जवाब पाने के तरीके", tipsIntro:"स्पष्ट सवाल से सटीक जवाब मिलने में मदद मिलती है।",
+      tips:[
+        "एक बार में एक स्पष्ट सवाल पूछें और ज़रूरत हो तो वाहन नंबर या संदर्भ दें।",
+        "दस्तावेज़ के लिए पेज, सेक्शन, तारीख या उस क्लॉज़ का उल्लेख करें जिसे समझना है।",
+        "ज़रूरत हो तो आसान भाषा, छोटा सारांश, बुलेट पॉइंट या तुलना माँगें।",
+        "जानकारी अधूरी या गलत लगे तो मूल दस्तावेज़ या रिकॉर्ड जाँचें।"
+      ],
+      privacyTitle:"गोपनीयता और सटीकता",
+      privacyText:"पासवर्ड, भुगतान की जानकारी या ऐसा डेटा अपलोड न करें जिसे साझा करने की अनुमति नहीं है। इस संस्करण की चैट हिस्ट्री इसी ब्राउज़र में सेव होती है और दूसरे डिवाइस पर अपने आप सिंक नहीं होती। जवाब दस्तावेज़ से निकाले गए टेक्स्ट और उपलब्ध रिकॉर्ड पर निर्भर करते हैं।",
+      footer:"GetRightCover Assistant · यूज़र गाइड"
+    },
+    Hinglish: {
+      brandSub:"User guide aur feature instructions", home:"← Main Chatbot",
+      eyebrow:"HELP CENTRE", title:"Chatbot kaise use karein",
+      subtitle:"Chat karna, purani chats kholna, documents upload karna aur reports download karna seekhein.",
+      language:"Instructions ki language select karein", basics:"SHURU KAREIN",
+      chatTitle:"1. Assistant se chat karein", chatIntro:"Message box mein apna question likhein.",
+      chat:[
+        "Message box mein question likhein aur Enter dabayein ya Send select karein.",
+        "Main chatbot ke language menu se response ki language choose karein.",
+        "Follow-up questions poochhein. Attachment option available ho toh main chat mein supported file bhi attach kar sakte hain."
+      ],
+      historyTitle:"2. New Chat aur Chat History", historyIntro:"Apni conversations organised rakhein.",
+      history:[
+        "Nayi conversation ke liye New Chat select karein. Purani conversation saved rehni chahiye.",
+        "History kholein aur kisi title par click karke purani chat dobara open karein.",
+        "Kisi chat ko delete karne ke liye uske paas delete option use karein. Browser storage clear karne se saved chats mit sakti hain."
+      ],
+      docTitle:"3. Document Chat", docIntro:"Document ka simple summary banayein aur usse related questions poochhein.",
+      doc:[
+        "Main chatbot ke Document Chat button par click karke alag page kholein.",
+        "Apne device se file select karein, response language chunein aur Generate easy summary dabayein.",
+        "Summary ke baad usi selected file par follow-up questions pooch sakte hain. Nayi file ke liye Clear dabayein."
+      ],
+      supportedTitle:"Supported files aur limits",
+      supportedText:"PDF, DOCX, XLSX, XLS, PPTX, CSV, TXT, JSON, MD aur supported image formats. Maximum file size 15 MB hai. Scanned PDF mein selectable text nahi hai toh OCR enabled na hone ke karan file read nahi ho sakti.",
+      customerTitle:"4. Customer, vehicle aur membership details",
+      customerIntro:"Sirf available aur authorised customer data use karein.",
+      customer:[
+        "Local customer lookup enabled ho toh registered customer ki required information dein aur chatbot ke prompts follow karein.",
+        "Available vehicles, membership, renewal dates, document expiry, claims ya challans ke baare mein specific questions poochhein.",
+        "Database mein number match hona identity proof nahi hai. Private customer information sirf authorised hone par access ya share karein."
+      ],
+      reportTitle:"5. Excel reports", reportIntro:"Feature available hone par report download karein.",
+      report:[
+        "Response mein Download Excel Report link aaye toh us par click karke customer report download karein.",
+        "Report mein customer summary, vehicles, memberships, renewal, document expiry aur available claim/RC details ho sakti hain.",
+        "Source mein missing information report mein nahi bhi aayegi. Use karne se pehle dates aur records check karein."
+      ],
+      tipsTitle:"6. Better answers ke tips", tipsIntro:"Clear question se useful response milta hai.",
+      tips:[
+        "Ek time par ek clear question poochhein; zaroorat ho toh vehicle number ya context dein.",
+        "Document ke liye page, section, date ya specific clause mention karein.",
+        "Simple language, short summary, bullet points ya comparison maang sakte hain.",
+        "Information missing ya incorrect lage toh original document ya source record check karein."
+      ],
+      privacyTitle:"Privacy aur accuracy",
+      privacyText:"Password, payment credentials ya unauthorised information upload na karein. Is version ki chat history isi browser mein save hoti hai aur doosre devices par automatically sync nahi hoti. Answers extracted document text aur available records par depend karte hain.",
+      footer:"GetRightCover Assistant · User Guide"
+    },
+    Marathi: {
+      brandSub:"वापरकर्ता मार्गदर्शक आणि सुविधा सूचना", home:"← मुख्य चॅटबॉट",
+      eyebrow:"मदत केंद्र", title:"चॅटबॉट कसा वापरायचा",
+      subtitle:"चॅट करणे, जुने संभाषण उघडणे, दस्तऐवज अपलोड करणे आणि अहवाल डाउनलोड करणे शिका.",
+      language:"सूचनांची भाषा निवडा", basics:"सुरुवात करा",
+      chatTitle:"1. सहाय्यकाशी चॅट करा", chatIntro:"मेसेज बॉक्समध्ये प्रश्न लिहा.",
+      chat:[
+        "मेसेज बॉक्समध्ये प्रश्न लिहा आणि Enter दाबा किंवा Send निवडा.",
+        "मुख्य चॅटबॉटमधील भाषा मेनूमधून उत्तराची भाषा निवडा.",
+        "पुढील प्रश्न विचारा. अटॅचमेंटची सुविधा उपलब्ध असल्यास समर्थित फाइल जोडू शकता."
+      ],
+      historyTitle:"2. नवीन चॅट आणि चॅट इतिहास", historyIntro:"संभाषणे व्यवस्थित ठेवा.",
+      history:[
+        "नवीन संभाषणासाठी New Chat निवडा. जुने संभाषण सेव्ह राहिले पाहिजे.",
+        "History उघडा आणि शीर्षक निवडून जुने संभाषण पुन्हा उघडा.",
+        "संभाषण हटवण्यासाठी त्याजवळील डिलीट पर्याय वापरा. ब्राउझर स्टोरेज साफ केल्यास संभाषणे हटू शकतात."
+      ],
+      docTitle:"3. Document Chat", docIntro:"दस्तऐवजाचा सारांश तयार करा आणि प्रश्न विचारा.",
+      doc:[
+        "मुख्य चॅटबॉटमधील Document Chat बटणातून स्वतंत्र पेज उघडा.",
+        "फाइल निवडा, उत्तराची भाषा निवडा आणि Generate easy summary दाबा.",
+        "सारांशानंतर त्याच फाइलवर पुढील प्रश्न विचारा. दुसरी फाइल निवडण्यासाठी Clear वापरा."
+      ],
+      supportedTitle:"समर्थित फाइल्स आणि मर्यादा",
+      supportedText:"PDF, DOCX, XLSX, XLS, PPTX, CSV, TXT, JSON, MD आणि समर्थित प्रतिमा. कमाल आकार 15 MB. निवडता येणारा मजकूर नसलेले स्कॅन केलेले PDF OCR उपलब्ध नसल्यामुळे वाचता येणार नाहीत.",
+      customerTitle:"4. ग्राहक, वाहन आणि सदस्यता माहिती", customerIntro:"फक्त उपलब्ध व अधिकृत माहिती वापरा.",
+      customer:[
+        "लोकल ग्राहक शोध सुरू असल्यास आवश्यक नोंदणीकृत ग्राहक माहिती द्या आणि चॅटबॉटच्या सूचनांचे पालन करा.",
+        "वाहने, सदस्यता, नूतनीकरण, कागदपत्रांची मुदत, क्लेम किंवा चलनाबद्दल विशिष्ट प्रश्न विचारा.",
+        "डेटाबेसमध्ये नंबर सापडणे म्हणजे ओळख सिद्ध होणे नाही. परवानगी असल्यासच खाजगी माहिती वापरा."
+      ],
+      reportTitle:"5. Excel अहवाल", reportIntro:"सुविधा उपलब्ध असल्यास अहवाल डाउनलोड करा.",
+      report:[
+        "उत्तरात Download Excel Report लिंक दिसल्यास ती निवडून अहवाल डाउनलोड करा.",
+        "अहवालात ग्राहक सारांश, वाहने, सदस्यता, नूतनीकरण, मुदत आणि उपलब्ध क्लेम/RC माहिती असू शकते.",
+        "स्रोतामध्ये नसलेली माहिती अहवालात नसेल. वापरण्यापूर्वी तारखा आणि नोंदी तपासा."
+      ],
+      tipsTitle:"6. चांगल्या उत्तरांसाठी टिप्स", tipsIntro:"स्पष्ट प्रश्नामुळे योग्य उत्तर मिळण्यास मदत होते.",
+      tips:[
+        "एकावेळी एक स्पष्ट प्रश्न विचारा आणि आवश्यक असल्यास वाहन क्रमांक किंवा संदर्भ द्या.",
+        "दस्तऐवजासाठी पान, विभाग, तारीख किंवा विशिष्ट कलम नमूद करा.",
+        "सोप्या भाषेत सारांश, मुद्दे किंवा तुलना मागा.",
+        "माहिती अपूर्ण किंवा चुकीची वाटल्यास मूळ दस्तऐवज तपासा."
+      ],
+      privacyTitle:"गोपनीयता आणि अचूकता",
+      privacyText:"पासवर्ड, पेमेंट माहिती किंवा शेअर करण्याची परवानगी नसलेला डेटा अपलोड करू नका. चॅट इतिहास या ब्राउझरमध्ये सेव्ह होतो; तो इतर डिव्हाइसवर आपोआप सिंक होत नाही. उत्तरे दस्तऐवजातून मिळालेल्या मजकूरावर आणि उपलब्ध नोंदींवर अवलंबून असतात.",
+      footer:"GetRightCover Assistant · वापरकर्ता मार्गदर्शक"
+    },
+    Gujarati: {
+      brandSub:"વપરાશકર્તા માર્ગદર્શિકા અને સુવિધાની સૂચનાઓ", home:"← મુખ્ય ચેટબોટ",
+      eyebrow:"મદદ કેન્દ્ર", title:"ચેટબોટનો ઉપયોગ કેવી રીતે કરવો",
+      subtitle:"ચેટ કરવી, જૂની વાતચીત ખોલવી, દસ્તાવેજ અપલોડ કરવો અને રિપોર્ટ ડાઉનલોડ કરવો શીખો.",
+      language:"સૂચનાઓની ભાષા પસંદ કરો", basics:"શરૂઆત કરો",
+      chatTitle:"1. સહાયક સાથે ચેટ કરો", chatIntro:"સંદેશ બોક્સમાં તમારો પ્રશ્ન લખો.",
+      chat:[
+        "સંદેશ બોક્સમાં પ્રશ્ન લખો અને Enter દબાવો અથવા Send પસંદ કરો.",
+        "મુખ્ય ચેટબોટના ભાષા મેનૂમાંથી જવાબની ભાષા પસંદ કરો.",
+        "આગળના પ્રશ્નો પૂછો. Attachment સુવિધા ઉપલબ્ધ હોય તો સપોર્ટેડ ફાઇલ જોડો."
+      ],
+      historyTitle:"2. નવી ચેટ અને ચેટ હિસ્ટ્રી", historyIntro:"વાતચીત ગોઠવેલી રાખો.",
+      history:[
+        "નવી વાતચીત માટે New Chat પસંદ કરો. જૂની વાતચીત સેવ રહેવી જોઈએ.",
+        "History ખોલો અને શીર્ષક પસંદ કરીને જૂની વાતચીત ફરી ખોલો.",
+        "વાતચીત કાઢવા માટે તેની બાજુનો delete વિકલ્પ વાપરો. બ્રાઉઝર સ્ટોરેજ સાફ કરવાથી સેવ કરેલી ચેટ્સ દૂર થઈ શકે છે."
+      ],
+      docTitle:"3. Document Chat", docIntro:"દસ્તાવેજનો સારાંશ બનાવો અને પ્રશ્નો પૂછો.",
+      doc:[
+        "મુખ્ય ચેટબોટમાં Document Chat બટનથી અલગ પેજ ખોલો.",
+        "ફાઇલ પસંદ કરો, જવાબની ભાષા પસંદ કરો અને Generate easy summary દબાવો.",
+        "સારાંશ પછી એ જ ફાઇલ વિશે બીજા પ્રશ્નો પૂછો. નવી ફાઇલ માટે Clear પસંદ કરો."
+      ],
+      supportedTitle:"સપોર્ટેડ ફાઇલ્સ અને મર્યાદા",
+      supportedText:"PDF, DOCX, XLSX, XLS, PPTX, CSV, TXT, JSON, MD અને સપોર્ટેડ ઇમેજ ફોર્મેટ. મહત્તમ કદ 15 MB. પસંદ કરી શકાય એવો ટેક્સ્ટ ન હોય તેવા સ્કેન PDF OCR સક્રિય ન હોવાથી વાંચી શકાતા નથી.",
+      customerTitle:"4. ગ્રાહક, વાહન અને સભ્યપદની માહિતી", customerIntro:"ફક્ત ઉપલબ્ધ અને અધિકૃત માહિતી વાપરો.",
+      customer:[
+        "લોકલ ગ્રાહક lookup સક્રિય હોય તો જરૂરી નોંધાયેલ ગ્રાહક માહિતી આપો અને ચેટબોટની સૂચનાઓ અનુસરો.",
+        "વાહનો, સભ્યપદ, નવીનીકરણ, દસ્તાવેજની અવધિ, ક્લેમ અથવા ચલણ વિશે ચોક્કસ પ્રશ્નો પૂછો.",
+        "ડેટાબેઝમાં નંબર મળવો ઓળખનો પુરાવો નથી. પરવાનગી હોય ત્યારે જ ખાનગી માહિતી વાપરો."
+      ],
+      reportTitle:"5. Excel રિપોર્ટ", reportIntro:"સુવિધા ઉપલબ્ધ હોય ત્યારે રિપોર્ટ ડાઉનલોડ કરો.",
+      report:[
+        "જવાબમાં Download Excel Report લિંક દેખાય તો તેને પસંદ કરીને રિપોર્ટ ડાઉનલોડ કરો.",
+        "રિપોર્ટમાં ગ્રાહક સારાંશ, વાહનો, સભ્યપદ, નવીનીકરણ, દસ્તાવેજની અવધિ અને ઉપલબ્ધ ક્લેમ/RC માહિતી હોઈ શકે છે.",
+        "સ્રોતમાં ન હોય તેવી માહિતી રિપોર્ટમાં ન પણ હોય. ઉપયોગ પહેલાં તારીખો અને રેકોર્ડ તપાસો."
+      ],
+      tipsTitle:"6. સારા જવાબ માટે ટિપ્સ", tipsIntro:"સ્પષ્ટ પ્રશ્નથી વધુ ઉપયોગી જવાબ મળે છે.",
+      tips:[
+        "એક સમયે એક સ્પષ્ટ પ્રશ્ન પૂછો અને જરૂર હોય તો વાહન નંબર અથવા સંદર્ભ આપો.",
+        "દસ્તાવેજ માટે પાનું, વિભાગ, તારીખ અથવા કલમ જણાવો.",
+        "સરળ ભાષામાં સારાંશ, મુદ્દા અથવા સરખામણી માંગો.",
+        "માહિતી ખોટી કે અધૂરી લાગે તો મૂળ દસ્તાવેજ તપાસો."
+      ],
+      privacyTitle:"ગોપનીયતા અને ચોકસાઈ",
+      privacyText:"પાસવર્ડ, ચુકવણીની માહિતી અથવા શેર કરવાની પરવાનગી ન હોય તેવો ડેટા અપલોડ ન કરો. ચેટ હિસ્ટ્રી આ બ્રાઉઝરમાં સેવ થાય છે અને બીજા ઉપકરણ સાથે આપમેળે સિંક થતી નથી. જવાબો દસ્તાવેજમાંથી મળેલા ટેક્સ્ટ અને ઉપલબ્ધ રેકોર્ડ પર આધારિત છે.",
+      footer:"GetRightCover Assistant · વપરાશકર્તા માર્ગદર્શિકા"
+    },
+    Punjabi: {
+      brandSub:"ਯੂਜ਼ਰ ਗਾਈਡ ਅਤੇ ਫੀਚਰ ਹਦਾਇਤਾਂ", home:"← ਮੁੱਖ ਚੈਟਬੋਟ",
+      eyebrow:"ਮਦਦ ਕੇਂਦਰ", title:"ਚੈਟਬੋਟ ਕਿਵੇਂ ਵਰਤਣਾ ਹੈ",
+      subtitle:"ਚੈਟ ਕਰਨਾ, ਪੁਰਾਣੀਆਂ ਗੱਲਬਾਤਾਂ ਖੋਲ੍ਹਣਾ, ਦਸਤਾਵੇਜ਼ ਅੱਪਲੋਡ ਕਰਨਾ ਅਤੇ ਰਿਪੋਰਟ ਡਾਊਨਲੋਡ ਕਰਨਾ ਸਿੱਖੋ।",
+      language:"ਹਦਾਇਤਾਂ ਦੀ ਭਾਸ਼ਾ ਚੁਣੋ", basics:"ਸ਼ੁਰੂ ਕਰੋ",
+      chatTitle:"1. ਸਹਾਇਕ ਨਾਲ ਚੈਟ ਕਰੋ", chatIntro:"ਸੁਨੇਹੇ ਵਾਲੇ ਬਾਕਸ ਵਿੱਚ ਸਵਾਲ ਲਿਖੋ।",
+      chat:[
+        "ਸਵਾਲ ਲਿਖੋ ਅਤੇ Enter ਦਬਾਓ ਜਾਂ Send ਚੁਣੋ।",
+        "ਮੁੱਖ ਚੈਟਬੋਟ ਦੇ ਭਾਸ਼ਾ ਮੀਨੂ ਤੋਂ ਜਵਾਬ ਦੀ ਭਾਸ਼ਾ ਚੁਣੋ।",
+        "ਅਗਲੇ ਸਵਾਲ ਪੁੱਛੋ। ਅਟੈਚਮੈਂਟ ਦੀ ਸਹੂਲਤ ਹੋਵੇ ਤਾਂ ਸਹਾਇਕ ਫਾਈਲ ਜੋੜੋ।"
+      ],
+      historyTitle:"2. ਨਵੀਂ ਚੈਟ ਅਤੇ ਚੈਟ ਹਿਸਟਰੀ", historyIntro:"ਗੱਲਬਾਤਾਂ ਨੂੰ ਵਿਵਸਥਿਤ ਰੱਖੋ।",
+      history:[
+        "ਨਵੀਂ ਗੱਲਬਾਤ ਲਈ New Chat ਚੁਣੋ। ਪੁਰਾਣੀ ਗੱਲਬਾਤ ਸੇਵ ਰਹਿਣੀ ਚਾਹੀਦੀ ਹੈ।",
+        "History ਖੋਲ੍ਹੋ ਅਤੇ ਸਿਰਲੇਖ ਚੁਣ ਕੇ ਪੁਰਾਣੀ ਚੈਟ ਮੁੜ ਖੋਲ੍ਹੋ।",
+        "ਗੱਲਬਾਤ ਮਿਟਾਉਣ ਲਈ ਉਸਦੇ ਕੋਲ ਵਾਲਾ delete ਵਿਕਲਪ ਵਰਤੋ। ਬ੍ਰਾਊਜ਼ਰ ਸਟੋਰੇਜ ਸਾਫ਼ ਕਰਨ ਨਾਲ ਚੈਟਾਂ ਮਿਟ ਸਕਦੀਆਂ ਹਨ।"
+      ],
+      docTitle:"3. Document Chat", docIntro:"ਦਸਤਾਵੇਜ਼ ਦਾ ਸਾਰ ਬਣਾਓ ਅਤੇ ਸਵਾਲ ਪੁੱਛੋ।",
+      doc:[
+        "ਮੁੱਖ ਚੈਟਬੋਟ ਦੇ Document Chat ਬਟਨ ਨਾਲ ਵੱਖਰਾ ਪੇਜ ਖੋਲ੍ਹੋ।",
+        "ਫਾਈਲ ਚੁਣੋ, ਜਵਾਬ ਦੀ ਭਾਸ਼ਾ ਚੁਣੋ ਅਤੇ Generate easy summary ਦਬਾਓ।",
+        "ਸਾਰ ਤੋਂ ਬਾਅਦ ਉਸੇ ਫਾਈਲ ਬਾਰੇ ਹੋਰ ਸਵਾਲ ਪੁੱਛੋ। ਨਵੀਂ ਫਾਈਲ ਲਈ Clear ਚੁਣੋ।"
+      ],
+      supportedTitle:"ਸਹਾਇਕ ਫਾਈਲਾਂ ਅਤੇ ਸੀਮਾ",
+      supportedText:"PDF, DOCX, XLSX, XLS, PPTX, CSV, TXT, JSON, MD ਅਤੇ ਸਹਾਇਕ ਤਸਵੀਰ ਫਾਰਮੈਟ। ਵੱਧ ਤੋਂ ਵੱਧ ਆਕਾਰ 15 MB। ਚੁਣਨ ਯੋਗ ਟੈਕਸਟ ਤੋਂ ਬਿਨਾਂ ਸਕੈਨ ਕੀਤੇ PDF OCR ਚਾਲੂ ਨਾ ਹੋਣ ਕਰਕੇ ਨਹੀਂ ਪੜ੍ਹੇ ਜਾ ਸਕਦੇ।",
+      customerTitle:"4. ਗਾਹਕ, ਵਾਹਨ ਅਤੇ ਮੈਂਬਰਸ਼ਿਪ ਜਾਣਕਾਰੀ", customerIntro:"ਕੇਵਲ ਉਪਲਬਧ ਅਤੇ ਅਧਿਕਾਰਤ ਜਾਣਕਾਰੀ ਵਰਤੋ।",
+      customer:[
+        "ਲੋਕਲ ਗਾਹਕ lookup ਚਾਲੂ ਹੋਵੇ ਤਾਂ ਲੋੜੀਂਦੀ ਰਜਿਸਟਰਡ ਜਾਣਕਾਰੀ ਦਿਓ ਅਤੇ ਚੈਟਬੋਟ ਦੀਆਂ ਹਦਾਇਤਾਂ ਮੰਨੋ।",
+        "ਵਾਹਨ, ਮੈਂਬਰਸ਼ਿਪ, ਨਵੀਨੀਕਰਨ, ਦਸਤਾਵੇਜ਼ ਦੀ ਮਿਆਦ, ਕਲੇਮ ਜਾਂ ਚਲਾਨ ਬਾਰੇ ਖਾਸ ਸਵਾਲ ਪੁੱਛੋ।",
+        "ਡਾਟਾਬੇਸ ਵਿੱਚ ਨੰਬਰ ਮਿਲਣਾ ਪਛਾਣ ਦਾ ਸਬੂਤ ਨਹੀਂ। ਨਿੱਜੀ ਜਾਣਕਾਰੀ ਸਿਰਫ਼ ਇਜਾਜ਼ਤ ਹੋਣ ਤੇ ਵਰਤੋ।"
+      ],
+      reportTitle:"5. Excel ਰਿਪੋਰਟ", reportIntro:"ਸਹੂਲਤ ਉਪਲਬਧ ਹੋਵੇ ਤਾਂ ਰਿਪੋਰਟ ਡਾਊਨਲੋਡ ਕਰੋ।",
+      report:[
+        "ਜਵਾਬ ਵਿੱਚ Download Excel Report ਲਿੰਕ ਆਵੇ ਤਾਂ ਉਸ ਨੂੰ ਚੁਣ ਕੇ ਰਿਪੋਰਟ ਡਾਊਨਲੋਡ ਕਰੋ।",
+        "ਰਿਪੋਰਟ ਵਿੱਚ ਗਾਹਕ ਸਾਰ, ਵਾਹਨ, ਮੈਂਬਰਸ਼ਿਪ, ਨਵੀਨੀਕਰਨ, ਦਸਤਾਵੇਜ਼ ਮਿਆਦ ਅਤੇ ਉਪਲਬਧ ਕਲੇਮ/RC ਜਾਣਕਾਰੀ ਹੋ ਸਕਦੀ ਹੈ।",
+        "ਸਰੋਤ ਵਿੱਚ ਨਾ ਹੋਈ ਜਾਣਕਾਰੀ ਰਿਪੋਰਟ ਵਿੱਚ ਨਹੀਂ ਹੋਵੇਗੀ। ਵਰਤੋਂ ਤੋਂ ਪਹਿਲਾਂ ਤਾਰੀਖਾਂ ਅਤੇ ਰਿਕਾਰਡ ਜਾਂਚੋ।"
+      ],
+      tipsTitle:"6. ਵਧੀਆ ਜਵਾਬਾਂ ਲਈ ਸੁਝਾਅ", tipsIntro:"ਸਪਸ਼ਟ ਸਵਾਲ ਨਾਲ ਸਹੀ ਜਵਾਬ ਮਿਲਣ ਵਿੱਚ ਮਦਦ ਹੁੰਦੀ ਹੈ।",
+      tips:[
+        "ਇੱਕ ਵਾਰ ਵਿੱਚ ਇੱਕ ਸਪਸ਼ਟ ਸਵਾਲ ਪੁੱਛੋ ਅਤੇ ਲੋੜ ਹੋਵੇ ਤਾਂ ਵਾਹਨ ਨੰਬਰ ਦਿਓ।",
+        "ਦਸਤਾਵੇਜ਼ ਲਈ ਪੰਨਾ, ਭਾਗ, ਤਾਰੀਖ ਜਾਂ ਖਾਸ ਧਾਰਾ ਦੱਸੋ।",
+        "ਸਧਾਰਨ ਭਾਸ਼ਾ ਵਿੱਚ ਸਾਰ, ਬਿੰਦੂ ਜਾਂ ਤੁਲਨਾ ਮੰਗੋ।",
+        "ਜਾਣਕਾਰੀ ਗਲਤ ਜਾਂ ਅਧੂਰੀ ਲੱਗੇ ਤਾਂ ਅਸਲ ਦਸਤਾਵੇਜ਼ ਜਾਂਚੋ।"
+      ],
+      privacyTitle:"ਪਰਦੇਦਾਰੀ ਅਤੇ ਸਹੀਪਨ",
+      privacyText:"ਪਾਸਵਰਡ, ਭੁਗਤਾਨ ਜਾਣਕਾਰੀ ਜਾਂ ਬਿਨਾਂ ਇਜਾਜ਼ਤ ਵਾਲਾ ਡਾਟਾ ਅੱਪਲੋਡ ਨਾ ਕਰੋ। ਚੈਟ ਹਿਸਟਰੀ ਇਸ ਬ੍ਰਾਊਜ਼ਰ ਵਿੱਚ ਸੇਵ ਹੁੰਦੀ ਹੈ ਅਤੇ ਦੂਜੇ ਡਿਵਾਈਸਾਂ ਨਾਲ ਆਪਣੇ ਆਪ ਸਿੰਕ ਨਹੀਂ ਹੁੰਦੀ। ਜਵਾਬ ਦਸਤਾਵੇਜ਼ ਤੋਂ ਕੱਢੇ ਟੈਕਸਟ ਅਤੇ ਉਪਲਬਧ ਰਿਕਾਰਡਾਂ ਉੱਤੇ ਨਿਰਭਰ ਕਰਦੇ ਹਨ।",
+      footer:"GetRightCover Assistant · ਯੂਜ਼ਰ ਗਾਈਡ"
+    },
+    Bengali: {
+      brandSub:"ব্যবহার নির্দেশিকা ও ফিচারের তথ্য", home:"← মূল চ্যাটবট",
+      eyebrow:"সহায়তা কেন্দ্র", title:"চ্যাটবট কীভাবে ব্যবহার করবেন",
+      subtitle:"চ্যাট করা, আগের কথোপকথন খোলা, নথি আপলোড করা এবং রিপোর্ট ডাউনলোড করা শিখুন।",
+      language:"নির্দেশনার ভাষা বেছে নিন", basics:"শুরু করুন",
+      chatTitle:"1. সহকারীর সঙ্গে চ্যাট করুন", chatIntro:"মেসেজ বক্সে আপনার প্রশ্ন লিখুন।",
+      chat:[
+        "প্রশ্ন লিখে Enter চাপুন অথবা Send নির্বাচন করুন।",
+        "মূল চ্যাটবটের ভাষা মেনু থেকে উত্তরের ভাষা বেছে নিন।",
+        "পরের প্রশ্ন করুন। অ্যাটাচমেন্ট সুবিধা থাকলে সমর্থিত ফাইলও যোগ করতে পারেন।"
+      ],
+      historyTitle:"2. নতুন চ্যাট ও চ্যাট ইতিহাস", historyIntro:"কথোপকথন গুছিয়ে রাখুন।",
+      history:[
+        "নতুন কথোপকথনের জন্য New Chat বেছে নিন। আগের কথোপকথন সংরক্ষিত থাকা উচিত।",
+        "History খুলে কোনো শিরোনামে ক্লিক করলে পুরোনো চ্যাট আবার খুলবে।",
+        "চ্যাট মুছতে পাশের delete বিকল্প ব্যবহার করুন। ব্রাউজারের স্টোরেজ মুছে দিলে সংরক্ষিত চ্যাটও মুছে যেতে পারে।"
+      ],
+      docTitle:"3. Document Chat", docIntro:"নথির সারাংশ তৈরি করুন এবং প্রশ্ন করুন।",
+      doc:[
+        "মূল চ্যাটবটের Document Chat বোতাম থেকে আলাদা পেজ খুলুন।",
+        "ফাইল বেছে ভাষা নির্বাচন করুন এবং Generate easy summary চাপুন।",
+        "সারাংশের পরে একই ফাইল নিয়ে আরও প্রশ্ন করুন। নতুন ফাইলের জন্য Clear নির্বাচন করুন।"
+      ],
+      supportedTitle:"সমর্থিত ফাইল ও সীমা",
+      supportedText:"PDF, DOCX, XLSX, XLS, PPTX, CSV, TXT, JSON, MD ও সমর্থিত ছবির ফরম্যাট। সর্বোচ্চ আকার 15 MB। নির্বাচনযোগ্য লেখা নেই এমন স্ক্যান করা PDF OCR চালু না থাকায় পড়া নাও যেতে পারে।",
+      customerTitle:"4. গ্রাহক, গাড়ি ও সদস্যতার তথ্য", customerIntro:"শুধু উপলভ্য ও অনুমোদিত তথ্য ব্যবহার করুন।",
+      customer:[
+        "লোকাল গ্রাহক অনুসন্ধান চালু থাকলে প্রয়োজনীয় নিবন্ধিত তথ্য দিন এবং চ্যাটবটের নির্দেশ অনুসরণ করুন।",
+        "গাড়ি, সদস্যতা, নবীকরণ, নথির মেয়াদ, ক্লেম বা চালান নিয়ে নির্দিষ্ট প্রশ্ন করুন।",
+        "ডেটাবেসে নম্বর মেলা পরিচয়ের প্রমাণ নয়। অনুমতি থাকলেই ব্যক্তিগত তথ্য ব্যবহার করুন।"
+      ],
+      reportTitle:"5. Excel রিপোর্ট", reportIntro:"সুবিধাটি উপলভ্য হলে রিপোর্ট ডাউনলোড করুন।",
+      report:[
+        "উত্তরে Download Excel Report লিংক এলে সেটি বেছে রিপোর্ট ডাউনলোড করুন।",
+        "রিপোর্টে গ্রাহকের সারাংশ, গাড়ি, সদস্যতা, নবীকরণ, নথির মেয়াদ এবং উপলভ্য ক্লেম/RC তথ্য থাকতে পারে।",
+        "উৎসে নেই এমন তথ্য রিপোর্টে নাও থাকতে পারে। ব্যবহারের আগে তারিখ ও রেকর্ড যাচাই করুন।"
+      ],
+      tipsTitle:"6. ভালো উত্তরের টিপস", tipsIntro:"স্পষ্ট প্রশ্ন সঠিক উত্তর পেতে সাহায্য করে।",
+      tips:[
+        "একবারে একটি স্পষ্ট প্রশ্ন করুন এবং দরকার হলে গাড়ির নম্বর দিন।",
+        "নথি সম্পর্কে জানতে পৃষ্ঠা, বিভাগ, তারিখ বা নির্দিষ্ট ধারা উল্লেখ করুন।",
+        "সহজ ভাষায় সারাংশ, পয়েন্ট বা তুলনা চাইতে পারেন।",
+        "তথ্য ভুল বা অসম্পূর্ণ মনে হলে মূল নথি যাচাই করুন।"
+      ],
+      privacyTitle:"গোপনীয়তা ও নির্ভুলতা",
+      privacyText:"পাসওয়ার্ড, পেমেন্টের তথ্য বা অনুমতি ছাড়া শেয়ার করা যায় না এমন তথ্য আপলোড করবেন না। চ্যাট ইতিহাস এই ব্রাউজারে থাকে এবং অন্য ডিভাইসে স্বয়ংক্রিয়ভাবে সিঙ্ক হয় না। উত্তর নথি থেকে পাওয়া লেখা ও উপলভ্য রেকর্ডের উপর নির্ভর করে।",
+      footer:"GetRightCover Assistant · ব্যবহার নির্দেশিকা"
+    },
+    Tamil: {
+      brandSub:"பயனர் வழிகாட்டி மற்றும் அம்ச விளக்கங்கள்", home:"← முதன்மை சாட்பாட்",
+      eyebrow:"உதவி மையம்", title:"சாட்பாட்டை எப்படிப் பயன்படுத்துவது",
+      subtitle:"உரையாடல், பழைய உரையாடல்களைத் திறத்தல், ஆவணங்களைப் பதிவேற்றுதல் மற்றும் அறிக்கைகளைப் பதிவிறக்குதல் ஆகியவற்றைக் கற்றுக்கொள்ளுங்கள்.",
+      language:"வழிமுறைகளின் மொழியைத் தேர்ந்தெடுக்கவும்", basics:"தொடங்குங்கள்",
+      chatTitle:"1. உதவியாளருடன் உரையாடுங்கள்", chatIntro:"செய்திப் பெட்டியில் உங்கள் கேள்வியை உள்ளிடவும்.",
+      chat:[
+        "கேள்வியைத் தட்டச்சு செய்து Enter அழுத்தவும் அல்லது Send என்பதைத் தேர்ந்தெடுக்கவும்.",
+        "முதன்மை சாட்பாட்டின் மொழிப் பட்டியலில் பதிலுக்கான மொழியைத் தேர்ந்தெடுக்கவும்.",
+        "தொடர்க் கேள்விகளைக் கேளுங்கள். கோப்பு இணைப்பு வசதி இருந்தால் ஆதரிக்கப்படும் கோப்பைச் சேர்க்கலாம்."
+      ],
+      historyTitle:"2. புதிய உரையாடல் மற்றும் வரலாறு", historyIntro:"உரையாடல்களை ஒழுங்காக வைத்திருங்கள்.",
+      history:[
+        "புதிய உரையாடலைத் தொடங்க New Chat என்பதைத் தேர்ந்தெடுக்கவும். பழைய உரையாடல் சேமிக்கப்பட்டிருக்க வேண்டும்.",
+        "History-ஐத் திறந்து தலைப்பைத் தேர்ந்தெடுத்தால் பழைய உரையாடலை மீண்டும் திறக்கலாம்.",
+        "உரையாடலை நீக்க அருகிலுள்ள delete விருப்பத்தைப் பயன்படுத்தவும். உலாவி சேமிப்பகத்தை அழித்தால் உரையாடல்கள் நீங்கலாம்."
+      ],
+      docTitle:"3. Document Chat", docIntro:"ஆவணத்தின் சுருக்கத்தைப் பெற்று கேள்விகளைக் கேளுங்கள்.",
+      doc:[
+        "முதன்மை சாட்பாட்டில் உள்ள Document Chat பொத்தானைத் தேர்ந்தெடுத்து தனிப் பக்கத்தைத் திறக்கவும்.",
+        "கோப்பைத் தேர்ந்தெடுத்து பதில் மொழியை அமைத்து Generate easy summary என்பதை அழுத்தவும்.",
+        "சுருக்கத்திற்குப் பிறகு அதே கோப்பைப் பற்றி மேலும் கேள்விகள் கேளுங்கள். புதிய கோப்பிற்கு Clear என்பதைத் தேர்ந்தெடுக்கவும்."
+      ],
+      supportedTitle:"ஆதரிக்கப்படும் கோப்புகள் மற்றும் வரம்புகள்",
+      supportedText:"PDF, DOCX, XLSX, XLS, PPTX, CSV, TXT, JSON, MD மற்றும் ஆதரிக்கப்படும் பட வடிவங்கள். அதிகபட்ச அளவு 15 MB. தேர்ந்தெடுக்கக்கூடிய உரை இல்லாத ஸ்கேன் செய்யப்பட்ட PDF-களை OCR இயக்கப்படாததால் படிக்க முடியாமல் இருக்கலாம்.",
+      customerTitle:"4. வாடிக்கையாளர், வாகனம் மற்றும் உறுப்பினர் விவரங்கள்", customerIntro:"கிடைக்கும் மற்றும் அங்கீகரிக்கப்பட்ட தகவலை மட்டுமே பயன்படுத்தவும்.",
+      customer:[
+        "உள்ளூர் வாடிக்கையாளர் தேடல் இயக்கப்பட்டிருந்தால் தேவையான பதிவு விவரங்களை வழங்கி சாட்பாட்டின் வழிமுறைகளைப் பின்பற்றவும்.",
+        "வாகனம், உறுப்பினர் நிலை, புதுப்பிப்பு, ஆவண காலாவதி, கிளைம் அல்லது சலான் பற்றிக் குறிப்பிட்ட கேள்விகளைக் கேளுங்கள்.",
+        "தரவுத்தளத்தில் எண் இருப்பது அடையாளச் சான்றல்ல. அனுமதி இருந்தால் மட்டுமே தனிப்பட்ட விவரங்களைப் பயன்படுத்தவும்."
+      ],
+      reportTitle:"5. Excel அறிக்கைகள்", reportIntro:"வசதி கிடைக்கும்போது அறிக்கையைப் பதிவிறக்கவும்.",
+      report:[
+        "பதிலில் Download Excel Report இணைப்பு வந்தால் அதைப் பயன்படுத்திப் பதிவிறக்கவும்.",
+        "அறிக்கையில் வாடிக்கையாளர் சுருக்கம், வாகனங்கள், உறுப்பினர் விவரங்கள், புதுப்பிப்பு, ஆவண காலாவதி மற்றும் கிடைக்கும் கிளைம்/RC தகவல்கள் இருக்கலாம்.",
+        "மூலத் தரவில் இல்லாத விவரங்கள் அறிக்கையில் இருக்காது. பயன்படுத்துவதற்கு முன் தேதிகளையும் பதிவுகளையும் சரிபார்க்கவும்."
+      ],
+      tipsTitle:"6. சிறந்த பதில்களுக்கான குறிப்புகள்", tipsIntro:"தெளிவான கேள்வி துல்லியமான பதிலுக்கு உதவும்.",
+      tips:[
+        "ஒரு நேரத்தில் ஒரு தெளிவான கேள்வியைக் கேட்டு, தேவைப்பட்டால் வாகன எண்ணைக் குறிப்பிடவும்.",
+        "ஆவணத்திற்காகப் பக்கம், பகுதி, தேதி அல்லது குறிப்பிட்ட விதியைச் சொல்லவும்.",
+        "எளிய மொழியில் சுருக்கம், குறிப்புகள் அல்லது ஒப்பீட்டைக் கேட்கலாம்.",
+        "தகவல் தவறாகவோ முழுமையற்றதாகவோ இருந்தால் அசல் ஆவணத்தைச் சரிபார்க்கவும்."
+      ],
+      privacyTitle:"தனியுரிமை மற்றும் துல்லியம்",
+      privacyText:"கடவுச்சொற்கள், பணம் செலுத்தும் விவரங்கள் அல்லது பகிர அனுமதி இல்லாத தரவைப் பதிவேற்ற வேண்டாம். இந்தப் பதிப்பின் உரையாடல் வரலாறு இந்த உலாவியில் சேமிக்கப்படுகிறது; பிற சாதனங்களுடன் தானாக ஒத்திசைக்கப்படாது. பதில்கள் ஆவணத்திலிருந்து பெறப்பட்ட உரை மற்றும் கிடைக்கும் பதிவுகளைச் சார்ந்தவை.",
+      footer:"GetRightCover Assistant · பயனர் வழிகாட்டி"
+    },
+    Telugu: {
+      brandSub:"వినియోగదారు మార్గదర్శిని మరియు ఫీచర్ సూచనలు", home:"← ప్రధాన చాట్‌బాట్",
+      eyebrow:"సహాయ కేంద్రం", title:"చాట్‌బాట్‌ను ఎలా ఉపయోగించాలి",
+      subtitle:"చాట్ చేయడం, పాత సంభాషణలను తెరవడం, పత్రాలను అప్‌లోడ్ చేయడం మరియు నివేదికలను డౌన్‌లోడ్ చేయడం నేర్చుకోండి.",
+      language:"సూచనల భాషను ఎంచుకోండి", basics:"ప్రారంభించండి",
+      chatTitle:"1. అసిస్టెంట్‌తో చాట్ చేయండి", chatIntro:"మెసేజ్ బాక్స్‌లో మీ ప్రశ్నను టైప్ చేయండి.",
+      chat:[
+        "ప్రశ్న టైప్ చేసి Enter నొక్కండి లేదా Send ఎంచుకోండి.",
+        "ప్రధాన చాట్‌బాట్ భాష మెనూలో సమాధాన భాషను ఎంచుకోండి.",
+        "తదుపరి ప్రశ్నలు అడగండి. అటాచ్‌మెంట్ సదుపాయం ఉంటే మద్దతు ఉన్న ఫైల్‌ను జోడించండి."
+      ],
+      historyTitle:"2. కొత్త చాట్ మరియు చాట్ హిస్టరీ", historyIntro:"సంభాషణలను క్రమబద్ధంగా ఉంచండి.",
+      history:[
+        "కొత్త సంభాషణ కోసం New Chat ఎంచుకోండి. పాత సంభాషణ సేవ్ అయి ఉండాలి.",
+        "History తెరిచి శీర్షికను ఎంచుకుంటే పాత చాట్‌ను మళ్లీ తెరవవచ్చు.",
+        "చాట్ తొలగించడానికి దాని పక్కన ఉన్న delete ఎంపికను ఉపయోగించండి. బ్రౌజర్ స్టోరేజ్‌ను క్లియర్ చేస్తే సేవ్ చేసిన చాట్‌లు తొలగవచ్చు."
+      ],
+      docTitle:"3. Document Chat", docIntro:"పత్రం సారాంశం పొందండి, దాని గురించి ప్రశ్నలు అడగండి.",
+      doc:[
+        "ప్రధాన చాట్‌బాట్‌లో Document Chat బటన్ ఎంచుకుని ప్రత్యేక పేజీని తెరవండి.",
+        "ఫైల్ ఎంచుకుని సమాధాన భాషను ఎంచుకుని Generate easy summary నొక్కండి.",
+        "సారాంశం తర్వాత అదే ఫైల్‌పై తదుపరి ప్రశ్నలు అడగండి. కొత్త ఫైల్ కోసం Clear ఎంచుకోండి."
+      ],
+      supportedTitle:"మద్దతు ఉన్న ఫైళ్లు మరియు పరిమితులు",
+      supportedText:"PDF, DOCX, XLSX, XLS, PPTX, CSV, TXT, JSON, MD మరియు మద్దతు ఉన్న చిత్ర ఫార్మాట్లు. గరిష్ఠ పరిమాణం 15 MB. ఎంపిక చేయగల టెక్స్ట్ లేని స్కాన్ PDFలను OCR ప్రారంభించనందున చదవలేకపోవచ్చు.",
+      customerTitle:"4. కస్టమర్, వాహనం మరియు సభ్యత్వ వివరాలు", customerIntro:"అందుబాటులో ఉన్న, అనుమతి పొందిన సమాచారాన్ని మాత్రమే ఉపయోగించండి.",
+      customer:[
+        "లోకల్ కస్టమర్ లుక్‌అప్ ప్రారంభించబడితే అవసరమైన నమోదిత వివరాలు ఇచ్చి చాట్‌బాట్ సూచనలను అనుసరించండి.",
+        "వాహనాలు, సభ్యత్వాలు, రెన్యూవల్, డాక్యుమెంట్ గడువు, క్లెయిమ్ లేదా చలాన్లపై నిర్దిష్ట ప్రశ్నలు అడగండి.",
+        "డేటాబేస్‌లో నంబర్ ఉండటం గుర్తింపు నిర్ధారణ కాదు. అనుమతి ఉన్నప్పుడే వ్యక్తిగత సమాచారాన్ని ఉపయోగించండి."
+      ],
+      reportTitle:"5. Excel నివేదికలు", reportIntro:"సదుపాయం అందుబాటులో ఉన్నప్పుడు నివేదికను డౌన్‌లోడ్ చేయండి.",
+      report:[
+        "సమాధానంలో Download Excel Report లింక్ కనిపిస్తే దాన్ని ఎంచుకుని నివేదికను డౌన్‌లోడ్ చేయండి.",
+        "నివేదికలో కస్టమర్ సారాంశం, వాహనాలు, సభ్యత్వాలు, రెన్యూవల్, డాక్యుమెంట్ గడువు మరియు అందుబాటులో ఉన్న క్లెయిమ్/RC వివరాలు ఉండవచ్చు.",
+        "మూలంలో లేని వివరాలు నివేదికలో ఉండకపోవచ్చు. ఉపయోగించే ముందు తేదీలు, రికార్డులను తనిఖీ చేయండి."
+      ],
+      tipsTitle:"6. మెరుగైన సమాధానాల కోసం సూచనలు", tipsIntro:"స్పష్టమైన ప్రశ్న సరైన సమాధానానికి సహాయపడుతుంది.",
+      tips:[
+        "ఒక్కసారి ఒక స్పష్టమైన ప్రశ్న అడగండి; అవసరమైతే వాహన నంబర్ లేదా సందర్భాన్ని ఇవ్వండి.",
+        "పత్రం గురించి అడిగేటప్పుడు పేజీ, విభాగం, తేదీ లేదా నిబంధనను పేర్కొనండి.",
+        "సులభమైన భాషలో సారాంశం, ముఖ్యాంశాలు లేదా పోలిక కోరండి.",
+        "సమాచారం తప్పుగా లేదా అసంపూర్ణంగా అనిపిస్తే అసలు పత్రాన్ని తనిఖీ చేయండి."
+      ],
+      privacyTitle:"గోప్యత మరియు ఖచ్చితత్వం",
+      privacyText:"పాస్‌వర్డ్‌లు, చెల్లింపు వివరాలు లేదా పంచుకోవడానికి అనుమతి లేని సమాచారాన్ని అప్‌లోడ్ చేయవద్దు. ఈ సంస్కరణలో చాట్ చరిత్ర ఈ బ్రౌజర్‌లో సేవ్ అవుతుంది; ఇతర పరికరాలతో ఆటోమేటిక్‌గా సమకాలీకరించబడదు. సమాధానాలు పత్రం నుంచి పొందిన టెక్స్ట్ మరియు అందుబాటులో ఉన్న రికార్డులపై ఆధారపడతాయి.",
+      footer:"GetRightCover Assistant · వినియోగదారు మార్గదర్శిని"
+    }
+  };
+
+  const simpleTextIds = [
+    ["brandSub","brandSub"],["homeLink","home"],["eyebrow","eyebrow"],
+    ["pageTitle","title"],["pageSubtitle","subtitle"],
+    ["languageLabel","language"],["basicsLabel","basics"],
+    ["chatTitle","chatTitle"],["chatIntro","chatIntro"],
+    ["historyTitle","historyTitle"],["historyIntro","historyIntro"],
+    ["docTitle","docTitle"],["docIntro","docIntro"],
+    ["supportedTitle","supportedTitle"],["customerTitle","customerTitle"],
+    ["customerIntro","customerIntro"],["reportTitle","reportTitle"],
+    ["reportIntro","reportIntro"],["tipsTitle","tipsTitle"],
+    ["tipsIntro","tipsIntro"],["privacyTitle","privacyTitle"],
+    ["privacyText","privacyText"],["footerText","footer"]
+  ];
+
+  function setList(id, items) {
+    const element = document.getElementById(id);
+    element.replaceChildren();
+    items.forEach(item => {
+      const li = document.createElement("li");
+      li.textContent = item;
+      element.appendChild(li);
+    });
+  }
+
+  function renderLanguage(language) {
+    const guide = guides[language] || guides.English;
+    document.documentElement.lang = language === "Hindi" ? "hi" :
+      language === "Marathi" ? "mr" : language === "Gujarati" ? "gu" :
+      language === "Punjabi" ? "pa" : language === "Bengali" ? "bn" :
+      language === "Tamil" ? "ta" : language === "Telugu" ? "te" : "en";
+
+    simpleTextIds.forEach(([id, key]) => {
+      document.getElementById(id).textContent = guide[key];
+    });
+
+    setList("chatSteps", guide.chat);
+    setList("historySteps", guide.history);
+    setList("docSteps", guide.doc);
+    setList("customerSteps", guide.customer);
+    setList("reportSteps", guide.report);
+    setList("tipsSteps", guide.tips);
+  }
+
+  const selector = document.getElementById("guideLanguage");
+  const savedLanguage = localStorage.getItem("grc_guide_language") || "English";
+  selector.value = guides[savedLanguage] ? savedLanguage : "English";
+  renderLanguage(selector.value);
+
+  selector.addEventListener("change", () => {
+    localStorage.setItem("grc_guide_language", selector.value);
+    renderLanguage(selector.value);
+  });
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,185 @@
+from __future__ import annotations
+
+import base64
+from pathlib import Path
+
+import requests
+
+from .config import (
+    OLLAMA_BASE_URL,
+    OLLAMA_TIMEOUT,
+    VISION_MODEL,
+)
+
+
+ACCIDENT_PROMPT = """
+You are an accident-image assistance system for GetRightCover.
+
+Analyze the uploaded vehicle/accident image and provide ONLY practical,
+safety-focused guidance based on what is visibly present.
+
+Important rules:
+- Do not decide who is at fault.
+- Do not provide legal conclusions.
+- Do not diagnose injuries or medical conditions.
+- Do not give an exact repair-cost estimate.
+- Do not claim internal mechanical damage unless it is visibly obvious.
+- Clearly distinguish visible observations from uncertainty.
+- If the image is unclear, say that it is unclear.
+- Never invent vehicle, insurance, claim, or customer information.
+- Prioritize immediate safety.
+
+Return exactly this structure:
+
+OBSERVATIONS:
+- <visible observation 1>
+- <visible observation 2>
+- <visible observation 3>
+
+SAFETY:
+<one short sentence>
+
+NEXT_ACTIONS:
+1. <action>
+2. <action>
+3. <action>
+4. <action>
+
+LIMITATIONS:
+<one short sentence explaining what cannot be determined from the image alone>
+"""
+
+
+def analyze_accident_image(image_path: Path) -> dict:
+    if not image_path.exists():
+        raise FileNotFoundError(
+            f"Image not found: {image_path}"
+        )
+
+    if image_path.stat().st_size == 0:
+        raise ValueError(
+            "Uploaded image is empty."
+        )
+
+    image_base64 = base64.b64encode(
+        image_path.read_bytes()
+    ).decode("utf-8")
+
+    payload = {
+        "model": VISION_MODEL,
+        "stream": False,
+        "think": False,
+        "messages": [
+            {
+                "role": "user",
+                "content": ACCIDENT_PROMPT,
+                "images": [image_base64],
+            }
+        ],
+        "options": {
+            "temperature": 0.1,
+            "num_predict": 500,
+        },
+    }
+
+    response = requests.post(
+        f"{OLLAMA_BASE_URL}/api/chat",
+        json=payload,
+        timeout=max(OLLAMA_TIMEOUT, 180),
+    )
+
+    response.raise_for_status()
+
+    data = response.json()
+
+    content = (
+        data.get("message", {})
+        .get("content", "")
+        .strip()
+    )
+
+    if not content:
+        raise RuntimeError(
+            "Vision model returned an empty response."
+        )
+
+    return {
+        "model": VISION_MODEL,
+        "analysis": content,
+    }
+
+def analyze_live_frame(image_path: Path, question: str) -> dict:
+    """Answer a spoken question using one locally processed camera frame."""
+    if not image_path.exists():
+        raise FileNotFoundError(f"Image not found: {image_path}")
+
+    if image_path.stat().st_size == 0:
+        raise ValueError("Camera frame is empty.")
+
+    question = (question or "").strip()
+    if len(question) > 4000:
+        raise ValueError("Question must be 4000 characters or fewer.")
+
+    if not question:
+        question = "Briefly describe the visible scene."
+
+    image_base64 = base64.b64encode(
+        image_path.read_bytes()
+    ).decode("utf-8")
+
+    prompt = f"""
+You are GetRightCover's local live visual assistant.
+
+Answer the user's question using the attached camera frame.
+Be concise and natural because your answer will be spoken aloud.
+
+Rules:
+- Describe only things supported by the visible image.
+- Clearly state when text or details are too small or unclear to read.
+- Do not invent identities, vehicle records, insurance details, or hidden facts.
+- Do not claim to know something outside the camera's view.
+- If safety risks are visible, mention practical immediate precautions.
+- Answer the specific question rather than giving an unrelated image description.
+
+User's question:
+{question}
+""".strip()
+
+    payload = {
+        "model": VISION_MODEL,
+        "stream": False,
+        "think": False,
+        "messages": [
+            {
+                "role": "user",
+                "content": prompt,
+                "images": [image_base64],
+            }
+        ],
+        "options": {
+            "temperature": 0.2,
+            "num_predict": 350,
+        },
+    }
+
+    response = requests.post(
+        f"{OLLAMA_BASE_URL}/api/chat",
+        json=payload,
+        timeout=max(OLLAMA_TIMEOUT, 120),
+    )
+    response.raise_for_status()
+
+    content = (
+        response.json()
+        .get("message", {})
+        .get("content", "")
+        .strip()
+    )
+
+    if not content:
+        raise RuntimeError("Live vision model returned an empty response.")
+
+    return {
+        "model": VISION_MODEL,
+        "analysis": content,
+    }

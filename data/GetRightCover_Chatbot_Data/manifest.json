@@ -1,0 +1,191 @@
+{
+  "package_name": "GetRightCover Chatbot Data Extract",
+  "source_file": "Analytics_Wall_Earth_Zoom_Intro_Animation.html",
+  "extraction_method": "Parsed dashboard HTML data arrays and read embedded Excel workbooks with artifact_tool; dashboard UI code and embedded API keys were not copied into this package.",
+  "extracted_on_local_date": "2026-10-14",
+  "source_files_embedded": [
+    {
+      "id": 1,
+      "name": "Challan_Intelligence_Dashboard.html",
+      "type": "HTML DASHBOARD",
+      "title": "Challan Intelligence Command Center",
+      "extracted_bytes": 60230,
+      "source": "embedded HTML"
+    },
+    {
+      "id": 2,
+      "name": "CEO_RC_Status_With_BP_Customer_Details.xlsx",
+      "type": "EXCEL WORKBOOK",
+      "title": "Ceo Rc Status with Bp Customer Details",
+      "extracted_bytes": 183942,
+      "source": "embedded workbook base64",
+      "excel_rows": 1730,
+      "excel_columns": 21,
+      "sheet_list": "<span class=\"sheet-pill\">RC Status Analysis</span>"
+    },
+    {
+      "id": 3,
+      "name": "Customer_Fleet_Interactive_Dashboard_Final-2.html",
+      "type": "HTML DASHBOARD",
+      "title": "Customer Fleet Interactive Dashboard Final",
+      "extracted_bytes": 3680215,
+      "source": "embedded HTML"
+    },
+    {
+      "id": 4,
+      "name": "Insurance_Company_Vehicle_Analysis.xlsx",
+      "type": "EXCEL WORKBOOK",
+      "title": "Insurance Company Vehicle Analysis",
+      "extracted_bytes": 14489,
+      "source": "embedded workbook base64",
+      "excel_rows": 42,
+      "excel_columns": 3,
+      "sheet_list": "<span class=\"sheet-pill\">Insurance Analysis</span><span class=\"sheet-pill\">Top Insurance Companies</span>"
+    },
+    {
+      "id": 5,
+      "name": "Insurance_Company_Vehicle_Analysis_Final.xlsx",
+      "type": "EXCEL WORKBOOK",
+      "title": "Insurance Company Vehicle Analysis Final",
+      "extracted_bytes": 43753,
+      "source": "embedded workbook base64",
+      "excel_rows": 27,
+      "excel_columns": 8,
+      "sheet_list": "<span class=\"sheet-pill\">Summary</span><span class=\"sheet-pill\">Insurance Company Analysis</span><span class=\"sheet-pill\">Vehicles Without Company</span><span class=\"sheet-pill\">Duplicate Vehicles</span>"
+    },
+    {
+      "id": 6,
+      "name": "Insurance_Vehicle_Intelligence_Dashboard_Updated-4.html",
+      "type": "HTML DASHBOARD",
+      "title": "Insurance Vehicle Intelligence Dashboard Updated",
+      "extracted_bytes": 222445,
+      "source": "embedded HTML"
+    },
+    {
+      "id": 7,
+      "name": "Renewal_Membership_Intelligence_Dashboard_Final.html",
+      "type": "HTML DASHBOARD",
+      "title": "Renewal Membership Intelligence Dashboard Final",
+      "extracted_bytes": 11998523,
+      "source": "embedded HTML"
+    },
+    {
+      "id": 8,
+      "name": "Vehicle_Portfolio_Command_Center_Theme_Map_Animated-2.html",
+      "type": "HTML DASHBOARD",
+      "title": "Vehicle Portfolio Command Center Theme Map Animated",
+      "extracted_bytes": 27524447,
+      "source": "embedded HTML"
+    },
+    {
+      "id": 9,
+      "name": "Renewal_Claims_4_Bucket_Accurate_Dynamic.html",
+      "type": "HTML DASHBOARD",
+      "title": "Renewal + Claims Intelligence",
+      "extracted_bytes": 9829382,
+      "source": "embedded HTML"
+    }
+  ],
+  "json_files": {
+    "customers.json": {
+      "records": 3092,
+      "description": "Customer Fleet profiles keyed with source customer ID."
+    },
+    "customer_vehicle_links.json": {
+      "records": 22357,
+      "description": "One record per vehicle listed on a Customer Fleet profile."
+    },
+    "memberships.json": {
+      "records": 24611,
+      "unique_normalized_vehicle_keys": 24254,
+      "description": "Full membership records from Renewal Membership dashboard; original field names retained."
+    },
+    "renewal_claims.json": {
+      "records": 27373,
+      "unique_normalized_vehicle_keys": 27205,
+      "has_claim_true_rows": 1188,
+      "has_claim_true_unique_vehicles": 1181,
+      "description": "Full records from Renewal + Claims dashboard; hasClaim is a claim flag, not individual challan details."
+    },
+    "vehicles.json": {
+      "records": 30459,
+      "description": "Unique compliance-oriented vehicle rows with insurance, PUC, fitness and tax dates / expired flags."
+    },
+    "vehicle_portfolio_records_raw.json": {
+      "records": 30659,
+      "unique_normalized_vehicle_keys": 30457,
+      "description": "Raw vehicle portfolio rows preserved, including duplicate source rows."
+    },
+    "rc_statuses.json": {
+      "records": 1729,
+      "description": "RC status analysis worksheet records, including status flags."
+    },
+    "challan_summaries.json": {
+      "monthly_rows": 131,
+      "state_rows": 30,
+      "violation_rows": 15,
+      "individual_challan_rows_available": false,
+      "description": "Only aggregate dashboard rows were present."
+    },
+    "insurance_summaries.json": {
+      "insurer_dashboard_records": 52,
+      "company_assignment_records": 31,
+      "vehicles_without_company_records": 1121,
+      "duplicate_vehicle_records": 266
+    },
+    "vehicle_lookup_index.json": {
+      "keys": 31358,
+      "description": "Normalized registration keys map to zero-based indices in data files; raw vehicle values remain in the records."
+    },
+    "phone_lookup_index.json": {
+      "keys": 5593,
+      "description": "Digits-only phone lookup across source rows; not proof of identity by itself."
+    },
+    "customer_name_lookup_index.json": {
+      "keys": 4719,
+      "description": "Normalized name lookup; use with phone/customer ID because names can be shared."
+    },
+    "business_partners.json": {
+      "records": 515,
+      "description": "Unique source-specific business-partner identity tuples from membership/claim datasets."
+    },
+    "renewal_summaries.json": {
+      "source_record_count": 24611
+    },
+    "vehicle_portfolio_summaries.json": {
+      "raw_vehicle_rows": 30659,
+      "unique_compliance_rows": 30459
+    }
+  },
+  "quick_counts": {
+    "customer_profiles": 3092,
+    "customer_vehicle_links": 22357,
+    "unique_normalized_vehicles_in_customer_fleet": 22223,
+    "membership_rows": 24611,
+    "renewal_claim_rows": 27373,
+    "renewal_claim_true_rows": 1188,
+    "vehicle_compliance_rows": 30459,
+    "insurance_expired_vehicle_rows": 2734,
+    "puc_expired_vehicle_rows": 1882,
+    "fitness_expired_vehicle_rows": 2036,
+    "tax_expired_vehicle_rows": 108,
+    "raw_vehicle_portfolio_rows": 30659,
+    "rc_status_rows": 1729,
+    "monthly_total_challans_sum": 397631,
+    "state_total_challans_sum": 402547,
+    "violation_total_challans_sum": 137494,
+    "monthly_vs_state_difference": 4916,
+    "challan_aggregates_reconcile": false,
+    "state_rows": 30,
+    "monthly_rows": 131,
+    "violation_rows": 15
+  },
+  "important_limitations": [
+    "No individual e-challan or court-challan records were embedded in the supplied Analytics Wall. Challan dashboard data is only monthly, state and violation aggregation.",
+    "The hasClaim field in renewal_claims.json is a claim indicator; it does not contain challan number, offence, pending amount, or payment status.",
+    "Expiry flags and dashboard bucket counts reflect the source dashboard snapshot. For accurate current status, calculate expiry from the preserved date fields against the current date at query time.",
+    "Customer names and phone numbers appear in extracted records. In production, only retrieve records after customer verification and authorization.",
+    "Index values are zero-based row indices into the corresponding JSON arrays. Vehicle registrations in records retain their source formatting; normalized keys are used only for lookup.",
+    "The included source workbooks and dashboards may represent different snapshots or source subsets. Source arrays have been preserved rather than silently deduplicated or reconciled."
+  ]
+}

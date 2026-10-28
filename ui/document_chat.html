@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Document Chat | GetRightCover</title>
+<style>
+:root{font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:#172033;background:#f4f7fb}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh}
+.topbar{height:74px;background:#fff;border-bottom:1px solid #e6ebf2;display:flex;align-items:center;justify-content:space-between;padding:0 clamp(16px,4vw,52px);gap:16px}
+.brand{display:flex;align-items:center;gap:12px;font-weight:750;font-size:17px}
+.logo{height:39px;width:39px;border-radius:12px;background:#1d4ed8;color:#fff;display:grid;place-items:center;font-size:12px;letter-spacing:.5px}
+.brand small{display:block;color:#7b8799;font-size:11px;font-weight:500;margin-top:3px}
+a{color:#1d4ed8;text-decoration:none;font-weight:650}
+.back{border:1px solid #dbe3ef;border-radius:11px;padding:10px 14px;font-size:13px;background:#fff}
+main{max-width:1000px;margin:0 auto;padding:36px 18px 60px}
+.heading{margin-bottom:23px}
+.eyebrow{font-size:11px;text-transform:uppercase;letter-spacing:1.5px;color:#2563eb;font-weight:800}
+h1{font-size:clamp(28px,4vw,38px);letter-spacing:-1.1px;margin:8px 0}
+.subtitle{color:#66748a;line-height:1.6;margin:0;max-width:700px;font-size:15px}
+.panel{background:#fff;border:1px solid #e2e8f0;border-radius:19px;box-shadow:0 8px 28px #17203308;margin-bottom:18px;overflow:hidden}
+.upload-panel{padding:22px}
+.panel-title{font-size:15px;font-weight:750;margin:0 0 6px}
+.muted{font-size:13px;line-height:1.55;color:#738096}
+.drop{border:1.5px dashed #b9c9df;background:#f8fbff;border-radius:15px;padding:28px 16px;text-align:center;margin-top:16px}
+.file-icon{margin:auto auto 12px;width:47px;height:47px;border-radius:14px;background:#e5efff;color:#2563eb;display:grid;place-items:center;font-size:23px}
+.file-name{font-size:13px;color:#345078;margin:12px 0 0;overflow-wrap:anywhere}
+.actions{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin-top:17px}
+button,select,input{font:inherit}
+button{cursor:pointer}
+.primary{border:0;background:#2563eb;color:#fff;padding:11px 16px;border-radius:11px;font-size:13px;font-weight:750}
+.primary:disabled{opacity:.45;cursor:not-allowed}
+.secondary{border:1px solid #dbe3ef;background:#fff;color:#344256;padding:10px 13px;border-radius:11px;font-size:13px;font-weight:650}
+select{border:1px solid #dbe3ef;background:#fff;padding:10px 12px;border-radius:10px;color:#334155;font-size:13px}
+.chat-panel{padding:0}
+.chat-head{padding:18px 22px;border-bottom:1px solid #edf1f6;display:flex;justify-content:space-between;gap:12px;align-items:center}
+.status{font-size:12px;color:#64748b}
+.messages{padding:20px;display:flex;flex-direction:column;gap:15px;min-height:220px;max-height:520px;overflow:auto}
+.welcome{background:#f7faff;border:1px solid #e8eff9;border-radius:14px;padding:17px;color:#53647d;font-size:13px;line-height:1.65}
+.message{max-width:92%;padding:13px 15px;border-radius:14px;font-size:14px;line-height:1.65;white-space:pre-wrap;overflow-wrap:anywhere}
+.message.user{align-self:flex-end;background:#e8f1ff;color:#1e3a66;border-bottom-right-radius:4px}
+.message.assistant{align-self:flex-start;background:#f4f6f9;border:1px solid #e7ebf0;color:#253247;border-bottom-left-radius:4px}
+.message.error{background:#fff1f2;border-color:#fecdd3;color:#9f1239}
+.composer{border-top:1px solid #edf1f6;padding:15px;display:flex;gap:10px}
+.composer input{min-width:0;flex:1;border:1px solid #dce4ef;border-radius:12px;padding:12px 13px;outline:none;font-size:14px}
+.composer input:focus{border-color:#8bb3ff;box-shadow:0 0 0 3px #dbeafe}
+.composer button{flex-shrink:0}
+.footnote{font-size:11px;line-height:1.6;color:#8a96a8;margin:13px 2px 0}
+.spinner{display:inline-block;width:13px;height:13px;border:2px solid #cbd5e1;border-top-color:#2563eb;border-radius:50%;animation:spin .7s linear infinite;vertical-align:middle;margin-right:7px}
+@keyframes spin{to{transform:rotate(360deg)}}
+@media(max-width:600px){.topbar{height:64px}.brand{font-size:14px}.brand small{font-size:10px}.back{padding:9px;font-size:12px}main{padding-top:25px}.upload-panel{padding:16px}.messages{padding:14px;max-height:55vh}.message{max-width:100%}.composer{padding:11px}.composer .primary{padding:10px}}
+</style>
+</head>
+<body>
+<div class="topbar">
+  <div class="brand"><div class="logo">GRC</div><div>GetRightCover<small>AI document assistant</small></div></div>
+  <a class="back" href="/">← Main Chatbot</a>
+</div>
+<main>
+  <section class="heading">
+    <div class="eyebrow">Your personal document assistant</div>
+    <h1>Document Chat</h1>
+    <p class="subtitle">Upload a PDF or document, get an easy-to-understand summary, then ask follow-up questions about its contents—all in one place.</p>
+  </section>
+
+  <section class="panel upload-panel">
+    <h2 class="panel-title">1. Upload your document</h2>
+    <div class="muted">Choose a file up to 15 MB. Supported formats include PDF, DOCX, TXT, Excel, PowerPoint, CSV, JSON, Markdown and images.</div>
+    <div class="drop">
+      <div class="file-icon">↥</div>
+      <p class="panel-title">Select a document from your device</p>
+      <p class="muted">PDF · DOCX · TXT · XLSX · PPTX · CSV · JPG · PNG and more</p>
+      <input type="file" id="fileInput" accept=".pdf,.docx,.xlsx,.xls,.pptx,.csv,.txt,.json,.md,.jpg,.jpeg,.png,.webp">
+      <p class="file-name" id="fileName">No document selected</p>
+    </div>
+    <div class="actions">
+      <label class="muted" for="language">Response language</label>
+      <select id="language">
+        <option>Hinglish</option><option>Hindi</option><option>English</option>
+        <option>Marathi</option><option>Gujarati</option><option>Punjabi</option>
+        <option>Bengali</option><option>Tamil</option><option>Telugu</option>
+      </select>
+      <button class="primary" id="summarizeBtn" disabled>Generate easy summary</button>
+      <button class="secondary" id="clearBtn" type="button">Clear</button>
+    </div>
+    <p class="footnote">The document is processed by your local chatbot service. Very long documents may be truncated. Scanned PDFs without selectable text are not OCR-processed yet.</p>
+  </section>
+
+  <section class="panel chat-panel">
+    <div class="chat-head">
+      <div><h2 class="panel-title" style="margin:0 0 4px">2. Ask questions about your document</h2><div class="muted">Select a document first, then generate a summary or ask a question.</div></div>
+      <span class="status" id="status">Ready</span>
+    </div>
+    <div class="messages" id="messages" aria-live="polite">
+      <div class="welcome">Your summary and answers will appear here. Try questions such as “Explain this in simple language”, “What are the important dates?”, or “What are the main obligations?”</div>
+    </div>
+    <form class="composer" id="questionForm">
+      <input id="questionInput" type="text" placeholder="Ask anything about the uploaded document…" autocomplete="off" disabled>
+      <button class="primary" id="sendBtn" type="submit" disabled>Ask</button>
+    </form>
+  </section>
+</main>
+<script>
+(() => {
+  const fileInput = document.getElementById("fileInput");
+  const fileName = document.getElementById("fileName");
+  const summarizeBtn = document.getElementById("summarizeBtn");
+  const clearBtn = document.getElementById("clearBtn");
+  const language = document.getElementById("language");
+  const messages = document.getElementById("messages");
+  const status = document.getElementById("status");
+  const questionForm = document.getElementById("questionForm");
+  const questionInput = document.getElementById("questionInput");
+  const sendBtn = document.getElementById("sendBtn");
+  let selectedFile = null;
+  let busy = false;
+
+  function addMessage(text, who, extraClass = "") {
+    const bubble = document.createElement("div");
+    bubble.className = "message " + who + (extraClass ? " " + extraClass : "");
+    bubble.textContent = text;
+    messages.appendChild(bubble);
+    messages.scrollTop = messages.scrollHeight;
+    return bubble;
+  }
+
+  function setBusy(value) {
+    busy = value;
+    summarizeBtn.disabled = value || !selectedFile;
+    clearBtn.disabled = value;
+    fileInput.disabled = value;
+    language.disabled = value;
+    questionInput.disabled = value || !selectedFile;
+    sendBtn.disabled = value || !selectedFile;
+    status.innerHTML = value ? '<span class="spinner"></span>Working…' : (selectedFile ? "Document ready" : "Ready");
+  }
+
+  fileInput.addEventListener("change", () => {
+    const file = fileInput.files && fileInput.files[0];
+    if (!file) return;
+    if (file.size > 15 * 1024 * 1024) {
+      selectedFile = null;
+      summarizeBtn.disabled = true;
+      questionInput.disabled = true;
+      sendBtn.disabled = true;
+      addMessage("This file is larger than 15 MB. Please select a smaller file.", "assistant", "error");
+      fileInput.value = "";
+      fileName.textContent = "No document selected";
+      return;
+    }
+    selectedFile = file;
+    fileName.textContent = file.name + " · " + (file.size / (1024 * 1024)).toFixed(2) + " MB";
+    summarizeBtn.disabled = false;
+    questionInput.disabled = false;
+    sendBtn.disabled = false;
+    messages.innerHTML = "";
+    addMessage("Document selected: " + file.name + "\nClick “Generate easy summary” to begin. You can then ask follow-up questions without selecting the file again.", "assistant");
+    status.textContent = "Document selected";
+  });
+
+  async function askDocument(question, displayQuestion = question) {
+    if (!selectedFile || busy) return;
+    const trimmed = String(question || "").trim();
+    if (!trimmed) return;
+    addMessage(displayQuestion, "user");
+    const waiting = addMessage("Reading your document and preparing an answer…", "assistant");
+    setBusy(true);
+    try {
+      const formData = new FormData();
+      formData.append("file", selectedFile, selectedFile.name);
+      formData.append("question", trimmed);
+      formData.append("language", language.value);
+      const response = await fetch("/api/chat-with-file", { method: "POST", body: formData });
+      const data = await response.json().catch(() => ({}));
+      waiting.remove();
+      if (!response.ok) {
+        throw new Error(data.detail || "The document could not be processed.");
+      }
+      addMessage(data.answer || "No answer was returned.", "assistant");
+    } catch (error) {
+      waiting.remove();
+      addMessage(error.message || "Something went wrong while reading the document.", "assistant", "error");
+    } finally {
+      setBusy(false);
+      questionInput.focus();
+    }
+  }
+
+  summarizeBtn.addEventListener("click", () => {
+    askDocument(
+      "Create a clear, easy-to-understand summary of this document. Use short headings and bullet points. Include the main idea, key points, important dates, obligations, risks and action items when present. Explain difficult terms simply. Use only information found in the document; do not invent missing facts. Mention if parts are unclear or unavailable.",
+      "Generate an easy-language summary"
+    );
+  });
+
+  questionForm.addEventListener("submit", (event) => {
+    event.preventDefault();
+    const question = questionInput.value.trim();
+    if (!question || !selectedFile || busy) return;
+    questionInput.value = "";
+    askDocument(question);
+  });
+
+  clearBtn.addEventListener("click", () => {
+    selectedFile = null;
+    fileInput.value = "";
+    fileName.textContent = "No document selected";
+    messages.innerHTML = '<div class="welcome">Your summary and answers will appear here. Choose a document to get started.</div>';
+    summarizeBtn.disabled = true;
+    questionInput.disabled = true;
+    sendBtn.disabled = true;
+    status.textContent = "Ready";
+  });
+})();
+</script>
+</body>
+</html>
