@@ -1,0 +1,10 @@
+{
+  "name": "analytics-wall-shared",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Analytics Wall with shared Netlify Blobs storage",
+  "dependencies": {
+    "@netlify/blobs": "^8.1.0"
+  }
+}
